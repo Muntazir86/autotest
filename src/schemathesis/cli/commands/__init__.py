@@ -131,3 +131,10 @@ run = schemathesis.command(
     cls=CommandWithGroupedOptions,
     context_settings={"terminal_width": get_terminal_width(), **CONTEXT_SETTINGS},
 )(run_command)
+
+# Register config and workflow subcommands
+from schemathesis.cli.commands.config import config_group
+from schemathesis.cli.commands.workflow import workflow_group
+
+schemathesis.add_command(config_group)
+schemathesis.add_command(workflow_group)

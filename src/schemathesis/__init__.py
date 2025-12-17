@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from schemathesis import errors, graphql, openapi, pytest
+from schemathesis import extraction, reporting
 from schemathesis.auths import AuthContext, AuthProvider, auth
 from schemathesis.checks import CheckContext, CheckFunction, check
 from schemathesis.config import SchemathesisConfig as Config
@@ -53,4 +54,7 @@ __all__ = [
     # Serialization
     "serializer",
     "SerializationContext",
+    # Enhanced features
+    "extraction",
+    "reporting",
 ]
