@@ -1,10 +1,10 @@
-# Schemathesis CLI Reference
+# Autotest CLI Reference
 
-This reference details all the command-line options available in the Schemathesis CLI. The documentation is organized by command and subcommand to provide a clear structure of available options and their usage.
+This reference details all the command-line options available in the Autotest CLI. The documentation is organized by command and subcommand to provide a clear structure of available options and their usage.
 
 ## Global Options
 
-These options apply to all Schemathesis commands:
+These options apply to all Autotest commands:
 
 #### `--no-color`
 
@@ -16,7 +16,7 @@ These options apply to all Schemathesis commands:
 
 !!! note ""
 
-    Forces the use of ANSI color escape codes in terminal output, even in environments where Schemathesis would normally disable colors.
+    Forces the use of ANSI color escape codes in terminal output, even in environments where Autotest would normally disable colors.
 
 ## `run`
 
@@ -81,7 +81,7 @@ $ st run [OPTIONS] SCHEMA
     **Default**: `[]`  
     **Possible values**: `data_too_large`, `filter_too_much`, `too_slow`, `large_base_example`, `all`  
 
-    Disables specified health checks during test execution. Health checks identify potential problems with test generation or performance and may stop tests early with an error to prevent Schemathesis from hanging (e.g., when processing extremely complex schemas).
+    Disables specified health checks during test execution. Health checks identify potential problems with test generation or performance and may stop tests early with an error to prevent Autotest from hanging (e.g., when processing extremely complex schemas).
 
     ```console
     $ st run openapi.yaml --suppress-health-check too_slow,data_too_large
@@ -195,7 +195,7 @@ $ st run [OPTIONS] SCHEMA
 
 ### Filtering
 
-Schemathesis provides various ways to filter which operations are tested:
+Autotest provides various ways to filter which operations are tested:
 
 #### `--include-TYPE VALUE` / `--exclude-TYPE VALUE`
 
@@ -250,7 +250,7 @@ Schemathesis provides various ways to filter which operations are tested:
 
 ### Network
 
-The following options control how Schemathesis makes network requests to the API under test:
+The following options control how Autotest makes network requests to the API under test:
 
 #### `-H, --header NAME:VALUE`
 
@@ -393,7 +393,7 @@ These options control the reporting and output format of test results:
 !!! note ""
 
     **Type**: `String`  
-    **Default**: `schemathesis-report`  
+    **Default**: `Autotest-report`  
 
     Directory to store all report files.
 
@@ -478,7 +478,7 @@ These options control the reporting and output format of test results:
 
 ### Data Generation
 
-These options control how Schemathesis generates test data for API testing:
+These options control how Autotest generates test data for API testing:
 
 #### `-m, --mode MODE`
 
@@ -488,7 +488,7 @@ These options control how Schemathesis generates test data for API testing:
     **Default**: `positive`  
     **Possible values**: `positive`, `negative`, `all`  
 
-    Test data generation mode. Controls whether Schemathesis generates valid data, invalid data, or both.
+    Test data generation mode. Controls whether Autotest generates valid data, invalid data, or both.
 
     ```console
     $ st run openapi.yaml --mode all
@@ -503,7 +503,7 @@ These options control how Schemathesis generates test data for API testing:
 
     Maximum number of test cases generated per API operation. Must be greater than or equal to 1.
 
-    Schemathesis generates diverse examples based on your API schema, distributed across enabled generation modes (e.g., positive and negative test cases). See [Data Generation](../explanations/data-generation.md) for details.
+    Autotest generates diverse examples based on your API schema, distributed across enabled generation modes (e.g., positive and negative test cases). See [Data Generation](../explanations/data-generation.md) for details.
 
     This setting has different effects depending on the test phase:
 
@@ -624,11 +624,11 @@ These options control how Schemathesis generates test data for API testing:
     **Type**: `String`  
     **Default**: `.hypothesis/examples`  
 
-    Storage for examples discovered by Schemathesis. Use `none` to disable, `:memory:` for temporary storage, or specify a file path for persistent storage.
+    Storage for examples discovered by Autotest. Use `none` to disable, `:memory:` for temporary storage, or specify a file path for persistent storage.
 
     ```console
     $ st run openapi.yaml --generation-database ":memory:"
-    $ st run openapi.yaml --generation-database ./schemathesis_examples.db
+    $ st run openapi.yaml --generation-database ./Autotest_examples.db
     ```
 
 #### `--generation-unique-inputs`
@@ -638,7 +638,7 @@ These options control how Schemathesis generates test data for API testing:
     **Type**: `Flag`  
     **Default**: `false`  
 
-    Force the generation of unique test cases. When enabled, Schemathesis will ensure that no duplicate test inputs are used within a single test phase.
+    Force the generation of unique test cases. When enabled, Autotest will ensure that no duplicate test inputs are used within a single test phase.
 
     ```console
     $ st run openapi.yaml --generation-unique-inputs
@@ -646,7 +646,7 @@ These options control how Schemathesis generates test data for API testing:
 
 ## Exit codes
 
-Schemathesis uses predictable exit codes so automation can interpret results:
+Autotest uses predictable exit codes so automation can interpret results:
 
 - `0` — All configured checks passed
 - `1` — At least one check failed or a bug was reported

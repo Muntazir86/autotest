@@ -3,12 +3,12 @@ from __future__ import annotations
 import pytest
 import requests
 
-import schemathesis
-from schemathesis.core import deserialization
-from schemathesis.core.parameters import ParameterLocation
-from schemathesis.core.transport import Response
-from schemathesis.resources.repository import PER_TYPE_CAPACITY
-from schemathesis.specs.openapi.extra_data_source import ParameterRequirement
+import autotest
+from autotest.core import deserialization
+from autotest.core.parameters import ParameterLocation
+from autotest.core.transport import Response
+from autotest.resources.repository import PER_TYPE_CAPACITY
+from autotest.specs.openapi.extra_data_source import ParameterRequirement
 
 USER_RESOURCE = "User"
 POST_USERS = "POST /users"
@@ -30,7 +30,7 @@ def user_schema_builder(ctx):
             paths.update(extra_endpoints)
 
         spec = ctx.openapi.build_schema(paths)
-        return schemathesis.openapi.from_dict(spec)
+        return autotest.openapi.from_dict(spec)
 
     return build
 
@@ -347,7 +347,7 @@ def test_custom_deserializer(ctx):
             },
         }
     )
-    schema = schemathesis.openapi.from_dict(spec)
+    schema = autotest.openapi.from_dict(spec)
     data_source = schema.create_extra_data_source()
 
     operation = schema["/users"]["POST"]

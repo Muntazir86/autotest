@@ -189,7 +189,7 @@ def test_proxy_error(cli, schema_url, snapshot_cli):
 @pytest.mark.operations("get_user", "create_user", "update_user")
 @pytest.mark.snapshot(replace_reproduce_with=True)
 def test_generation_config(cli, mocker, schema_url, snapshot_cli):
-    from schemathesis.specs.openapi import _hypothesis
+    from autotest.specs.openapi import _hypothesis
 
     mocked = mocker.spy(_hypothesis, "from_schema")
     assert (
@@ -216,7 +216,7 @@ def test_keyboard_interrupt(cli, mocker, schema_url, snapshot_cli):
     def mocked(*args, **kwargs):
         raise KeyboardInterrupt
 
-    mocker.patch("schemathesis.Case.call", wraps=mocked)
+    mocker.patch("autotest.Case.call", wraps=mocked)
     assert cli.run(schema_url, "--phases=stateful") == snapshot_cli
 
 

@@ -12,20 +12,20 @@ from jsonschema import ValidationError
 from requests import Request
 from requests.models import RequestEncodingMixin
 
-import schemathesis
-from schemathesis.config._projects import ProjectConfig
-from schemathesis.core import NOT_SET
-from schemathesis.core.errors import MalformedMediaType
-from schemathesis.core.parameters import LOCATION_TO_CONTAINER
-from schemathesis.core.result import Ok
-from schemathesis.generation import GenerationMode
-from schemathesis.generation.hypothesis.builder import (
+import autotest
+from autotest.config._projects import ProjectConfig
+from autotest.core import NOT_SET
+from autotest.core.errors import MalformedMediaType
+from autotest.core.parameters import LOCATION_TO_CONTAINER
+from autotest.core.result import Ok
+from autotest.generation import GenerationMode
+from autotest.generation.hypothesis.builder import (
     HypothesisTestConfig,
     HypothesisTestMode,
     _iter_coverage_cases,
     create_test,
 )
-from schemathesis.generation.meta import CoverageScenario, TestPhase
+from autotest.generation.meta import CoverageScenario, TestPhase
 from test.utils import assert_requests_call
 
 
@@ -239,7 +239,7 @@ def collect_coverage_cases(ctx, body_schema, positive=False):
             "content": {"application/json": {"schema": body_schema}},
         },
     )
-    loaded = schemathesis.openapi.from_dict(schema)
+    loaded = autotest.openapi.from_dict(schema)
     operation = loaded["/foo"]["post"]
 
     validator = jsonschema.Draft202012Validator(body_schema)
@@ -1221,7 +1221,7 @@ def test_required_and_optional_headers_only_type(ctx):
         [
             # Can't really negate a parameter that can be anything, except for make it missing and injecting an unknown one
             {
-                "headers": {"x-schemathesis-unknown-property": "42"},
+                "headers": {"x-autotest-unknown-property": "42"},
             },
             {},
         ],
@@ -1245,7 +1245,7 @@ def test_required_and_optional_headers(ctx):
         schema,
         [
             {
-                "headers": {"X-API-Key-1": "00000", "x-schemathesis-unknown-property": "42"},
+                "headers": {"X-API-Key-1": "00000", "x-autotest-unknown-property": "42"},
             },
             {
                 "headers": {"X-API-Key-1": ""},
@@ -1484,7 +1484,7 @@ def test_optional_parameter_without_type(ctx):
             # Can't really negate a parameter that can be anything, except for make it missing and injecting an unknown one
             {
                 "query": {
-                    "x-schemathesis-unknown-property": "42",
+                    "x-autotest-unknown-property": "42",
                 },
             },
             {},
@@ -1657,7 +1657,7 @@ def test_string_with_format(ctx):
         path="/foo/{foo_id}",
     )
 
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
 
     def test(case):
         uuid.UUID(case.path_parameters["foo_id"], version=4)
@@ -1974,7 +1974,7 @@ def test_negative_query_parameter(ctx, schema, expected, required):
         ],
     )
 
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
 
     urls = []
     operation = schema["/foo"]["post"]
@@ -2065,7 +2065,7 @@ def test_request_body_is_required(ctx, required, properties):
             }
         }
     )
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
 
     operation = schema["/items"]["post"]
 
@@ -2109,7 +2109,7 @@ def test_request_body_with_references(ctx, required):
             }
         },
     )
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
 
     operation = schema["/items"]["post"]
 
@@ -2133,7 +2133,7 @@ def test_request_body_without_validation_keywords(ctx):
             }
         },
     )
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
 
     operation = schema["/items"]["post"]
 
@@ -2158,7 +2158,7 @@ def test_unspecified_http_methods(ctx, cli, openapi3_base_url, snapshot_cli):
     }
     schema = ctx.openapi.build_schema(raw_schema)
 
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
 
     methods = set()
     operation = schema["/foo"]["post"]
@@ -2184,9 +2184,9 @@ def test_unspecified_http_methods(ctx, cli, openapi3_base_url, snapshot_cli):
     schema_path = ctx.openapi.write_schema(raw_schema)
     with ctx.check(
         """
-import schemathesis
+import autotest
 
-@schemathesis.check
+@autotest.check
 def failed(ctx, response, case):
     if case.meta and getattr(case.meta.phase.data, "description", "") == "Unspecified HTTP method: DELETE":
         raise AssertionError(f"Should be {case.meta.phase.data.description}")
@@ -2224,7 +2224,7 @@ def test_avoid_testing_unexpected_methods(ctx):
     }
     schema = ctx.openapi.build_schema(raw_schema)
 
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
 
     methods = set()
     operation = schema["/foo"]["post"]
@@ -2351,7 +2351,7 @@ def test_nested_parameters(ctx):
         }
     )
 
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
 
     ranges = set()
     operation = schema["/test"]["get"]
@@ -2435,7 +2435,7 @@ def _request_body(inner):
 )
 def test_references(ctx, operation, components):
     raw_schema = ctx.openapi.build_schema({"/test": {"post": operation}}, components=components)
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     for operation in schema.get_all_operations():
         if isinstance(operation, Ok):
             for _ in _iter_coverage_cases(
@@ -2469,7 +2469,7 @@ def test_urlencoded_payloads_are_valid(ctx):
             },
         },
     )
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
 
     operation = schema["/foo"]["post"]
 
@@ -2493,7 +2493,7 @@ def test_malformed_content_type(ctx):
             },
         },
     )
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
 
     operation = schema["/foo"]["post"]
 
@@ -2515,7 +2515,7 @@ def test_no_missing_header_duplication(ctx):
             {"name": "X-Key-3", "in": "header", "required": True, "schema": {"type": "string"}},
         ],
     )
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
 
     descriptions = []
     operation = schema["/foo"]["post"]
@@ -2532,7 +2532,7 @@ def test_no_missing_header_duplication(ctx):
 
 
 def assert_coverage(schema, modes, expected, path=None):
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
     schema.config.phases.coverage.generate_duplicate_query_parameters = True
 
     cases = []
@@ -2789,7 +2789,7 @@ def test_negative_type_violation_for_const_property(ctx):
             }
         },
     )
-    loaded = schemathesis.openapi.from_dict(schema)
+    loaded = autotest.openapi.from_dict(schema)
     operation = loaded["/test"]["POST"]
 
     cases = []
@@ -2832,7 +2832,7 @@ def test_additional_properties_with_schema_positive(ctx):
             },
         },
     )
-    loaded = schemathesis.openapi.from_dict(schema)
+    loaded = autotest.openapi.from_dict(schema)
     operation = loaded["/foo"]["post"]
 
     cases = []
@@ -2867,7 +2867,7 @@ def test_additional_properties_with_schema_negative(ctx):
             },
         },
     )
-    loaded = schemathesis.openapi.from_dict(schema)
+    loaded = autotest.openapi.from_dict(schema)
     operation = loaded["/foo"]["post"]
 
     cases = []
@@ -2907,7 +2907,7 @@ def test_additional_properties_anyof_positive(ctx):
             },
         },
     )
-    loaded = schemathesis.openapi.from_dict(schema)
+    loaded = autotest.openapi.from_dict(schema)
     operation = loaded["/foo"]["post"]
 
     cases = []

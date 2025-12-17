@@ -2,8 +2,8 @@ from dataclasses import fields
 
 import pytest
 
-import schemathesis
-from schemathesis.specs.openapi.definitions import OPENAPI_30_VALIDATOR, SWAGGER_20_VALIDATOR
+import autotest
+from autotest.specs.openapi.definitions import OPENAPI_30_VALIDATOR, SWAGGER_20_VALIDATOR
 
 
 def make_object_schema(is_loose=False, **properties):
@@ -150,7 +150,7 @@ def assert_parameters():
                 assert left_attr == right_attr
 
     def check(schema, expected, json_schemas, location="body"):
-        schema = schemathesis.openapi.from_dict(schema)
+        schema = autotest.openapi.from_dict(schema)
         operation = schema["/users"]["POST"]
         container = getattr(operation, location)
         _compare(container, expected)

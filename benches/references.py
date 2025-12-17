@@ -1,10 +1,10 @@
 import pytest
 
-from schemathesis.core.transforms import resolve_pointer
+from autotest.core.transforms import resolve_pointer
 
 RECURSIVE_SCHEMA = {
     "openapi": "3.0.0",
-    "info": {"title": "Example API", "description": "An API to test Schemathesis", "version": "1.0.0"},
+    "info": {"title": "Example API", "description": "An API to test autotest", "version": "1.0.0"},
     "components": {
         "schemas": {
             "Node": {

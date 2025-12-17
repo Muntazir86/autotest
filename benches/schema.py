@@ -8,18 +8,18 @@ from unittest.mock import patch
 import pytest
 import requests
 
-import schemathesis
-from schemathesis.cli.commands.run.handlers.cassettes import Finalize, Initialize, Process, har_writer, vcr_writer
-from schemathesis.config import SchemathesisConfig
-from schemathesis.core.parameters import ParameterLocation
-from schemathesis.core.transforms import deepclone
-from schemathesis.core.transport import Response
-from schemathesis.engine import events, from_schema
-from schemathesis.generation.hypothesis import setup
-from schemathesis.generation.modes import GenerationMode
-from schemathesis.specs.openapi._hypothesis import get_parameters_strategy
-from schemathesis.specs.openapi.stateful import dependencies
-from schemathesis.specs.openapi.stateful.dependencies.layers import compute_dependency_layers
+import autotest
+from autotest.cli.commands.run.handlers.cassettes import Finalize, Initialize, Process, har_writer, vcr_writer
+from autotest.config import autotestConfig
+from autotest.core.parameters import ParameterLocation
+from autotest.core.transforms import deepclone
+from autotest.core.transport import Response
+from autotest.engine import events, from_schema
+from autotest.generation.hypothesis import setup
+from autotest.generation.modes import GenerationMode
+from autotest.specs.openapi._hypothesis import get_parameters_strategy
+from autotest.specs.openapi.stateful import dependencies
+from autotest.specs.openapi.stateful.dependencies.layers import compute_dependency_layers
 
 CURRENT_DIR = pathlib.Path(__file__).parent.absolute()
 sys.path.append(str(CURRENT_DIR.parent))
@@ -28,24 +28,24 @@ CATALOG_DIR = CURRENT_DIR / "data"
 from corpus.tools import load_from_corpus, read_corpus_file  # noqa: E402
 
 setup()
-CONFIG = SchemathesisConfig()
+CONFIG = autotestConfig()
 
 CORPUS_OPENAPI_30 = read_corpus_file("openapi-3.0")
 CORPUS_SWAGGER_20 = read_corpus_file("swagger-2.0")
 # Small size (~2k lines in YAML)
 BBCI = load_from_corpus("bbci.co.uk/1.0.json", CORPUS_OPENAPI_30)
-BBCI_SCHEMA = schemathesis.openapi.from_dict(BBCI)
+BBCI_SCHEMA = autotest.openapi.from_dict(BBCI)
 BBCI_OPERATIONS = list(BBCI_SCHEMA.get_all_operations())
 # Medium size (~8k lines in YAML)
 VMWARE = load_from_corpus("vmware.local/vrni/1.0.0.json", CORPUS_OPENAPI_30)
-VMWARE_SCHEMA = schemathesis.openapi.from_dict(VMWARE)
+VMWARE_SCHEMA = autotest.openapi.from_dict(VMWARE)
 VMWARE_OPERATIONS = list(VMWARE_SCHEMA.get_all_operations())
 # Large size (~92k lines in YAML)
 STRIPE = load_from_corpus("stripe.com/2022-11-15.json", CORPUS_OPENAPI_30)
-STRIPE_SCHEMA = schemathesis.openapi.from_dict(STRIPE)
+STRIPE_SCHEMA = autotest.openapi.from_dict(STRIPE)
 # Medium GraphQL schema (~6k lines)
 UNIVERSE = load_from_corpus("universe.json", "graphql")
-UNIVERSE_SCHEMA = schemathesis.graphql.from_dict(UNIVERSE)
+UNIVERSE_SCHEMA = autotest.graphql.from_dict(UNIVERSE)
 
 APPVEYOR = load_from_corpus("appveyor.com/1.0.0.json", CORPUS_SWAGGER_20)
 EVETECH = load_from_corpus("evetech.net/0.8.6.json", CORPUS_SWAGGER_20)
@@ -70,21 +70,21 @@ RESPONSE = Response(
     elapsed=0.1,
     verify=False,
 )
-patch("schemathesis.Case.call", return_value=RESPONSE).start()
+patch("autotest.Case.call", return_value=RESPONSE).start()
 
 
 @pytest.mark.benchmark
 @pytest.mark.parametrize(
     "raw_schema, loader",
     [
-        (BBCI, schemathesis.openapi.from_dict),
-        (VMWARE, schemathesis.openapi.from_dict),
-        (UNIVERSE, schemathesis.graphql.from_dict),
-        (APPVEYOR, schemathesis.openapi.from_dict),
-        (EVETECH, schemathesis.openapi.from_dict),
-        (OSISOFT, schemathesis.openapi.from_dict),
-        (ML_WEBSERVICES, schemathesis.openapi.from_dict),
-        (AZURE_NETWORK, schemathesis.openapi.from_dict),
+        (BBCI, autotest.openapi.from_dict),
+        (VMWARE, autotest.openapi.from_dict),
+        (UNIVERSE, autotest.graphql.from_dict),
+        (APPVEYOR, autotest.openapi.from_dict),
+        (EVETECH, autotest.openapi.from_dict),
+        (OSISOFT, autotest.openapi.from_dict),
+        (ML_WEBSERVICES, autotest.openapi.from_dict),
+        (AZURE_NETWORK, autotest.openapi.from_dict),
     ],
     ids=("bbci", "vmware", "universe", "appveyor", "evetech", "osisoft", "ml_webservices", "azure_network"),
 )
@@ -102,14 +102,14 @@ def test_iter_operations(benchmark, raw_schema, loader):
 @pytest.mark.parametrize(
     "raw_schema, loader",
     [
-        (VMWARE, schemathesis.openapi.from_dict),
-        (STRIPE, schemathesis.openapi.from_dict),
-        (UNIVERSE, schemathesis.graphql.from_dict),
-        (APPVEYOR, schemathesis.openapi.from_dict),
-        (EVETECH, schemathesis.openapi.from_dict),
-        (OSISOFT, schemathesis.openapi.from_dict),
-        (ML_WEBSERVICES, schemathesis.openapi.from_dict),
-        (AZURE_NETWORK, schemathesis.openapi.from_dict),
+        (VMWARE, autotest.openapi.from_dict),
+        (STRIPE, autotest.openapi.from_dict),
+        (UNIVERSE, autotest.graphql.from_dict),
+        (APPVEYOR, autotest.openapi.from_dict),
+        (EVETECH, autotest.openapi.from_dict),
+        (OSISOFT, autotest.openapi.from_dict),
+        (ML_WEBSERVICES, autotest.openapi.from_dict),
+        (AZURE_NETWORK, autotest.openapi.from_dict),
     ],
     ids=("vmware", "stripe", "universe", "appveyor", "evetech", "osisoft", "ml_webservices", "azure_network"),
 )
@@ -320,15 +320,15 @@ def _load_from_file(loader, json_string):
 @pytest.mark.parametrize(
     "raw_schema, loader",
     [
-        (BBCI, schemathesis.openapi.from_file),
-        (VMWARE, schemathesis.openapi.from_file),
-        (STRIPE, schemathesis.openapi.from_file),
-        (UNIVERSE, schemathesis.graphql.from_file),
-        (APPVEYOR, schemathesis.openapi.from_file),
-        (EVETECH, schemathesis.openapi.from_file),
-        (OSISOFT, schemathesis.openapi.from_file),
-        (ML_WEBSERVICES, schemathesis.openapi.from_file),
-        (AZURE_NETWORK, schemathesis.openapi.from_file),
+        (BBCI, autotest.openapi.from_file),
+        (VMWARE, autotest.openapi.from_file),
+        (STRIPE, autotest.openapi.from_file),
+        (UNIVERSE, autotest.graphql.from_file),
+        (APPVEYOR, autotest.openapi.from_file),
+        (EVETECH, autotest.openapi.from_file),
+        (OSISOFT, autotest.openapi.from_file),
+        (ML_WEBSERVICES, autotest.openapi.from_file),
+        (AZURE_NETWORK, autotest.openapi.from_file),
     ],
     ids=("bbci", "vmware", "stripe", "universe", "appveyor", "evetech", "osisoft", "ml_webservices", "azure_network"),
 )
@@ -349,7 +349,7 @@ def test_load_from_file(benchmark, raw_schema, loader):
 )
 def test_as_state_machine(benchmark, raw_schema):
     def _build():
-        schema = schemathesis.openapi.from_dict(deepclone(raw_schema))
+        schema = autotest.openapi.from_dict(deepclone(raw_schema))
         schema.as_state_machine()
 
     benchmark(_build)

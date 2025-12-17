@@ -3,10 +3,10 @@ from _pytest.main import ExitCode
 from hypothesis import given
 from hypothesis import strategies as st
 
-import schemathesis
-from schemathesis.core.errors import IncorrectUsage
-from schemathesis.graphql import nodes
-from schemathesis.specs.graphql.scalars import CUSTOM_SCALARS
+import autotest
+from autotest.core.errors import IncorrectUsage
+from autotest.graphql import nodes
+from autotest.specs.graphql.scalars import CUSTOM_SCALARS
 
 
 @pytest.fixture(autouse=True)
@@ -18,7 +18,7 @@ def clear_custom_scalars():
 def test_custom_scalar_graphql():
     # When a custom scalar strategy is registered
     expected = "2022-04-27"
-    schemathesis.graphql.scalar("Date", st.just(expected).map(nodes.String))
+    autotest.graphql.scalar("Date", st.just(expected).map(nodes.String))
     raw_schema = """
 scalar Date
 
@@ -26,7 +26,7 @@ type Query {
   getByDate(value: Date!): Int!
 }
 """
-    schema = schemathesis.graphql.from_file(raw_schema)
+    schema = autotest.graphql.from_file(raw_schema)
 
     @given(schema["Query"]["getByDate"].as_strategy())
     def test(case):
@@ -93,4 +93,4 @@ type Query {
 )
 def test_invalid_strategy(name, value, expected):
     with pytest.raises(IncorrectUsage, match=expected):
-        schemathesis.graphql.scalar(name, value)
+        autotest.graphql.scalar(name, value)

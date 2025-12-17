@@ -55,8 +55,8 @@ jobs:
           flavor: |
             latest=false
           images: |
-            schemathesis/schemathesis
-            ghcr.io/schemathesis/schemathesis
+            autotest/autotest
+            ghcr.io/autotest/autotest
           tags: |
             type=semver,pattern={{raw}}${{ matrix.tag-suffix }}
             type=semver,pattern={{version}}${{ matrix.tag-suffix }}

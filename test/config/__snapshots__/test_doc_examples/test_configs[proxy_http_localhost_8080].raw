@@ -1,1 +1,1 @@
-SchemathesisConfig(projects=ProjectsConfig(default=ProjectConfig(proxy='http://localhost:8080')))
+autotestConfig(projects=ProjectsConfig(default=ProjectConfig(proxy='http://localhost:8080')))

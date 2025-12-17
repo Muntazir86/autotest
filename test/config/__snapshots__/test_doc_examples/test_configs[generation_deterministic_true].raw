@@ -1,1 +1,1 @@
-SchemathesisConfig(projects=ProjectsConfig(default=ProjectConfig(generation=GenerationConfig(deterministic=True))))
+autotestConfig(projects=ProjectsConfig(default=ProjectConfig(generation=GenerationConfig(deterministic=True))))

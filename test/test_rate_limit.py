@@ -3,15 +3,15 @@ import threading
 import pytest
 from pyrate_limiter import BucketFullException, Duration, Rate, RateItem
 
-import schemathesis.graphql
-from schemathesis.core.rate_limit import _get_max_delay
+import autotest.graphql
+from autotest.core.rate_limit import _get_max_delay
 
 
 @pytest.mark.parametrize(
     ("loader", "fixture"),
     [
-        (schemathesis.graphql.from_url, "graphql_url"),
-        (schemathesis.openapi.from_url, "openapi3_schema_url"),
+        (autotest.graphql.from_url, "graphql_url"),
+        (autotest.openapi.from_url, "openapi3_schema_url"),
     ],
 )
 @pytest.mark.operations("success")

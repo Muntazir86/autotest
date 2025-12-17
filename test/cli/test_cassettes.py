@@ -11,8 +11,8 @@ from _pytest.main import ExitCode
 from hypothesis import example, given
 from hypothesis import strategies as st
 
-from schemathesis.cli.commands.run.handlers.cassettes import _cookie_to_har, write_double_quoted
-from schemathesis.generation import GenerationMode
+from autotest.cli.commands.run.handlers.cassettes import _cookie_to_har, write_double_quoted
+from autotest.generation import GenerationMode
 
 
 @pytest.fixture
@@ -187,7 +187,7 @@ def test_bad_yaml_headers(ctx, cli, cassette_path, hypothesis_max_examples, open
 @pytest.mark.operations("success")
 def test_run_subprocess(testdir, cassette_path, hypothesis_max_examples, schema_url, snapshot_cli):
     result = testdir.run(
-        "schemathesis",
+        "Autotest",
         "run",
         f"--report-vcr-path={cassette_path}",
         f"--max-examples={hypothesis_max_examples or 2}",

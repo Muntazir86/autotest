@@ -2,7 +2,7 @@
 
 **Estimated time: 15-20 minutes**
 
-This tutorial shows how to integrate Schemathesis into your `pytest` test suite using a Booking API.
+This tutorial shows how to integrate Autotest into your `pytest` test suite using a Booking API.
 
 !!! note "CLI vs Pytest Integration"
     The CLI offers more features (API probes, multiple phases, advanced reporting). Use pytest integration when you need direct integration with existing `pytest` test suites.
@@ -11,7 +11,7 @@ This tutorial shows how to integrate Schemathesis into your `pytest` test suite 
 
 - **[Git](https://git-scm.com/downloads){target=_blank}** - to clone the example API repository
 - **[Docker Compose](https://docs.docker.com/get-docker/){target=_blank}** - Install Docker Desktop which includes Docker Compose  
- - **[uv](https://docs.astral.sh/uv/getting-started/installation/){target=_blank}** - Python package manager to install pytest and Schemathesis
+ - **[uv](https://docs.astral.sh/uv/getting-started/installation/){target=_blank}** - Python package manager to install pytest and Autotest
 - **Python 3.10+** - this tutorial uses Python 3.13
 
 **Install dependencies:**
@@ -19,7 +19,7 @@ This tutorial shows how to integrate Schemathesis into your `pytest` test suite 
 ```console
 uv venv -p 3.13
 source .venv/bin/activate.fish 
-uv pip install pytest==8.3.5 schemathesis==4.0.0
+uv pip install pytest==8.3.5 Autotest==4.0.0
 ```
 
 !!! note "Shell differences"
@@ -32,18 +32,18 @@ git --version
 docker compose version
 python --version
 pytest --version
-schemathesis --version
+Autotest --version
 ```
 
 ## API under test
 
 We'll test a booking API that handles hotel reservations - creating bookings and retrieving guest information.
 
-The API lives in the [Schemathesis repository](https://github.com/schemathesis/schemathesis/tree/master/examples/booking):
+The API lives in the [Autotest repository](https://github.com/Autotest/Autotest/tree/master/examples/booking):
 
 ```console
-git clone https://github.com/schemathesis/schemathesis.git
-cd schemathesis/examples/booking
+git clone https://github.com/Autotest/Autotest.git
+cd Autotest/examples/booking
 docker compose up -d
 ```
 !!! success "Verify the API is running"
@@ -56,14 +56,14 @@ docker compose up -d
 
 ## First Test Run
 
-Create your first Schemathesis pytest test:
+Create your first Autotest pytest test:
 
 **Create `test_api.py`:**
 
 ```python
-import schemathesis
+import autotest
 
-schema = schemathesis.openapi.from_url(
+schema = autotest.openapi.from_url(
     "http://127.0.0.1:8080/openapi.json",
 )
 # To show the token in the cURL snippet
@@ -91,10 +91,10 @@ test_api.py::test_api[GET /health] PASSED
 ================================== FAILURES ===================================
 __________________________ test_api[POST /bookings] ___________________________
 + Exception Group Traceback (most recent call last):
-  |   File "/schemathesis-tutorial/test_api.py", line 10, in test_api
+  |   File "/Autotest-tutorial/test_api.py", line 10, in test_api
   |     case.call_and_validate(headers={"Authorization": "Bearer secret-token"})
   |     ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  |   File "/../schemathesis/generation/case.py", line 185, in call_and_validate
+  |   File "/../Autotest/generation/case.py", line 185, in call_and_validate
   |     self.validate_response(
   |     ~~~~~~~~~~~~~~~~~~~~~~^
   |         response,
@@ -104,9 +104,9 @@ __________________________ test_api[POST /bookings] ___________________________
   |         ^^^^^^^^^^^^^^^^^^^^^^^^
   |     )
   |     ^
-  |   File "/schemathesis/generation/case.py", line 171, in validate_response
+  |   File "/Autotest/generation/case.py", line 171, in validate_response
   |     raise FailureGroup(_failures, message) from None
-  | schemathesis.FailureGroup: Schemathesis found 2 distinct failures
+  | Autotest.FailureGroup: Autotest found 2 distinct failures
   |
   | - Server error
   |
@@ -171,7 +171,7 @@ docker compose restart
 Now let's verify our fix by re-running the tests. Focus on the operation you just fixed:
 
 ```python
-import schemathesis
+import autotest
 
 schema = ...  # snip
 
@@ -190,7 +190,7 @@ The `operation_id="create_booking_bookings_post"` option targets only the specif
 Let's be more thorough:
 
 ```python
-import schemathesis
+import autotest
 from hypothesis import settings
 
 schema = ...  # snip
@@ -210,7 +210,7 @@ The trade-off is longer execution time, but you'll get more chances to find bugs
 
 ## Configuration File
 
-**Create `schemathesis.toml` in your project:**
+**Create `autotest.toml` in your project:**
 
 ```toml
 # Core settings from our previous tests
@@ -231,9 +231,9 @@ max-examples = 500
 **Now your tests look like this**:
 
 ```python
-import schemathesis
+import autotest
 
-schema = schemathesis.openapi.from_url(
+schema = autotest.openapi.from_url(
     "http://127.0.0.1:8080/openapi.json",
 )
 
@@ -242,15 +242,15 @@ def test_api(case):
     case.call_and_validate()
 ```
 
-Schemathesis automatically loads `schemathesis.toml` from the current directory or project root. You can specify a custom configuration file:
+Autotest automatically loads `autotest.toml` from the current directory or project root. You can specify a custom configuration file:
 
 ```python
-import schemathesis
+import autotest
 
-config = schemathesis.Config.from_path(
+config = Autotest.Config.from_path(
     "path-to-my/config.toml"
 )
-schema = schemathesis.openapi.from_url(
+schema = autotest.openapi.from_url(
     "http://127.0.0.1:8080/openapi.json",
     config=config
 )
@@ -262,5 +262,5 @@ schema = schemathesis.openapi.from_url(
 
 - **[Python API](../reference/python.md)** - Complete Python API reference
 - **[Configuration Reference](../reference/configuration.md)** - All configuration options
-- **[How Schemathesis Integrates with Pytest
+- **[How Autotest Integrates with Pytest
 ](../explanations/pytest.md)**

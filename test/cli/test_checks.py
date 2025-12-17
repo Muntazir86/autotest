@@ -2,13 +2,13 @@ import pytest
 from _pytest.main import ExitCode
 from flask import Flask, jsonify, request
 
-import schemathesis
-from schemathesis.checks import CHECKS
+import autotest
+from autotest.checks import CHECKS
 
 
 @pytest.fixture
 def new_check():
-    @schemathesis.check
+    @autotest.check
     def check_function(ctx, response, case):
         pass
 
@@ -18,7 +18,7 @@ def new_check():
 
 
 def test_register_returns_a_value(new_check):
-    # When a function is registered via the `schemathesis.check` decorator
+    # When a function is registered via the `Autotest.check` decorator
     # Then this function should be available for further usage
     # See #721
     assert new_check is not None

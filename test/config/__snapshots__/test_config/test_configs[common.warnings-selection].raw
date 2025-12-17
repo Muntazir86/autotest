@@ -1,1 +1,1 @@
-SchemathesisConfig(projects=ProjectsConfig(default=ProjectConfig(warnings=WarningsConfig(display=[<SchemathesisWarning.MISSING_AUTH: 'missing_auth'>]))))
+autotestConfig(projects=ProjectsConfig(default=ProjectConfig(warnings=WarningsConfig(display=[<autotestWarning.MISSING_AUTH: 'missing_auth'>]))))

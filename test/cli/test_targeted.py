@@ -1,8 +1,8 @@
 import pytest
 from _pytest.main import ExitCode
 
-import schemathesis
-from schemathesis.generation.metrics import METRICS
+import autotest
+from autotest.generation.metrics import METRICS
 
 
 @pytest.fixture
@@ -11,7 +11,7 @@ def new_metric(ctx, cli):
         """
 import click
 
-@schemathesis.metric
+@autotest.metric
 def new_metric(ctx) -> float:
     click.echo("NEW METRIC IS CALLED")
     assert ctx.case.meta.generation.mode is not None, "Empty generation mode"
@@ -58,7 +58,7 @@ def test_custom_metric_graphql(cli, new_metric, graphql_url):
 
 @pytest.fixture
 def metric_function():
-    @schemathesis.metric
+    @autotest.metric
     def new_metric(context):
         return 0.5
 
@@ -68,7 +68,7 @@ def metric_function():
 
 
 def test_register_returns_a_value(metric_function):
-    # When a function is registered via the `schemathesis.metric` decorator
+    # When a function is registered via the `Autotest.metric` decorator
     # Then this function should be available for further usage
     # See #721
     assert metric_function is not None

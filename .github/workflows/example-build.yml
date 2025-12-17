@@ -22,8 +22,8 @@ jobs:
         run: docker compose up -d --build
         working-directory: "./examples/booking"
 
-      # Runs positive Schemathesis tests
-      - uses: schemathesis/action@v2
+      # Runs positive autotest tests
+      - uses: autotest/action@v2
         continue-on-error: true
         with:
           # A local API schema location

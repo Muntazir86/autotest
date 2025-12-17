@@ -1,7 +1,7 @@
 import pytest
 
-from schemathesis.core.errors import InvalidSchema
-from schemathesis.core.validation import check_header_name
+from autotest.core.errors import InvalidSchema
+from autotest.core.validation import check_header_name
 
 
 @pytest.mark.parametrize(

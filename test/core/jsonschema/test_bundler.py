@@ -1,11 +1,11 @@
 import pytest
 
-from schemathesis.core.compat import RefResolutionError, RefResolver
-from schemathesis.core.errors import InfiniteRecursiveReference
-from schemathesis.core.jsonschema import BUNDLE_STORAGE_KEY, bundle
-from schemathesis.core.jsonschema.bundler import BundleError
-from schemathesis.core.transforms import deepclone
-from schemathesis.specs.openapi.definitions import OPENAPI_30, OPENAPI_31, SWAGGER_20
+from autotest.core.compat import RefResolutionError, RefResolver
+from autotest.core.errors import InfiniteRecursiveReference
+from autotest.core.jsonschema import BUNDLE_STORAGE_KEY, bundle
+from autotest.core.jsonschema.bundler import BundleError
+from autotest.core.transforms import deepclone
+from autotest.specs.openapi.definitions import OPENAPI_30, OPENAPI_31, SWAGGER_20
 
 USER = {"type": "string"}
 COMPANY = {"type": "object"}

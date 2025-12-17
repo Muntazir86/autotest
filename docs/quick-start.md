@@ -2,9 +2,9 @@
 
 **Estimated time: 5 minutes**
 
-Schemathesis automatically finds bugs in your APIs by generating thousands of test cases from your OpenAPI or GraphQL schema. It catches edge cases that manual testing typically misses.
+Autotest automatically finds bugs in your APIs by generating thousands of test cases from your OpenAPI or GraphQL schema. It catches edge cases that manual testing typically misses.
 
-During the quick-start run Schemathesis:
+During the quick-start run Autotest:
 
 - Generates property-based inputs for each operation defined in your schema
 - Runs core checks such as status-code conformance, response validation, and server error detection
@@ -15,7 +15,7 @@ During the quick-start run Schemathesis:
 Test a sample API using [uv](https://docs.astral.sh/uv/){target=_blank}:
 
 ```bash
-uvx schemathesis run https://example.schemathesis.io/openapi.json
+uvx autotest run https://example.Autotest.io/openapi.json
 ```
 
 Example output:
@@ -33,27 +33,27 @@ Reproduce with:
 
     curl -X POST -H 'Content-Type: application/json' \
       -d '{"number": "\n\udbcd." }' 
-      https://example.schemathesis.io/improper-input-type-handling
+      https://example.Autotest.io/improper-input-type-handling
 ```
 
 ## Test your own API
 
 === "With authentication"
     ```bash
-    uvx schemathesis run https://your-api.com/openapi.json \
+    uvx autotest run https://your-api.com/openapi.json \
       --header 'Authorization: Bearer your-token'
     ```
 
 === "Local development"
     ```bash
-    uvx schemathesis run ./openapi.yaml --url http://localhost:8000
+    uvx autotest run ./openapi.yaml --url http://localhost:8000
     ```
 
 === "pytest integration"
     ```python
-    import schemathesis
+    import autotest
     
-    schema = schemathesis.openapi.from_url("https://your-api.com/openapi.json")
+    schema = autotest.openapi.from_url("https://your-api.com/openapi.json")
     
     @schema.parametrize()
     def test_api(case):
@@ -71,4 +71,4 @@ Runs scale with schema size and server performance. For thorough release testing
 **Reference guides:**
 
 - **[CLI Reference](reference/cli.md)** – full list of options and checks
-- **[Configuration Reference](reference/configuration.md)** – how to keep settings in `schemathesis.toml`
+- **[Configuration Reference](reference/configuration.md)** – how to keep settings in `autotest.toml`

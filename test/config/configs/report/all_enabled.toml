@@ -4,7 +4,7 @@ preserve-bytes = true
 
 [reports.junit]
 enabled = true
-path = "./test-reports/schemathesis-results.xml"
+path = "./test-reports/autotest-results.xml"
 
 [reports.vcr]
 enabled = true

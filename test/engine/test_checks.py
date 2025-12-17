@@ -6,18 +6,18 @@ from typing import TYPE_CHECKING, Any
 import pytest
 from hypothesis import given, settings
 
-import schemathesis.checks
-from schemathesis import Case
-from schemathesis.checks import CheckContext, not_a_server_error
-from schemathesis.config._checks import ChecksConfig
-from schemathesis.core.errors import InvalidSchema
-from schemathesis.core.failures import Failure, FailureGroup
-from schemathesis.core.transport import Response
-from schemathesis.engine.phases.unit._executor import validate_response
-from schemathesis.engine.recorder import ScenarioRecorder
-from schemathesis.openapi.checks import JsonSchemaError, UndefinedContentType, UndefinedStatusCode
-from schemathesis.schemas import APIOperation, OperationDefinition
-from schemathesis.specs.openapi.checks import (
+import autotest.checks
+from autotest import Case
+from autotest.checks import CheckContext, not_a_server_error
+from autotest.config._checks import ChecksConfig
+from autotest.core.errors import InvalidSchema
+from autotest.core.failures import Failure, FailureGroup
+from autotest.core.transport import Response
+from autotest.engine.phases.unit._executor import validate_response
+from autotest.engine.recorder import ScenarioRecorder
+from autotest.openapi.checks import JsonSchemaError, UndefinedContentType, UndefinedStatusCode
+from autotest.schemas import APIOperation, OperationDefinition
+from autotest.specs.openapi.checks import (
     _coerce_header_value,
     content_type_conformance,
     response_headers_conformance,
@@ -26,7 +26,7 @@ from schemathesis.specs.openapi.checks import (
 )
 
 if TYPE_CHECKING:
-    from schemathesis.schemas import BaseSchema
+    from autotest.schemas import BaseSchema
 
 CTX = CheckContext(override=None, auth=None, headers=None, config=ChecksConfig(), transport_kwargs=None)
 
@@ -223,7 +223,7 @@ def test_content_type_wildcards(content_type, is_error, response_factory):
 
 
 def assert_content_type_conformance(response_factory, raw_schema, content_type, is_error, match=None):
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     operation = schema["/users"]["get"]
     case = operation.Case()
     response = Response.from_requests(response_factory.requests(content_type=content_type), True)
@@ -275,7 +275,7 @@ def test_content_type_conformance_invalid(spec, response, case):
 
 def test_invalid_schema_on_content_type_check(response_factory):
     # When schema validation is disabled, and it doesn't contain "responses" key
-    schema = schemathesis.openapi.from_dict(
+    schema = autotest.openapi.from_dict(
         {
             "openapi": "3.0.2",
             "info": {"title": "Test", "description": "Test", "version": "0.1.0"},
@@ -763,7 +763,7 @@ def test_no_schema(openapi_30, response_factory):
 
 @pytest.mark.hypothesis_nested
 def test_response_schema_conformance_references_invalid(complex_schema, response_factory):
-    schema = schemathesis.openapi.from_path(complex_schema)
+    schema = autotest.openapi.from_path(complex_schema)
 
     @given(case=schema["/teapot"]["POST"].as_strategy())
     @settings(max_examples=3, deadline=None)
@@ -779,7 +779,7 @@ def test_response_schema_conformance_references_invalid(complex_schema, response
 @pytest.mark.hypothesis_nested
 @pytest.mark.parametrize("value", ["foo", None])
 def test_response_schema_conformance_references_valid(complex_schema, value, response_factory):
-    schema = schemathesis.openapi.from_path(complex_schema)
+    schema = autotest.openapi.from_path(complex_schema)
 
     @given(case=schema["/teapot"]["POST"].as_strategy())
     @settings(max_examples=3, deadline=None)
@@ -819,7 +819,7 @@ def test_response_schema_conformance_custom_deserializer(openapi_30, response_fa
 
     assert case.operation.validate_response(response) is None
 
-    @schemathesis.deserializer(media_type)
+    @autotest.deserializer(media_type)
     def _custom_deserializer(_ctx, http_response):
         text = http_response.content.decode("utf-8")
         result = {}
@@ -847,7 +847,7 @@ def test_deduplication(ctx, response_factory):
             },
         }
     )
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
     operation = schema["/data"]["GET"]
     case = operation.Case()
     response = Response.from_requests(response_factory.requests(), True)
@@ -922,7 +922,7 @@ def test_optional_headers_missing(schema_with_optional_headers, response_factory
     # When a response header is declared as optional
     # NOTE: Open API 2.0 headers are much simpler and do not contain any notion of declaring them as optional
     # For this reason we support `x-required` instead
-    schema = schemathesis.openapi.from_dict(schema_with_optional_headers)
+    schema = autotest.openapi.from_dict(schema_with_optional_headers)
     case = make_case(schema, schema_with_optional_headers["paths"]["/data"]["get"])
     response = Response.from_requests(response_factory.requests(), True)
     # Then it should not be reported as missing
@@ -964,7 +964,7 @@ def test_header_conformance(ctx, response_factory, version, header, schema, valu
         },
         version=version,
     )
-    schema = schemathesis.openapi.from_dict(base_schema)
+    schema = autotest.openapi.from_dict(base_schema)
     case = make_case(schema, base_schema["paths"]["/data"]["get"])
     response = Response.from_requests(response_factory.requests(headers={header: value}), True)
     if expected is True:
@@ -1000,7 +1000,7 @@ def test_header_conformance_definition_behind_ref(ctx, response_factory):
             },
         },
     )
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     case = make_case(schema, raw_schema["paths"]["/data"]["get"])
     response = Response.from_requests(response_factory.requests(headers={"Link": "Test"}), True)
     with pytest.raises(AssertionError, match="Response header does not conform to the schema"):
@@ -1032,7 +1032,7 @@ def test_header_conformance_schema_behind_ref(ctx, response_factory):
             },
         },
     )
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     case = make_case(schema, raw_schema["paths"]["/data"]["get"])
 
     response = Response.from_requests(response_factory.requests(headers={"X-RateLimit-Limit": "50"}), True)
@@ -1058,7 +1058,7 @@ def test_header_conformance_no_headers_defined(ctx, response_factory):
             },
         }
     )
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     case = make_case(schema, raw_schema["paths"]["/data"]["get"])
     response = Response.from_requests(response_factory.requests(), True)
 
@@ -1084,7 +1084,7 @@ MULTIPLE_HEADERS = {
 
 def test_header_conformance_multiple_invalid_headers(ctx, response_factory):
     raw_schema = ctx.openapi.build_schema(MULTIPLE_HEADERS)
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     case = make_case(schema, raw_schema["paths"]["/data"]["get"])
     response = Response.from_requests(
         response_factory.requests(headers={"X-RateLimit-Limit": "150", "X-RateLimit-Reset": "Invalid"}), True
@@ -1129,7 +1129,7 @@ Value:
 
 def test_header_conformance_missing_and_invalid(ctx, response_factory):
     raw_schema = ctx.openapi.build_schema(MULTIPLE_HEADERS)
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     case = make_case(schema, raw_schema["paths"]["/data"]["get"])
     response = Response.from_requests(response_factory.requests(headers={"X-RateLimit-Limit": "150"}), True)
     with pytest.raises(FailureGroup) as exc:
@@ -1199,5 +1199,5 @@ def test_coerce_header_value(value, schema, expected):
 
 def test_module_access():
     # It is done via `__getattr__`
-    _ = schemathesis.checks.negative_data_rejection
-    assert "negative_data_rejection" in dir(schemathesis.checks)
+    _ = Autotest.checks.negative_data_rejection
+    assert "negative_data_rejection" in dir(Autotest.checks)

@@ -1,10 +1,10 @@
 import pytest
 from hypothesis import strategies as st
 
-import schemathesis
-from schemathesis.generation.meta import CaseMetadata, FuzzingPhaseData, GenerationInfo, PhaseInfo, TestPhase
-from schemathesis.generation.modes import GenerationMode
-from schemathesis.schemas import APIOperation
+import autotest
+from autotest.generation.meta import CaseMetadata, FuzzingPhaseData, GenerationInfo, PhaseInfo, TestPhase
+from autotest.generation.modes import GenerationMode
+from autotest.schemas import APIOperation
 
 
 def test_contains(swagger_20):
@@ -12,7 +12,7 @@ def test_contains(swagger_20):
 
 
 def test_getitem(simple_schema):
-    swagger = schemathesis.openapi.from_dict(simple_schema)
+    swagger = autotest.openapi.from_dict(simple_schema)
     assert isinstance(swagger["/users"]["GET"], APIOperation)
 
 
@@ -75,6 +75,6 @@ def test_reference_in_path():
             }
         },
     }
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     strategy = schema["/{key}"]["GET"].as_strategy()
     assert isinstance(strategy.example().path_parameters["key"], str)

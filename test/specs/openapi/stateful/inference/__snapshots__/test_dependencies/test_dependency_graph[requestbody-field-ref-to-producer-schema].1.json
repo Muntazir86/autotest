@@ -8,7 +8,7 @@
         "requestBody": {
           "recipient_id": "$response.body#/id"
         },
-        "x-schemathesis": {
+        "x-autotest": {
           "is_inferred": true,
           "merge_body": true
         }

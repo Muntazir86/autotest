@@ -5,24 +5,24 @@ import requests
 import strawberry
 from hypothesis import HealthCheck, Phase, find, given, settings
 
-import schemathesis
-from schemathesis.checks import CheckContext, not_a_server_error
-from schemathesis.config import ChecksConfig
-from schemathesis.core import SCHEMATHESIS_TEST_CASE_HEADER
-from schemathesis.core.errors import LoaderError
-from schemathesis.core.failures import Failure, FailureGroup
-from schemathesis.core.transport import USER_AGENT
-from schemathesis.graphql.loaders import extract_schema_from_response, get_introspection_query
-from schemathesis.specs.graphql.validation import validate_graphql_response
-from schemathesis.specs.openapi.checks import (
+import autotest
+from autotest.checks import CheckContext, not_a_server_error
+from autotest.config import ChecksConfig
+from autotest.core import autotest_TEST_CASE_HEADER
+from autotest.core.errors import LoaderError
+from autotest.core.failures import Failure, FailureGroup
+from autotest.core.transport import USER_AGENT
+from autotest.graphql.loaders import extract_schema_from_response, get_introspection_query
+from autotest.specs.graphql.validation import validate_graphql_response
+from autotest.specs.openapi.checks import (
     ensure_resource_availability,
     ignored_auth,
     negative_data_rejection,
     positive_data_acceptance,
     use_after_free,
 )
-from schemathesis.transport.prepare import get_default_headers
-from schemathesis.transport.wsgi import WSGI_TRANSPORT
+from autotest.transport.prepare import get_default_headers
+from autotest.transport.wsgi import WSGI_TRANSPORT
 from test.apps import _graphql as graphql
 from test.apps._graphql.schema import Author
 from test.utils import assert_requests_call
@@ -58,7 +58,7 @@ def test_as_wsgi_kwargs(graphql_strategy):
         "headers": {
             **get_default_headers(),
             "User-Agent": USER_AGENT,
-            SCHEMATHESIS_TEST_CASE_HEADER: ANY,
+            AUTOTEST_TEST_CASE_HEADER: ANY,
             "Content-Type": "application/json",
         },
     }
@@ -67,7 +67,7 @@ def test_as_wsgi_kwargs(graphql_strategy):
 
 @pytest.mark.filterwarnings("ignore:.*method is good for exploring strategies.*")
 def test_custom_base_url(graphql_url):
-    schema = schemathesis.graphql.from_url(graphql_url)
+    schema = autotest.graphql.from_url(graphql_url)
     schema.config.update(base_url="http://0.0.0.0:1234/something")
 
     # Then the base path is changed, in this case it is the only available path
@@ -131,7 +131,7 @@ def test_server_error(graphql_path, app_runner):
     app = graphql._flask.create_app(graphql_path, schema=gql_schema)
     port = app_runner.run_flask_app(app)
     graphql_url = f"http://127.0.0.1:{port}{graphql_path}"
-    graphql_schema = schemathesis.graphql.from_url(graphql_url)
+    graphql_schema = autotest.graphql.from_url(graphql_url)
 
     @given(case=graphql_schema["Query"]["showBug1"].as_strategy())
     @settings(max_examples=1, deadline=None, phases=[Phase.generate])
@@ -165,7 +165,7 @@ def test_no_query(graphql_url):
     raw_schema = decoded["data"]
     raw_schema["__schema"]["queryType"] = None
     raw_schema["__schema"]["mutationType"] = None
-    schema = schemathesis.graphql.from_dict(raw_schema)
+    schema = autotest.graphql.from_dict(raw_schema)
     # Then no operations should be collected
     assert list(schema.get_all_operations()) == []
     assert schema.statistic.operations.total == 0
@@ -177,7 +177,7 @@ def test_data_key(graphql_url, with_data_key):
     decoded = response.json()
     if not with_data_key:
         decoded = decoded["data"]
-    schema = schemathesis.graphql.from_dict(decoded)
+    schema = autotest.graphql.from_dict(decoded)
     assert schema.statistic.operations.total == 4
 
 
@@ -192,7 +192,7 @@ def test_operations_count(graphql_url):
     response = requests.post(graphql_url, json={"query": get_introspection_query()}, timeout=1)
     decoded = response.json()
     raw_schema = decoded["data"]
-    schema = schemathesis.graphql.from_dict(raw_schema)
+    schema = autotest.graphql.from_dict(raw_schema)
     assert schema.statistic.operations.total == 4
 
 
@@ -217,7 +217,7 @@ def test_type_names(name):
     }}
     """
     # Then the schema should be loaded without errors
-    schema = schemathesis.graphql.from_file(raw_schema)
+    schema = autotest.graphql.from_file(raw_schema)
     # And requests should be properly generated
 
     @given(case=schema[name]["v"].as_strategy())
@@ -265,9 +265,9 @@ def test_disallow_null(ctx, cli, testdir, snapshot_cli, graphql_url):
     schema_file = testdir.make_graphql_schema_file(schema, extension=".gql")
     module = ctx.write_pymodule(
         """
-import schemathesis
+import autotest
 
-@schemathesis.hook
+@autotest.hook
 def filter_body(context, body):
     node = body.definitions[0].selection_set.selections[0]
     assert node.arguments[0].value.__class__.__name__ != "NullValueNode"

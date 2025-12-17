@@ -1,1 +1,1 @@
-SchemathesisConfig(projects=ProjectsConfig(default=ProjectConfig(auth=AuthConfig(openapi=OpenAPIAuthConfig(schemes={'BearerAuth': HttpBearerAuthConfig(bearer='foo')})))))
+autotestConfig(projects=ProjectsConfig(default=ProjectConfig(auth=AuthConfig(openapi=OpenAPIAuthConfig(schemes={'BearerAuth': HttpBearerAuthConfig(bearer='foo')})))))

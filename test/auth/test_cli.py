@@ -2,11 +2,11 @@ import pytest
 
 TOKEN = "FOO"
 AUTH_PROVIDER_MODULE_CODE = f"""
-import schemathesis
+import autotest
 
 TOKEN = "{TOKEN}"
 
-@schemathesis.auth()
+@autotest.auth()
 class TokenAuth:
     def get(self, case, context):
         return TOKEN
@@ -23,7 +23,7 @@ def test_custom_auth(ctx, cli, schema_url, snapshot_cli):
     module = ctx.write_pymodule(
         f"""
 {AUTH_PROVIDER_MODULE_CODE}
-@schemathesis.hook
+@autotest.hook
 def after_call(context, case, response):
     assert case.headers["Authorization"] ==  f"Bearer {TOKEN}", case.headers["Authorization"]
     request_authorization = response.request.headers["Authorization"]
@@ -49,7 +49,7 @@ def test_explicit_auth_precedence(ctx, cli, schema_url, args, expected, snapshot
     module = ctx.write_pymodule(
         f"""
 {AUTH_PROVIDER_MODULE_CODE}
-@schemathesis.hook
+@autotest.hook
 def after_call(context, case, response):
     request_authorization = response.request.headers["Authorization"]
     assert request_authorization == "{expected}", request_authorization
@@ -111,7 +111,7 @@ def test_multiple_threads(ctx, cli, schema_url, snapshot_cli):
 
     TOKEN = "{TOKEN}"
 
-    @schemathesis.auth()
+    @autotest.auth()
     class TokenAuth:
 
         def __init__(self):
@@ -125,9 +125,9 @@ def test_multiple_threads(ctx, cli, schema_url, snapshot_cli):
         def set(self, case, data, context):
             case.headers = {{"Authorization": f"Bearer {{data}}"}}
 
-    @schemathesis.hook
+    @autotest.hook
     def after_call(context, case, response):
-        provider = schemathesis.auths.GLOBAL_AUTH_STORAGE.providers[0].provider
+        provider = Autotest.auths.GLOBAL_AUTH_STORAGE.providers[0].provider
         assert provider.get_calls == 1, provider.get_calls
     """
     )
@@ -155,9 +155,9 @@ def test_requests_auth(ctx, cli, schema_url, snapshot_cli):
         f"""
 from requests.auth import HTTPBasicAuth
 
-schemathesis.auth.set_from_requests(HTTPBasicAuth("user", "pass")).apply_to(method="GET", path="/success")
+Autotest.auth.set_from_requests(HTTPBasicAuth("user", "pass")).apply_to(method="GET", path="/success")
 
-@schemathesis.hook
+@autotest.hook
 def after_call(context, case, response):
     request_authorization = response.request.headers.get("Authorization")
     if case.operation.path == "/success":
@@ -174,7 +174,7 @@ def after_call(context, case, response):
 @pytest.fixture
 def verify_auth(ctx):
     with ctx.check("""
-@schemathesis.check
+@autotest.check
 def verify_auth(ctx, response, case):
     request_authorization = response.request.headers.get("Authorization")
     if case.operation.path == "/text":
@@ -194,7 +194,7 @@ def test_conditional(ctx, cli, schema_url, snapshot_cli):
     with ctx.check("""
 TOKEN_1 = "ABC"
 
-@schemathesis.auth().apply_to(method="GET", path="/text")
+@autotest.auth().apply_to(method="GET", path="/text")
 class TokenAuth1:
     def get(self, case, context):
         return TOKEN_1
@@ -205,7 +205,7 @@ class TokenAuth1:
 
 TOKEN_2 = "DEF"
 
-@schemathesis.auth().apply_to(method="GET", path="/success")
+@autotest.auth().apply_to(method="GET", path="/success")
 class TokenAuth2:
     def get(self, case, context):
         return TOKEN_2
@@ -214,7 +214,7 @@ class TokenAuth2:
         case.headers = {"Authorization": f"Bearer {data}"}
 
 
-@schemathesis.check
+@autotest.check
 def verify_auth(ctx, response, case):
     request_authorization = response.request.headers.get("Authorization")
     if case.operation.path == "/text":
@@ -234,9 +234,9 @@ def verify_auth(ctx, response, case):
 def test_auth_get_raises_exception(ctx, cli, schema_url, snapshot_cli, refresh_interval):
     # When auth provider's get() method raises an exception (with or without caching)
     decorator = (
-        "@schemathesis.auth()"
+        "@autotest.auth()"
         if refresh_interval is None
-        else f"@schemathesis.auth(refresh_interval={refresh_interval})"
+        else f"@autotest.auth(refresh_interval={refresh_interval})"
     )
     module = ctx.write_pymodule(
         f"""

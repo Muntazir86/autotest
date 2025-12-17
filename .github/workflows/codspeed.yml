@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 env:
-  SCHEMATHESIS_BENCHMARK_SEED: "42"
+  autotest_BENCHMARK_SEED: "42"
 
 jobs:
   benchmarks:
@@ -26,4 +26,4 @@ jobs:
         with:
           token: ${{ secrets.CODSPEED_TOKEN }}
           mode: "instrumentation"
-          run: uvx --from=".[bench]" pytest benches/* --codspeed -p no:schemathesis -p no:hypothesispytest -p no:subtests -p no:anyio
+          run: uvx --from=".[bench]" pytest benches/* --codspeed -p no:autotest -p no:hypothesispytest -p no:subtests -p no:anyio

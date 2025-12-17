@@ -1,5 +1,5 @@
-import schemathesis
-from schemathesis.generation.modes import GenerationMode
+import autotest
+from autotest.generation.modes import GenerationMode
 
 from .utils import integer
 
@@ -126,7 +126,7 @@ def test_common_parameters_with_references_stateful(ctx):
         basePath="/v1",
         version="2.0",
     )
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
     # Then state machine should be successfully generated
     state_machine = schema.as_state_machine()
     assert len(state_machine.bundles) == 1

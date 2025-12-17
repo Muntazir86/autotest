@@ -1,6 +1,6 @@
 # Warnings
 
-Schemathesis emits warnings when tests only cover error paths (HTTP 4xx) instead of hitting business logic, highlighting situations where your test configuration may need adjustment.
+Autotest emits warnings when tests only cover error paths (HTTP 4xx) instead of hitting business logic, highlighting situations where your test configuration may need adjustment.
 
 Warnings appear in your CLI output and don't stop test execution but indicate areas for improvement.
 
@@ -12,7 +12,7 @@ Warnings appear in your CLI output and don't stop test execution but indicate ar
 | `missing_auth` | Most interactions returned 401/403 | Provide valid credentials via `--auth`, custom headers, or config |
 | `missing_test_data` | Generated parameters hit non-existent resources (404) | Seed known IDs / payloads in your config file |
 | `validation_mismatch` | Schema constraints differ from real validation (lots of 4xx) | Tighten schema or extend generators to match runtime rules |
-| `missing_deserializer` | Structured responses lack a registered deserializer | Register one via `@schemathesis.deserializer` or align `content` types with actual formats |
+| `missing_deserializer` | Structured responses lack a registered deserializer | Register one via `@autotest.deserializer` or align `content` types with actual formats |
 | `unused_openapi_auth` | Configured OpenAPI auth scheme doesn't exist in schema | Check scheme name matches `securitySchemes` (check for typos) |
 
 ## Available Warnings
@@ -47,7 +47,7 @@ existing resources
 
 **Trigger**: At least 10% of requests returned HTTP 404
 
-When API returns HTTP 404, it likely means that some resource was not found and it happens most often with purely generated data. To force Schemathesis to use known valid parameters, you can provide them via a config file:
+When API returns HTTP 404, it likely means that some resource was not found and it happens most often with purely generated data. To force Autotest to use known valid parameters, you can provide them via a config file:
 
 ```toml
 [[operations]]
@@ -69,11 +69,11 @@ than documented
 
 **Trigger**: At least 10% of requests returned HTTP 4XX, excluding 401, 403, and 404
 
-The tested API rejects a lot of data - while technically it is a valid behavior, it means that Schemathesis' tests don't reach deep into the API's business logic and cover mostly the validation layer.
+The tested API rejects a lot of data - while technically it is a valid behavior, it means that Autotest' tests don't reach deep into the API's business logic and cover mostly the validation layer.
 
-As Schemathesis uses API schema to generate data, the most probable cause is that the schema is too rough and does not match the real API behavior, which leads to rejecting the generated data. 
+As Autotest uses API schema to generate data, the most probable cause is that the schema is too rough and does not match the real API behavior, which leads to rejecting the generated data. 
 
-To mitigate it, re-check the real validation rules and update your API schema so they match. Alternatively you can [extend](../guides/extending.md) Schemathesis so it generates data which is more likely to pass validation.
+To mitigate it, re-check the real validation rules and update your API schema so they match. Alternatively you can [extend](../guides/extending.md) Autotest so it generates data which is more likely to pass validation.
 
 ### `missing_deserializer`
 
@@ -85,15 +85,15 @@ Schema validation skipped: 1 operation cannot validate responses due to missing 
 ```
 
 !!! tip
-    Register a deserializer with [@schemathesis.deserializer](../guides/custom-response-deserializers.md) to enable validation
+    Register a deserializer with [@autotest.deserializer](../guides/custom-response-deserializers.md) to enable validation
 
-**Trigger**: Operation responses declare structured schemas (objects / arrays) for a media type, but Schemathesis has no deserializer registered for that `content-type`.
+**Trigger**: Operation responses declare structured schemas (objects / arrays) for a media type, but Autotest has no deserializer registered for that `content-type`.
 
-When this warning appears, Schemathesis skips validation because it cannot deserialize the response body. Restore validation by:
+When this warning appears, Autotest skips validation because it cannot deserialize the response body. Restore validation by:
 
-- Registering a deserializer for the media type via `@schemathesis.deserializer()` (or `schemathesis.deserializer.register`) so the payload is converted into Python data.
+- Registering a deserializer for the media type via `@autotest.deserializer()` (or `Autotest.deserializer.register`) so the payload is converted into Python data.
 - Updating the schema to advertise the actual media type (for example `application/json`) if the server already returns JSON.
-- Omitting structured schemas for truly binary responses; without a schema, Schemathesis won't expect to validate those payloads.
+- Omitting structured schemas for truly binary responses; without a schema, Autotest won't expect to validate those payloads.
 
 ### `unused_openapi_auth`
 
@@ -105,7 +105,7 @@ Unused OpenAPI auth: 1 configured auth scheme not used in the schema
 
 **Trigger**: Configured OpenAPI auth scheme is not defined in the schema's `securitySchemes`.
 
-This warning appears when `[auth.openapi.<scheme>]` references a scheme that doesn't exist in your OpenAPI spec. Verify the scheme name matches your schema's `securitySchemes` exactly - Schemathesis will suggest corrections for likely typos.
+This warning appears when `[auth.openapi.<scheme>]` references a scheme that doesn't exist in your OpenAPI spec. Verify the scheme name matches your schema's `securitySchemes` exactly - Autotest will suggest corrections for likely typos.
 
 See the [Authentication Guide](../guides/auth.md#openapi-aware-authentication) for details.
 
@@ -117,9 +117,9 @@ By default, all warnings are enabled. You can disable them entirely or enable on
 
     ```bash
     # Disable all warnings
-    schemathesis run ... --warnings=off
+    autotest run ... --warnings=off
     # Emit only `validation_mismatch`
-    schemathesis run ... --warnings=validation_mismatch
+    autotest run ... --warnings=validation_mismatch
     ```
 
 === "Config File"
@@ -153,6 +153,6 @@ Set `fail-on = true` to fail on all displayed warnings:
 fail-on = true  # Fail on any warning
 ```
 
-When `fail-on` is configured, Schemathesis will exit with code 1 if any of the specified warnings are encountered, even if all checks pass. This is useful for CI/CD pipelines that should fail when configuration or test data issues are detected.
+When `fail-on` is configured, Autotest will exit with code 1 if any of the specified warnings are encountered, even if all checks pass. This is useful for CI/CD pipelines that should fail when configuration or test data issues are detected.
 
 See [Configuration Reference](configuration.md#warnings) for complete details.

@@ -9,8 +9,8 @@ from typing import Any
 import pytest
 import yaml
 
-from schemathesis.checks import CHECKS
-from schemathesis.hooks import GLOBAL_HOOK_DISPATCHER
+from autotest.checks import CHECKS
+from autotest.hooks import GLOBAL_HOOK_DISPATCHER
 
 
 @dataclass
@@ -79,7 +79,7 @@ class Context:
         raise ValueError(f"Unknown format: {format}")
 
     def write_pymodule(self, content: str, *, filename: str = "module"):
-        content = f"import schemathesis\nnote=print\n{dedent(content)}"
+        content = f"import autotest\nnote=print\n{dedent(content)}"
         module = self._testdir.makepyfile(**{filename: content})
         pkgroot = module.dirpath()
         module._ensuresyspath(True, pkgroot)

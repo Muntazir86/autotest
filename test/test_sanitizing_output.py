@@ -2,9 +2,9 @@ from urllib.parse import urlencode
 
 import pytest
 
-from schemathesis.config._output import DEFAULT_KEYS_TO_SANITIZE, DEFAULT_REPLACEMENT
-from schemathesis.core import NOT_SET
-from schemathesis.core.output.sanitization import (
+from autotest.config._output import DEFAULT_KEYS_TO_SANITIZE, DEFAULT_REPLACEMENT
+from autotest.core import NOT_SET
+from autotest.core.output.sanitization import (
     SanitizationConfig,
     sanitize_url,
     sanitize_value,

@@ -1,6 +1,6 @@
 # Checks
 
-Schemathesis validates every API response with a fixed set of checks. All checks are **enabled by default** unless explicitly disabled.
+Autotest validates every API response with a fixed set of checks. All checks are **enabled by default** unless explicitly disabled.
 
 ## Controlling checks
 
@@ -153,7 +153,7 @@ Errors are deduplicated per schema path. Use `[output]` configuration options to
 
 ### `negative_data_rejection`
 
-Verifies the API properly rejects invalid input data. When Schemathesis generates a negative test case (invalid payload, missing required field, etc.), it expects the API to respond with an error status code.
+Verifies the API properly rejects invalid input data. When Autotest generates a negative test case (invalid payload, missing required field, etc.), it expects the API to respond with an error status code.
 
 ```text
 - API accepted schema-violating request
@@ -172,7 +172,7 @@ The failure message includes the specific invalid component, helping you identif
 
 ### `positive_data_acceptance`
 
-Verifies the API accepts valid request data. When Schemathesis generates schema-compliant requests, it expects the API to respond with a success status code.
+Verifies the API accepts valid request data. When Autotest generates schema-compliant requests, it expects the API to respond with a success status code.
 
 ```text
 - API rejected schema-compliant request
@@ -242,7 +242,7 @@ The failure message lists both the DELETE call and the subsequent operation for 
 
 ### `ensure_resource_availability`
 
-Verifies created resources are immediately accessible. After a successful `POST`, Schemathesis follows links to fetch the resource. The API should return the created resource, not `404 Not Found`.
+Verifies created resources are immediately accessible. After a successful `POST`, Autotest follows links to fetch the resource. The API should return the created resource, not `404 Not Found`.
 
 ```text
 - Resource is not available after creation
@@ -258,7 +258,7 @@ The API returned `404 Not Found` for a resource that was just created.
 
 ### `ignored_auth`
 
-Verifies authentication is properly enforced. When an operation declares authentication, Schemathesis tests whether the API accepts requests without credentials or with invalid credentials.
+Verifies authentication is properly enforced. When an operation declares authentication, Autotest tests whether the API accepts requests without credentials or with invalid credentials.
 
 ```text
 - API accepts requests without authentication

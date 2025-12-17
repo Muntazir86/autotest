@@ -10,15 +10,15 @@ from hypothesis_jsonschema import from_schema
 from hypothesis_jsonschema._canonicalise import FALSEY, canonicalish
 from jsonschema import Draft4Validator, Draft202012Validator
 
-import schemathesis
-from schemathesis.config import GenerationConfig
-from schemathesis.core.parameters import ParameterLocation
-from schemathesis.core.transforms import deepclone
-from schemathesis.generation import GenerationMode
-from schemathesis.openapi.generation.filters import is_valid_header
-from schemathesis.specs.openapi._hypothesis import get_default_format_strategies
-from schemathesis.specs.openapi.negative import GeneratedValue, mutated, negative_schema
-from schemathesis.specs.openapi.negative.mutations import (
+import autotest
+from autotest.config import GenerationConfig
+from autotest.core.parameters import ParameterLocation
+from autotest.core.transforms import deepclone
+from autotest.generation import GenerationMode
+from autotest.openapi.generation.filters import is_valid_header
+from autotest.specs.openapi._hypothesis import get_default_format_strategies
+from autotest.specs.openapi.negative import GeneratedValue, mutated, negative_schema
+from autotest.specs.openapi.negative.mutations import (
     MutationContext,
     MutationResult,
     change_items,
@@ -74,7 +74,7 @@ validate_schema = Draft4Validator.check_schema
 @settings(deadline=None, suppress_health_check=SUPPRESSED_HEALTH_CHECKS, max_examples=MAX_EXAMPLES)
 def test_top_level_strategy(data, location, schema):
     if location != ParameterLocation.BODY and schema.get("type") == "object":
-        # It always comes this way from Schemathesis
+        # It always comes this way from autotest
         schema["additionalProperties"] = False
     validate_schema(schema)
     validator = Draft4Validator(schema)
@@ -390,7 +390,7 @@ def test_optional_query_param_negation(ctx):
         }
     )
 
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
 
     @given(case=schema["/bug"]["get"].as_strategy(generation_mode=GenerationMode.NEGATIVE))
     @settings(deadline=None, max_examples=10, suppress_health_check=SUPPRESSED_HEALTH_CHECKS)
@@ -420,7 +420,7 @@ def test_negating_multiple_query_params(ctx):
         }
     )
 
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
 
     @given(case=schema["/bug"]["get"].as_strategy(generation_mode=GenerationMode.NEGATIVE))
     @settings(deadline=None, suppress_health_check=SUPPRESSED_HEALTH_CHECKS)
@@ -460,7 +460,7 @@ def test_negative_query_respects_allow_extra_parameter_toggle(data):
     assert isinstance(result, GeneratedValue)
     value = result.value
     if isinstance(value, dict):
-        assert "x-schemathesis-unknown-property" not in value
+        assert "x-autotest-unknown-property" not in value
 
 
 @pytest.mark.parametrize(
@@ -521,7 +521,7 @@ def test_non_default_styles(ctx, location, schema, style, explode):
         }
     )
 
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
 
     @given(case=schema["/bug"]["get"].as_strategy(generation_mode=GenerationMode.NEGATIVE))
     @settings(deadline=None, max_examples=10, suppress_health_check=SUPPRESSED_HEALTH_CHECKS)
@@ -607,7 +607,7 @@ def test_negative_format_generates_invalid_values(ctx):
             }
         }
     )
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
     invalid_uuid_found = False
 
     @given(case=schema["/items/{id}"]["GET"].as_strategy(generation_mode=GenerationMode.NEGATIVE))
@@ -635,7 +635,7 @@ def is_valid_uuid4(value: str) -> bool:
 @pytest.mark.hypothesis_nested
 def test_negative_custom_format_generates_invalid_values(ctx):
     # When a user registers a custom format (uuid4)
-    schemathesis.openapi.format("uuid4", st.uuids(version=4).map(str))
+    autotest.openapi.format("uuid4", st.uuids(version=4).map(str))
     # And a path parameter uses that custom format
     schema = ctx.openapi.build_schema(
         {
@@ -649,7 +649,7 @@ def test_negative_custom_format_generates_invalid_values(ctx):
             }
         }
     )
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
     invalid_uuid4_found = False
 
     @given(case=schema["/items/{id}"]["GET"].as_strategy(generation_mode=GenerationMode.NEGATIVE))
@@ -707,7 +707,7 @@ def test_path_parameters_never_contain_slash():
     # which could match `/api/groups/{id}/{user_id}` instead.
     #
     # This can happen when the generated value is a dict/object that gets stringified with `/` in keys
-    schema = schemathesis.openapi.from_dict(
+    schema = autotest.openapi.from_dict(
         {
             "openapi": "3.0.0",
             "info": {"title": "Test", "version": "0.1.0"},

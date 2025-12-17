@@ -2,12 +2,12 @@ import pytest
 from hypothesis import HealthCheck, Phase, settings
 from hypothesis.errors import InvalidDefinition
 
-import schemathesis
-from schemathesis.core.errors import NoLinksFound
-from schemathesis.core.failures import FailureGroup
-from schemathesis.generation.modes import GenerationMode
-from schemathesis.generation.stateful.state_machine import DEFAULT_STATE_MACHINE_SETTINGS, StepOutput
-from schemathesis.specs.openapi.stateful import make_response_filter, match_status_code
+import autotest
+from autotest.core.errors import NoLinksFound
+from autotest.core.failures import FailureGroup
+from autotest.generation.modes import GenerationMode
+from autotest.generation.stateful.state_machine import DEFAULT_STATE_MACHINE_SETTINGS, StepOutput
+from autotest.specs.openapi.stateful import make_response_filter, match_status_code
 
 
 @pytest.mark.parametrize(
@@ -118,7 +118,7 @@ def test_hidden_failure_app(request, factory_name, open_api_3):
     app = factory(operations=("create_user", "get_user", "update_user"), version=open_api_3)
 
     if factory_name == "asgi_app_factory":
-        schema = schemathesis.openapi.from_asgi("/openapi.json", app=app)
+        schema = autotest.openapi.from_asgi("/openapi.json", app=app)
         schema.raw_schema["paths"]["/users/"]["post"]["responses"]["201"]["links"] = {
             "GET /users/{user_id}": {
                 "parameters": {
@@ -140,7 +140,7 @@ def test_hidden_failure_app(request, factory_name, open_api_3):
             }
         }
     else:
-        schema = schemathesis.openapi.from_wsgi("/schema.yaml", app=app)
+        schema = autotest.openapi.from_wsgi("/schema.yaml", app=app)
 
     schema.config.generation.update(modes=[GenerationMode.POSITIVE])
     state_machine = schema.as_state_machine()
@@ -216,7 +216,7 @@ TestStateful = schema.as_state_machine().TestCase
 @pytest.mark.openapi_version("3.0")
 @pytest.mark.operations("success")
 def test_no_transitions_error(app_schema):
-    schema = schemathesis.openapi.from_dict(app_schema)
+    schema = autotest.openapi.from_dict(app_schema)
     state_machine_cls = schema.as_state_machine()
 
     with pytest.raises(NoLinksFound):
@@ -226,7 +226,7 @@ def test_no_transitions_error(app_schema):
 @pytest.mark.openapi_version("3.0")
 @pytest.mark.operations("create_user", "get_user", "update_user")
 def test_settings_error(app_schema):
-    schema = schemathesis.openapi.from_dict(app_schema)
+    schema = autotest.openapi.from_dict(app_schema)
 
     class Workflow(schema.as_state_machine()):
         settings = settings(max_examples=5)
@@ -238,7 +238,7 @@ def test_settings_error(app_schema):
 @pytest.mark.parametrize("merge_body", [True, False])
 def test_dynamic_body(merge_body, app_factory):
     app = app_factory(merge_body=merge_body)
-    schema = schemathesis.openapi.from_wsgi("/openapi.json", app=app)
+    schema = autotest.openapi.from_wsgi("/openapi.json", app=app)
     schema.config.generation.update(modes=[GenerationMode.POSITIVE])
     state_machine = schema.as_state_machine()
 
@@ -255,7 +255,7 @@ def test_dynamic_body(merge_body, app_factory):
 
 def test_custom_config_in_test_case(app_factory):
     app = app_factory()
-    schema = schemathesis.openapi.from_wsgi("/openapi.json", app=app)
+    schema = autotest.openapi.from_wsgi("/openapi.json", app=app)
     settings = schema.as_state_machine().TestCase.settings
     for key, value in DEFAULT_STATE_MACHINE_SETTINGS.__dict__.items():
         assert getattr(settings, key) == value
@@ -264,14 +264,14 @@ def test_custom_config_in_test_case(app_factory):
 @pytest.mark.openapi_version("3.0")
 @pytest.mark.operations("create_user", "get_user", "update_user")
 def test_passing_transport_kwargs(app_schema, openapi3_base_url, mocker):
-    schema = schemathesis.openapi.from_dict(app_schema)
+    schema = autotest.openapi.from_dict(app_schema)
     schema.config.update(base_url=openapi3_base_url)
 
     mocker.patch(
-        "schemathesis.specs.openapi.checks._get_security_parameters",
+        "autotest.specs.openapi.checks._get_security_parameters",
         return_value=[{"name": "token", "required": True, "in": "query"}],
     )
-    mocked = mocker.patch("schemathesis.specs.openapi.checks._contains_auth")
+    mocked = mocker.patch("autotest.specs.openapi.checks._contains_auth")
 
     headers = {"Authorization": "Bearer SECRET!", "Content-Type": "application/json"}
     kwargs = {"verify": False, "headers": headers}

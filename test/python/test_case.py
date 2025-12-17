@@ -1,4 +1,4 @@
-from schemathesis.schemas import APIOperation
+from autotest.schemas import APIOperation
 
 
 def test_formatted_path(swagger_20):

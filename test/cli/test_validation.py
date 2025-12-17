@@ -3,8 +3,8 @@ import pytest
 from hypothesis import example, given, settings
 from hypothesis import strategies as st
 
-from schemathesis.cli.commands.run import validation
-from schemathesis.core.validation import is_latin_1_encodable
+from autotest.cli.commands.run import validation
+from autotest.core.validation import is_latin_1_encodable
 
 
 @pytest.mark.parametrize("value", ["//test", "//ÿ["])

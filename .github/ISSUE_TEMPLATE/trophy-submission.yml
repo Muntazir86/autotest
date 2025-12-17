@@ -1,15 +1,15 @@
 name: 🏆 Trophy Case Submission
-description: Submit a bug discovered by Schemathesis
+description: Submit a bug discovered by autotest
 title: "[Trophy] "
 labels: ["trophy-case"]
 body:
   - type: markdown
     attributes:
       value: |
-        Share a bug you found with Schemathesis to help showcase its capabilities.
+        Share a bug you found with autotest to help showcase its capabilities.
 
         **Requirements:**
-        - Bug discovered using Schemathesis
+        - Bug discovered using autotest
         - Bugs in APIs that other developers use or recognize (open-source projects with active communities, public SaaS APIs, popular tools)
         - Security vulnerabilities: only submit after fix is public (follow responsible-disclosure rules)
         - Include link to upstream issue/fix when available

@@ -1,6 +1,6 @@
-# Contributing to Schemathesis
+# Contributing to autotest
 
-Welcome! Thank you for considering contributing to Schemathesis. Your feedback and contributions are invaluable to us!
+Welcome! Thank you for considering contributing to autotest. Your feedback and contributions are invaluable to us!
 
 ## Prerequisites for Code Contributions
 
@@ -32,7 +32,7 @@ See `just --list` for all available commands like `just test`, `just check`, `ju
 
 ## Feature Requests and Feedback
 
-If you'd like to suggest a feature or provide feedback, feel free to [submit an issue](https://github.com/schemathesis/schemathesis/issues). When submitting your issue, it helps to provide:
+If you'd like to suggest a feature or provide feedback, feel free to [submit an issue](https://github.com/autotest/autotest/issues). When submitting your issue, it helps to provide:
 
 - **Title**: Write a simple and descriptive title to identify your suggestion.
 - **Details**: Provide as many details as possible. Explain your context and how you envision the feature working.
@@ -41,13 +41,13 @@ If you'd like to suggest a feature or provide feedback, feel free to [submit an 
 
 ## Reporting Bugs
 
-If you encounter a bug, please report it in the [issue tracker](https://github.com/schemathesis/schemathesis/issues). When filing a bug report, please include:
+If you encounter a bug, please report it in the [issue tracker](https://github.com/autotest/autotest/issues). When filing a bug report, please include:
 
 - **Title**: Write a simple and descriptive title to identify the problem.
 - **Reproduction Steps**: Describe the exact steps to reproduce the problem in as much detail as possible.
 - **Observed Behavior**: Describe the behavior you observed and what makes it a problem.
 - **Expected Behavior**: Explain which behavior you expected to see instead and why.
-- **Versions**: Include Python and Schemathesis versions. Also, confirm if the issue persists in the latest version of Schemathesis.
+- **Versions**: Include Python and autotest versions. Also, confirm if the issue persists in the latest version of autotest.
 - **Additional Context**: Logs, error messages, or screenshots are often very helpful.
 
 **What happens next?**: After you submit an issue, we aim to review and respond as soon as possible.
@@ -57,7 +57,7 @@ If you don't receive a response within a few days, feel free to add a new commen
 
 We welcome contributions to the codebase! If you'd like to submit a pull request (PR), please follow these steps:
 
-1. **Fork the Repository**: Fork the Schemathesis repository on GitHub.
+1. **Fork the Repository**: Fork the autotest repository on GitHub.
 2. **Install Development Tools**: Install the development dependencies using the following command:
 
 ```bash
@@ -74,7 +74,7 @@ prek install
 
 4. **Branching**: Create a new branch and switch to it. Target your pull request to the `master` branch of the main repository.
 5. **Coding Standards**: Follow [PEP-8](https://pep8.org/) for naming conventions and use [ruff](https://github.com/astral-sh/ruff) for code formatting.
-6. **Write Tests**: Preferably, write integration tests that run the whole Schemathesis CLI.
+6. **Write Tests**: Preferably, write integration tests that run the whole autotest CLI.
 7. **Run Tests**:
 
 ```bash
@@ -93,7 +93,7 @@ If you don't hear back within a few days, feel free to add a comment to the pull
 
 ## Contributing to Documentation
 
-We recommend installing Schemathesis with the "dev" extra for all the dependencies needed for documentation:
+We recommend installing autotest with the "dev" extra for all the dependencies needed for documentation:
 
 ```bash
 uv pip install -e ".[dev]"

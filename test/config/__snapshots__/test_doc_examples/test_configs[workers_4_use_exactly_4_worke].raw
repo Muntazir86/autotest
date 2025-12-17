@@ -1,1 +1,1 @@
-SchemathesisConfig(projects=ProjectsConfig(default=ProjectConfig(workers=4)))
+autotestConfig(projects=ProjectsConfig(default=ProjectConfig(workers=4)))

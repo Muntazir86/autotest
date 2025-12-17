@@ -1,1 +1,1 @@
-SchemathesisConfig(projects=ProjectsConfig(default=ProjectConfig(phases=PhasesConfig(fuzzing=FuzzingPhaseConfig(extra_data_sources=ExtraDataSourcesConfig(responses=False))))))
+autotestConfig(projects=ProjectsConfig(default=ProjectConfig(phases=PhasesConfig(fuzzing=FuzzingPhaseConfig(extra_data_sources=ExtraDataSourcesConfig(responses=False))))))

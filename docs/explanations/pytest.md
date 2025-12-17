@@ -1,15 +1,15 @@
-# How Schemathesis Integrates with Pytest
+# How Autotest Integrates with Pytest
 
-This documents explains the mechanics of how Schemathesis works within pytest to automatically generate and run property-based API tests.
+This documents explains the mechanics of how Autotest works within pytest to automatically generate and run property-based API tests.
 
 ## Test Execution Flow
 
-When you run a Schemathesis pytest test, here's what happens:
+When you run a Autotest pytest test, here's what happens:
 
 ```python
-import schemathesis
+import autotest
 
-schema = schemathesis.openapi.from_url(
+schema = autotest.openapi.from_url(
     "http://127.0.0.1:8080/openapi.json",
 )
 
@@ -20,7 +20,7 @@ def test_api(case):
 
 **Execution sequence:**
 
-1. **Schema Loading:** Schemathesis loads your API schema (happens at module import time)
+1. **Schema Loading:** Autotest loads your API schema (happens at module import time)
 2. **Test Collection:** pytest discovers your test and `@schema.parametrize()` creates one parametrized test per API operation found in the schema
 3. **Test Execution:** For each operation (e.g., `POST /users`), pytest starts executing the parametrized test
 4. **Property-Based Testing:** Hypothesis generates multiple examples (~100 by default) based on the schema constraints
@@ -54,18 +54,18 @@ The `case` includes:
 - **Methods:** `call()`, `call_and_validate()` for making requests
 
 !!! note "Case Object Reference"
-    See the [Case Object Reference](../reference/python.md#schemathesis.Case) for complete attributes and methods.
+    See the [Case Object Reference](../reference/python.md#Autotest.Case) for complete attributes and methods.
 
 ## Deferred Discovery with Fixtures
 
-When you need pytest fixtures for schema setup, use `schemathesis.pytest.from_fixture`:
+When you need pytest fixtures for schema setup, use `Autotest.pytest.from_fixture`:
 
 ```python
 @pytest.fixture
 def api_schema(database):
-    return schemathesis.openapi.from_asgi("/openapi.json", app)
+    return autotest.openapi.from_asgi("/openapi.json", app)
 
-schema = schemathesis.pytest.from_fixture("api_schema")
+schema = Autotest.pytest.from_fixture("api_schema")
 
 @schema.parametrize()
 def test_api(case):
@@ -91,7 +91,7 @@ test_api.py::test_api[GET /health] PASSED
 __________________________ test_api[POST /bookings] ___________________________
 + Exception Group Traceback (most recent call last):
   | # snip
-  | schemathesis.FailureGroup: Schemathesis found 2 distinct failures
+  | Autotest.FailureGroup: Autotest found 2 distinct failures
   |
   | - Server error
   |
@@ -117,13 +117,13 @@ __________________________ test_api[POST /bookings] ___________________________
 
 ## Async Support
 
-Schemathesis supports asynchronous test functions with no additional configuration beyond installing `pytest-asyncio` or `pytest-trio`:
+Autotest supports asynchronous test functions with no additional configuration beyond installing `pytest-asyncio` or `pytest-trio`:
 
 ```python
 import pytest
-import schemathesis
+import autotest
 
-schema = schemathesis.openapi.from_url("http://127.0.0.1:8080/openapi.json")
+schema = autotest.openapi.from_url("http://127.0.0.1:8080/openapi.json")
 
 @pytest.mark.asyncio
 @schema.parametrize()
@@ -141,4 +141,4 @@ async def test_api_trio(case, client):
 ```
 
 !!! important "Async Network Calls"
-    Schemathesis uses synchronous network calls, therefore you need to serialize the test case yourself if you'd like to use an async test client.
+    Autotest uses synchronous network calls, therefore you need to serialize the test case yourself if you'd like to use an async test client.

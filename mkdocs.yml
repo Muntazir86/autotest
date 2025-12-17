@@ -1,5 +1,5 @@
-site_name: Schemathesis
-repo_url: https://github.com/schemathesis/schemathesis
+site_name: autotest
+repo_url: https://github.com/autotest/autotest
 
 nav:
   - Introduction: index.md
@@ -80,7 +80,7 @@ theme:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/schemathesis/schemathesis
+      link: https://github.com/autotest/autotest
       name: GitHub
     - icon: fontawesome/brands/discord
       link: https://discord.gg/R9ASRAmHnA
@@ -117,4 +117,4 @@ plugins:
           show_source: false
 - search
 
-copyright: Copyright &copy; 2020-2025 Dmitry Dygalo & Schemathesis.io
+copyright: Copyright &copy; 2020-2025 Dmitry Dygalo & autotest.io

@@ -74,11 +74,11 @@ def raw_schema(ctx, request):
 def unique_hook(ctx):
     with ctx.check(
         """
-@schemathesis.check
+@autotest.check
 def unique_test_cases(ctx, response, case):
     if not hasattr(case.operation.schema, "seen"):
         case.operation.schema.seen = set()
-    command = case.as_curl_command({"X-Schemathesis-TestCaseId": "0"})
+    command = case.as_curl_command({"x-autotest-TestCaseId": "0"})
     assert command not in case.operation.schema.seen, f"Test case already seen! {command}"
     case.operation.schema.seen.add(command)
 """

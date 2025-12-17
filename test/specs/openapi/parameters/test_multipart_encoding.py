@@ -1,17 +1,17 @@
 from hypothesis import given
 from hypothesis import strategies as st
 
-import schemathesis
-from schemathesis.generation import GenerationMode
-from schemathesis.transport.serialization import Binary
+import autotest
+from autotest.generation import GenerationMode
+from autotest.transport.serialization import Binary
 
 
 def test_multipart_with_custom_encoding():
     xml_strategy = st.just(b"<?xml version='1.0'?><root>test</root>")
-    schemathesis.openapi.media_type("text/xml", xml_strategy)
+    autotest.openapi.media_type("text/xml", xml_strategy)
 
     # Given an OpenAPI schema with multipart/form-data and custom encoding
-    schema = schemathesis.openapi.from_dict(
+    schema = autotest.openapi.from_dict(
         {
             "openapi": "3.0.0",
             "info": {"title": "Test", "version": "1.0"},
@@ -53,7 +53,7 @@ def test_multipart_with_custom_encoding():
 
 def test_multipart_without_custom_encoding_uses_default():
     # Given an OpenAPI schema with multipart but NO custom encoding
-    schema = schemathesis.openapi.from_dict(
+    schema = autotest.openapi.from_dict(
         {
             "openapi": "3.0.0",
             "info": {"title": "Test", "version": "1.0"},
@@ -93,7 +93,7 @@ def test_multipart_without_custom_encoding_uses_default():
 
 def test_multipart_encoding_without_registered_strategy_falls_back():
     # Given custom encoding but NO registered strategy for that content type
-    schema = schemathesis.openapi.from_dict(
+    schema = autotest.openapi.from_dict(
         {
             "openapi": "3.0.0",
             "info": {"title": "Test", "version": "1.0"},
@@ -135,10 +135,10 @@ def test_multipart_multiple_properties_with_different_encodings():
     # Register strategies for different media types
     xml_strategy = st.just(b"<xml>data</xml>")
     csv_strategy = st.just(b"col1,col2\nval1,val2")
-    schemathesis.openapi.media_type("text/xml", xml_strategy)
-    schemathesis.openapi.media_type("text/csv", csv_strategy)
+    autotest.openapi.media_type("text/xml", xml_strategy)
+    autotest.openapi.media_type("text/csv", csv_strategy)
 
-    schema = schemathesis.openapi.from_dict(
+    schema = autotest.openapi.from_dict(
         {
             "openapi": "3.0.0",
             "info": {"title": "Test", "version": "1.0"},
@@ -186,10 +186,10 @@ def test_multipart_encoding_with_multiple_content_types():
     # Register strategies for both image types
     png_strategy = st.just(b"\x89PNG\r\n\x1a\n")
     jpeg_strategy = st.just(b"\xff\xd8\xff\xe0")
-    schemathesis.openapi.media_type("image/png", png_strategy)
-    schemathesis.openapi.media_type("image/jpeg", jpeg_strategy)
+    autotest.openapi.media_type("image/png", png_strategy)
+    autotest.openapi.media_type("image/jpeg", jpeg_strategy)
 
-    schema = schemathesis.openapi.from_dict(
+    schema = autotest.openapi.from_dict(
         {
             "openapi": "3.0.0",
             "info": {"title": "Test", "version": "1.0"},
@@ -229,9 +229,9 @@ def test_multipart_encoding_with_multiple_content_types():
 
 def test_urlencoded_form_with_encoding():
     xml_strategy = st.just(b"<data>test</data>")
-    schemathesis.openapi.media_type("text/xml", xml_strategy)
+    autotest.openapi.media_type("text/xml", xml_strategy)
 
-    schema = schemathesis.openapi.from_dict(
+    schema = autotest.openapi.from_dict(
         {
             "openapi": "3.0.0",
             "info": {"title": "Test", "version": "1.0"},
@@ -270,9 +270,9 @@ def test_urlencoded_form_with_encoding():
 
 def test_multipart_optional_properties():
     xml_strategy = st.just(b"<optional/>")
-    schemathesis.openapi.media_type("text/xml", xml_strategy)
+    autotest.openapi.media_type("text/xml", xml_strategy)
 
-    schema = schemathesis.openapi.from_dict(
+    schema = autotest.openapi.from_dict(
         {
             "openapi": "3.0.0",
             "info": {"title": "Test", "version": "1.0"},
@@ -314,9 +314,9 @@ def test_multipart_optional_properties():
 
 def test_multipart_wildcard_matching_specific_to_wildcard():
     image_strategy = st.just(b"\x89PNG\r\n\x1a\n")
-    schemathesis.openapi.media_type("image/*", image_strategy)
+    autotest.openapi.media_type("image/*", image_strategy)
 
-    schema = schemathesis.openapi.from_dict(
+    schema = autotest.openapi.from_dict(
         {
             "openapi": "3.0.0",
             "info": {"title": "Test", "version": "1.0"},
@@ -361,10 +361,10 @@ def test_multipart_wildcard_matching_specific_to_wildcard():
 def test_multipart_wildcard_matching_wildcard_to_specific():
     png_strategy = st.just(b"\x89PNG")
     jpeg_strategy = st.just(b"\xff\xd8\xff")
-    schemathesis.openapi.media_type("image/png", png_strategy)
-    schemathesis.openapi.media_type("image/jpeg", jpeg_strategy)
+    autotest.openapi.media_type("image/png", png_strategy)
+    autotest.openapi.media_type("image/jpeg", jpeg_strategy)
 
-    schema = schemathesis.openapi.from_dict(
+    schema = autotest.openapi.from_dict(
         {
             "openapi": "3.0.0",
             "info": {"title": "Test", "version": "1.0"},
@@ -409,10 +409,10 @@ def test_multipart_wildcard_matching_wildcard_to_specific():
 def test_multipart_exact_match_preferred_over_wildcard():
     wildcard_strategy = st.just(b"WILDCARD")
     exact_strategy = st.just(b"EXACT")
-    schemathesis.openapi.media_type("image/*", wildcard_strategy)
-    schemathesis.openapi.media_type("image/png", exact_strategy)
+    autotest.openapi.media_type("image/*", wildcard_strategy)
+    autotest.openapi.media_type("image/png", exact_strategy)
 
-    schema = schemathesis.openapi.from_dict(
+    schema = autotest.openapi.from_dict(
         {
             "openapi": "3.0.0",
             "info": {"title": "Test", "version": "1.0"},
@@ -450,7 +450,7 @@ def test_multipart_exact_match_preferred_over_wildcard():
 
 
 def test_multipart_defensive_non_string_content_type():
-    schema = schemathesis.openapi.from_dict(
+    schema = autotest.openapi.from_dict(
         {
             "openapi": "3.0.0",
             "info": {"title": "Test", "version": "1.0"},
@@ -491,9 +491,9 @@ def test_multipart_defensive_non_string_content_type():
 
 def test_nested_object_with_encoding():
     xml_strategy = st.just(b"<xml/>")
-    schemathesis.openapi.media_type("text/xml", xml_strategy)
+    autotest.openapi.media_type("text/xml", xml_strategy)
 
-    schema = schemathesis.openapi.from_dict(
+    schema = autotest.openapi.from_dict(
         {
             "openapi": "3.0.0",
             "info": {"title": "Test", "version": "1.0"},
@@ -542,9 +542,9 @@ def test_nested_object_with_encoding():
 
 def test_additional_properties_with_encoding():
     xml_strategy = st.just(b"<xml/>")
-    schemathesis.openapi.media_type("text/xml", xml_strategy)
+    autotest.openapi.media_type("text/xml", xml_strategy)
 
-    schema = schemathesis.openapi.from_dict(
+    schema = autotest.openapi.from_dict(
         {
             "openapi": "3.0.0",
             "info": {"title": "Test", "version": "1.0"},
@@ -586,7 +586,7 @@ def test_additional_properties_with_encoding():
 
 
 def test_empty_encoding_object():
-    schema = schemathesis.openapi.from_dict(
+    schema = autotest.openapi.from_dict(
         {
             "openapi": "3.0.0",
             "info": {"title": "Test", "version": "1.0"},
@@ -624,7 +624,7 @@ def test_empty_encoding_object():
 
 
 def test_encoding_with_invalid_content_type_format():
-    schema = schemathesis.openapi.from_dict(
+    schema = autotest.openapi.from_dict(
         {
             "openapi": "3.0.0",
             "info": {"title": "Test", "version": "1.0"},
@@ -664,7 +664,7 @@ def test_encoding_with_invalid_content_type_format():
 
 def test_multipart_comma_separated_without_custom_strategy():
     # Comma-separated content types should work even without custom strategies
-    schema = schemathesis.openapi.from_dict(
+    schema = autotest.openapi.from_dict(
         {
             "openapi": "3.0.0",
             "info": {"title": "Test", "version": "1.0"},
@@ -720,9 +720,9 @@ def test_multipart_comma_separated_without_custom_strategy():
 def test_multipart_optional_encoding_not_always_present():
     # Optional fields with custom encoding should not always be present
     xml_strategy = st.just(b"<data/>")
-    schemathesis.openapi.media_type("text/xml", xml_strategy)
+    autotest.openapi.media_type("text/xml", xml_strategy)
 
-    schema = schemathesis.openapi.from_dict(
+    schema = autotest.openapi.from_dict(
         {
             "openapi": "3.0.0",
             "info": {"title": "Test", "version": "1.0"},
@@ -763,7 +763,7 @@ def test_multipart_optional_encoding_not_always_present():
 
 
 def test_multipart_encoding_with_negative_mode():
-    schema = schemathesis.openapi.from_dict(
+    schema = autotest.openapi.from_dict(
         {
             "openapi": "3.0.0",
             "info": {"title": "Test", "version": "1.0"},

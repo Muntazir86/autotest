@@ -1,7 +1,7 @@
 import pytest
 from hypothesis import given, settings
 
-import schemathesis
+import autotest
 
 
 def register_default(dispatcher):
@@ -18,7 +18,7 @@ def custom_name(context, path, methods):
     """)
 
 
-@pytest.mark.parametrize("dispatcher_factory", [lambda r: r.getfixturevalue("openapi_30"), lambda _: schemathesis])
+@pytest.mark.parametrize("dispatcher_factory", [lambda r: r.getfixturevalue("openapi_30"), lambda _: Autotest])
 @pytest.mark.parametrize("register", [register_default, register_named])
 def test_invalid_hook(request, dispatcher_factory, register):
     dispatcher = dispatcher_factory(request)
@@ -37,7 +37,7 @@ def test_invalid_hook(request, dispatcher_factory, register):
 @pytest.mark.operations("payload")
 @pytest.mark.parametrize("is_include", [True, False])
 def test_simple_filter(schema_url, is_include):
-    schema = schemathesis.openapi.from_url(schema_url)
+    schema = autotest.openapi.from_url(schema_url)
 
     if is_include:
 
@@ -82,25 +82,25 @@ def test_map_case_filter(ctx, cli, openapi3_schema_url, snapshot_cli):
     # All these hooks should not be called because of the applied filter
     with ctx.hook(
         r"""
-@schemathesis.hook.apply_to(path_regex=r"/fake/path")
+@autotest.hook.apply_to(path_regex=r"/fake/path")
 def map_case(ctx, case):
     1 / 0
 
-@schemathesis.hook.apply_to(path_regex=r"/fake/path")
+@autotest.hook.apply_to(path_regex=r"/fake/path")
 def filter_case(ctx, case):
     1 / 0
 
-@schemathesis.hook.apply_to(path_regex=r"/fake/path")
+@autotest.hook.apply_to(path_regex=r"/fake/path")
 def flatmap_case(ctx, case):
     1 / 0
 
-@schemathesis.hook.apply_to(path_regex=r"/fake/path")
+@autotest.hook.apply_to(path_regex=r"/fake/path")
 def before_generate_case(ctx, case):
     1 / 0
 
 
 try:
-    @schemathesis.hook("before_process_path").apply_to(method="GET")
+    @autotest.hook("before_process_path").apply_to(method="GET")
     def custom_name(context, path, methods):
         pass
 except:
@@ -132,7 +132,7 @@ def map_body(ctx, body):
 @pytest.mark.operations("payload")
 @pytest.mark.parametrize("hook", [multiple_skip_for, multiple_apply_to])
 def test_filter_combo(schema_url, hook):
-    schema = schemathesis.openapi.from_url(schema_url)
+    schema = autotest.openapi.from_url(schema_url)
     hook(schema)
 
     @given(case=schema["/payload"]["POST"].as_strategy())

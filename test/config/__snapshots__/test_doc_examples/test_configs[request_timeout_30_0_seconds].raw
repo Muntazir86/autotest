@@ -1,1 +1,1 @@
-SchemathesisConfig(projects=ProjectsConfig(default=ProjectConfig(request_timeout=30.0)))
+autotestConfig(projects=ProjectsConfig(default=ProjectConfig(request_timeout=30.0)))

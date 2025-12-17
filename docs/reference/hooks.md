@@ -44,7 +44,7 @@ Hooks that execute during test case execution.
 
 | Scope | Registration Method | Available Hooks |
 |-------|-------------------|-----------------|
-| **Global** | `@schemathesis.hook` or `@schemathesis.hook("hook_name")` | All hooks |
+| **Global** | `@autotest.hook` or `@autotest.hook("hook_name")` | All hooks |
 | **Schema** | `@schema.hooks.hook` or `@schema.hooks.hook("hook_name")` | All hooks except `before_load_schema`, `after_load_schema` |
 | **Test** | `@schema.hooks.apply(hook_func)` | All hooks except `before_load_schema`, `after_load_schema` |
 

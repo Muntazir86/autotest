@@ -2,11 +2,11 @@ from pathlib import Path
 
 import pytest
 
-from schemathesis.config import ConfigError, SchemathesisConfig
-from schemathesis.config._operations import OperationConfig
-from schemathesis.config._projects import ProjectConfig
-from schemathesis.config._validator import CONFIG_SCHEMA
-from schemathesis.core.errors import HookError
+from autotest.config import ConfigError, AutotestConfig
+from autotest.config._operations import OperationConfig
+from autotest.config._projects import ProjectConfig
+from autotest.config._validator import CONFIG_SCHEMA
+from autotest.core.errors import HookError
 
 CONFIGS_DIR = Path(__file__).parent / "configs"
 
@@ -33,7 +33,7 @@ def test_configs(monkeypatch, path, snapshot_config):
     monkeypatch.setenv("TEST_STRING_1", "foo")
     monkeypatch.setenv("TEST_STRING_2", "bar")
     try:
-        assert SchemathesisConfig.from_path(path) == snapshot_config
+        assert AutotestConfig.from_path(path) == snapshot_config
     except ConfigError as exc:
         assert str(exc) == snapshot_config
     except HookError as exc:
@@ -41,7 +41,7 @@ def test_configs(monkeypatch, path, snapshot_config):
 
 
 def test_warnings_for_without_operations():
-    config = SchemathesisConfig.from_dict({"warnings": False})
+    config = AutotestConfig.from_dict({"warnings": False})
     assert config.projects.default.warnings_for(operation=None).display == []
 
 
@@ -63,20 +63,20 @@ def test_project_key_config_sync():
 
 
 def test_config_path_from_path(tmp_path):
-    config_file = tmp_path / "schemathesis.toml"
+    config_file = tmp_path / "autotest.toml"
     config_file.write_text("color = true\n")
 
-    config = SchemathesisConfig.from_path(config_file)
+    config = AutotestConfig.from_path(config_file)
 
     assert config.config_path == str(config_file.resolve())
 
 
 def test_config_path_from_discover(tmp_path, monkeypatch):
-    config_file = tmp_path / "schemathesis.toml"
+    config_file = tmp_path / "autotest.toml"
     config_file.write_text("color = true\n")
 
     monkeypatch.chdir(tmp_path)
-    config = SchemathesisConfig.discover()
+    config = AutotestConfig.discover()
 
     assert config.config_path == str(config_file.resolve())
 
@@ -84,8 +84,8 @@ def test_config_path_from_discover(tmp_path, monkeypatch):
 @pytest.mark.parametrize(
     "factory",
     [
-        lambda: SchemathesisConfig(),
-        lambda: SchemathesisConfig.from_dict({"color": True}),
+        lambda: AutotestConfig(),
+        lambda: AutotestConfig.from_dict({"color": True}),
     ],
     ids=["default", "from_dict"],
 )
@@ -95,10 +95,10 @@ def test_config_path_none_when_no_file(factory):
 
 
 def test_project_config_path_delegates_to_parent(tmp_path):
-    config_file = tmp_path / "schemathesis.toml"
+    config_file = tmp_path / "autotest.toml"
     config_file.write_text("color = true\n")
 
-    config = SchemathesisConfig.from_path(config_file)
+    config = AutotestConfig.from_path(config_file)
     project_config = config.projects.default
 
     assert project_config.config_path == str(config_file.resolve())

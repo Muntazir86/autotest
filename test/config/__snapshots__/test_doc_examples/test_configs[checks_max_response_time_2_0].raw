@@ -1,1 +1,1 @@
-SchemathesisConfig(projects=ProjectsConfig(default=ProjectConfig(checks=ChecksConfig(max_response_time=MaxResponseTimeConfig(enabled=True, limit=2.0)))))
+autotestConfig(projects=ProjectsConfig(default=ProjectConfig(checks=ChecksConfig(max_response_time=MaxResponseTimeConfig(enabled=True, limit=2.0)))))

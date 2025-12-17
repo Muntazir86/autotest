@@ -1,7 +1,7 @@
 import pytest
 
-from schemathesis.core import media_types
-from schemathesis.core.errors import MalformedMediaType
+from autotest.core import media_types
+from autotest.core.errors import MalformedMediaType
 
 
 @pytest.mark.parametrize(

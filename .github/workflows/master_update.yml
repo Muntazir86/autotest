@@ -49,5 +49,5 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            schemathesis/schemathesis:${{ matrix.tag }}
-            ghcr.io/schemathesis/schemathesis:${{ matrix.tag }}
+            autotest/autotest:${{ matrix.tag }}
+            ghcr.io/autotest/autotest:${{ matrix.tag }}

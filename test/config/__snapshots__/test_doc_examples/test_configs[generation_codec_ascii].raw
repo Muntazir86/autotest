@@ -1,1 +1,1 @@
-SchemathesisConfig(projects=ProjectsConfig(default=ProjectConfig(generation=GenerationConfig(codec='ascii'))))
+autotestConfig(projects=ProjectsConfig(default=ProjectConfig(generation=GenerationConfig(codec='ascii'))))

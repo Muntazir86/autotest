@@ -29,4 +29,4 @@ def test_app(testdir, aiohttp_unused_port, framework):
     with testdir.tmpdir.join("stdout").open() as fd:
         stdout = fd.read()
     # Then it should start OK and emit debug logs
-    assert "Schemathesis test server is running!" in stdout
+    assert "Autotest test server is running!" in stdout

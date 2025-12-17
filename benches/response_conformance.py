@@ -1,10 +1,10 @@
 import pytest
 import requests
 
-import schemathesis
-from schemathesis.checks import CheckContext
-from schemathesis.config._checks import ChecksConfig
-from schemathesis.specs.openapi.checks import response_headers_conformance, response_schema_conformance
+import autotest
+from autotest.checks import CheckContext
+from autotest.config._checks import ChecksConfig
+from autotest.specs.openapi.checks import response_headers_conformance, response_schema_conformance
 
 RESPONSE_CONFORMANCE_SCHEMA = {
     "openapi": "3.0.2",
@@ -183,11 +183,11 @@ RESPONSE_CONFORMANCE_SCHEMA = {
     },
 }
 
-CONFIG = schemathesis.Config()
-CONFORMANCE_TEST_SCHEMA = schemathesis.openapi.from_dict(RESPONSE_CONFORMANCE_SCHEMA, config=CONFIG)
+CONFIG = autotest.Config()
+CONFORMANCE_TEST_SCHEMA = autotest.openapi.from_dict(RESPONSE_CONFORMANCE_SCHEMA, config=CONFIG)
 
 SIMPLE_CASE = CONFORMANCE_TEST_SCHEMA["/simple"]["get"].Case()
-SIMPLE_RESPONSE = schemathesis.Response(
+SIMPLE_RESPONSE = autotest.Response(
     status_code=200,
     headers={"Content-Type": ["application/json"]},
     content=b'{"id": 12345, "message": "Operation successful"}',
@@ -197,7 +197,7 @@ SIMPLE_RESPONSE = schemathesis.Response(
 )
 
 MEDIUM_CASE = CONFORMANCE_TEST_SCHEMA["/medium"]["get"].Case()
-MEDIUM_RESPONSE = schemathesis.Response(
+MEDIUM_RESPONSE = autotest.Response(
     status_code=200,
     headers={"Content-Type": ["application/json"]},
     content=b"""{"id": 12345, "user": {"name": "John Doe", "email": "john@example.com"}, "timestamp": "2023-12-01T10:30:00Z"}""",
@@ -207,7 +207,7 @@ MEDIUM_RESPONSE = schemathesis.Response(
 )
 
 COMPLEX_CASE = CONFORMANCE_TEST_SCHEMA["/complex"]["get"].Case()
-COMPLEX_RESPONSE = schemathesis.Response(
+COMPLEX_RESPONSE = autotest.Response(
     status_code=200,
     headers={"Content-Type": ["application/json"]},
     content=b"""{"id": 12345, "user": {"name": "John Doe", "email": "john@example.com"}, "address": {"street": "123 Main St", "city": "San Francisco", "country": "US"}, "preferences": {"theme": "dark", "notifications": true, "language": "en"}, "metadata": {"source": "api", "version": "1.2.3", "tags": ["important", "user-data"]}, "status": "active", "created_at": "2023-01-15T09:00:00Z", "updated_at": "2023-12-01T10:30:00Z"}""",
@@ -216,7 +216,7 @@ COMPLEX_RESPONSE = schemathesis.Response(
     verify=False,
 )
 SIMPLE_HEADERS_CASE = CONFORMANCE_TEST_SCHEMA["/simple-headers"]["get"].Case()
-SIMPLE_HEADERS_RESPONSE = schemathesis.Response(
+SIMPLE_HEADERS_RESPONSE = autotest.Response(
     status_code=200,
     headers={"Content-Type": ["application/json"], "X-Request-ID": ["a1b2c3d4-e5f6-7890-abcd-ef1234567890"]},
     content=b'{"status": "success"}',
@@ -226,7 +226,7 @@ SIMPLE_HEADERS_RESPONSE = schemathesis.Response(
 )
 
 COMPLEX_HEADERS_CASE = CONFORMANCE_TEST_SCHEMA["/complex-headers"]["get"].Case()
-COMPLEX_HEADERS_RESPONSE = schemathesis.Response(
+COMPLEX_HEADERS_RESPONSE = autotest.Response(
     status_code=200,
     headers={
         "Content-Type": ["application/json"],

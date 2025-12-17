@@ -1,11 +1,11 @@
 Exit code: 2
 ---
 Stdout:
-Schemathesis dev
+autotest dev
 ━━━━━━━━━━━━━━━━
 
 
-Usage: schemathesis run [OPTIONS] LOCATION
-Try 'schemathesis run -h' for help.
+Usage: autotest run [OPTIONS] LOCATION
+Try 'autotest run -h' for help.
 
 Error: The `--url` option is required when specifying a schema via a file.

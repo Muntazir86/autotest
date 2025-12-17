@@ -6,7 +6,7 @@ from unittest.mock import Mock
 import click
 import pytest
 
-from schemathesis.cli.ext.groups import should_use_color
+from autotest.cli.ext.groups import should_use_color
 
 
 @pytest.mark.parametrize(

@@ -1,7 +1,7 @@
 import pytest
 from hypothesis import settings
 
-from schemathesis.generation.modes import GenerationMode
+from autotest.generation.modes import GenerationMode
 
 
 @pytest.fixture(params=["petstore_v2.yaml", "petstore_v3.yaml"])

@@ -1,6 +1,6 @@
-import schemathesis
+import autotest
 
 
-@schemathesis.check
+@autotest.check
 def custom_check(ctx, response, case):
     raise AssertionError("\uc445")

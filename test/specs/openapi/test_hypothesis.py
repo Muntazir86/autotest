@@ -6,14 +6,14 @@ from hypothesis import Phase, assume, given, settings
 from hypothesis import strategies as st
 from jsonschema import Draft4Validator
 
-import schemathesis
-from schemathesis.config import GenerationConfig
-from schemathesis.core.parameters import ParameterLocation
-from schemathesis.openapi.generation import filters
-from schemathesis.openapi.generation.filters import is_valid_header
-from schemathesis.specs.openapi import _hypothesis, formats
-from schemathesis.specs.openapi._hypothesis import make_positive_strategy
-from schemathesis.specs.openapi.references import load_file
+import autotest
+from autotest.config import GenerationConfig
+from autotest.core.parameters import ParameterLocation
+from autotest.openapi.generation import filters
+from autotest.openapi.generation.filters import is_valid_header
+from autotest.specs.openapi import _hypothesis, formats
+from autotest.specs.openapi._hypothesis import make_positive_strategy
+from autotest.specs.openapi.references import load_file
 from test.utils import assert_requests_call
 
 
@@ -31,7 +31,7 @@ def operation(make_openapi_3_schema):
             {"in": "query", "name": "q1", "required": True, "schema": {"type": "string", "enum": ["FOO"]}},
         ],
     )
-    return schemathesis.openapi.from_dict(schema)["/users"]["POST"]
+    return autotest.openapi.from_dict(schema)["/users"]["POST"]
 
 
 @pytest.mark.parametrize(
@@ -108,7 +108,7 @@ def deeply_nested_schema(ctx):
 def test_missed_ref(deeply_nested_schema):
     # See GH-1167
     # When not resolved references are present in the schema during constructing a strategy
-    schema = schemathesis.openapi.from_dict(deeply_nested_schema)
+    schema = autotest.openapi.from_dict(deeply_nested_schema)
 
     @given(schema["/data"]["GET"].as_strategy())
     @settings(max_examples=10)
@@ -125,7 +125,7 @@ def test_inlined_definitions(deeply_nested_schema):
     # And the referenced schema contains Open API specific keywords
     deeply_nested_schema["components"]["schemas"]["bar"]["nullable"] = True
 
-    schema = schemathesis.openapi.from_dict(deeply_nested_schema)
+    schema = autotest.openapi.from_dict(deeply_nested_schema)
 
     @given(schema["/data"]["GET"].as_strategy())
     @settings(max_examples=1)
@@ -291,7 +291,7 @@ def test_inline_remote_refs(testdir, deeply_nested_schema, setup, check):
     }
 
     original = json.dumps(deeply_nested_schema, sort_keys=True, ensure_ascii=True)
-    schema = schemathesis.openapi.from_dict(deeply_nested_schema)
+    schema = autotest.openapi.from_dict(deeply_nested_schema)
 
     @given(schema["/data"]["GET"].as_strategy())
     @settings(max_examples=1)
@@ -330,7 +330,7 @@ def test_header_filtration_not_needed(ctx, mocker):
     schema = ctx.openapi.build_schema({})
     make_header_param(schema)
 
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
 
     @given(schema["/data"]["GET"].as_strategy())
     def test(case):
@@ -348,7 +348,7 @@ def test_header_filtration_needed(ctx, mocker):
     schema = ctx.openapi.build_schema({})
     make_header_param(schema, format="date")
 
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
 
     @given(schema["/data"]["GET"].as_strategy())
     @settings(max_examples=1)
@@ -390,7 +390,7 @@ def test_missing_header_filter(ctx, mocker):
         }
     )
 
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
 
     @given(schema["/data"]["GET"].as_strategy())
     def test(case):
@@ -418,7 +418,7 @@ def test_serializing_shared_header_parameters():
         },
     }
 
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
 
     @given(schema["/data"]["GET"].as_strategy())
     def test(case):
@@ -462,7 +462,7 @@ def test_filter_urlencoded(ctx):
             }
         }
     )
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
 
     @given(schema["/test"]["POST"].as_strategy())
     @settings(phases=[Phase.generate], max_examples=15, deadline=None)
@@ -486,7 +486,7 @@ def test_is_valid_header(value, expected):
 
 def test_unregister_string_format_valid():
     name = "example"
-    schemathesis.openapi.format(name, st.text())
+    autotest.openapi.format(name, st.text())
     assert name in _hypothesis.STRING_FORMATS
     formats.unregister_string_format(name)
     assert name not in _hypothesis.STRING_FORMATS
@@ -501,7 +501,7 @@ def test_custom_format_with_bytes(testdir):
     # See GH-3289: custom formats returning bytes should work
     testdir.make_test(
         """
-import schemathesis
+import autotest
 from hypothesis import strategies as st
 
 # Register a custom format that returns bytes
@@ -509,9 +509,9 @@ pdf_strategy = st.sampled_from([
     b"%PDF-1.4\\n1 0 obj\\n",
     b"%PDF-1.5\\n%\\xe2\\xe3",
 ])
-schemathesis.openapi.format("custom-pdf", pdf_strategy)
+autotest.openapi.format("custom-pdf", pdf_strategy)
 
-schema = schemathesis.openapi.from_dict({
+schema = autotest.openapi.from_dict({
     "openapi": "3.0.0",
     "info": {"title": "Test", "version": "1.0.0"},
     "paths": {

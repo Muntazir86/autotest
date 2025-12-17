@@ -30,18 +30,18 @@ from werkzeug import Request
 from werkzeug.datastructures import Headers
 from werkzeug.test import TestResponse
 
-import schemathesis.cli
-from schemathesis import auths, hooks
-from schemathesis.cli.commands.run.executor import CUSTOM_HANDLERS
-from schemathesis.cli.commands.run.handlers import output
-from schemathesis.core import deserialization
-from schemathesis.core.hooks import HOOKS_MODULE_ENV_VAR
-from schemathesis.core.transport import Response
-from schemathesis.core.version import SCHEMATHESIS_VERSION
-from schemathesis.specs.openapi import media_types
-from schemathesis.transport.asgi import ASGI_TRANSPORT
-from schemathesis.transport.requests import REQUESTS_TRANSPORT
-from schemathesis.transport.wsgi import WSGI_TRANSPORT
+import autotest.cli
+from autotest import auths, hooks
+from autotest.cli.commands.run.executor import CUSTOM_HANDLERS
+from autotest.cli.commands.run.handlers import output
+from autotest.core import deserialization
+from autotest.core.hooks import HOOKS_MODULE_ENV_VAR
+from autotest.core.transport import Response
+from autotest.core.version import autotest_VERSION
+from autotest.specs.openapi import media_types
+from autotest.transport.asgi import ASGI_TRANSPORT
+from autotest.transport.requests import REQUESTS_TRANSPORT
+from autotest.transport.wsgi import WSGI_TRANSPORT
 
 from .apps import _graphql as graphql
 from .apps import openapi
@@ -66,7 +66,7 @@ logging.getLogger("pyrate_limiter").setLevel(logging.CRITICAL)
 # `pytest test -m hypothesis --hypothesis-profile <profile-name>`
 settings.register_profile("CI", max_examples=2000)
 
-output.SCHEMATHESIS_VERSION = "dev"
+output.AUTOTEST_VERSION = "dev"
 
 
 @pytest.fixture(autouse=True)
@@ -250,7 +250,7 @@ def openapi3_schema_url(server_address, openapi_3_app):
 
 @pytest.fixture
 def openapi3_schema(openapi3_schema_url):
-    return schemathesis.openapi.from_url(openapi3_schema_url)
+    return autotest.openapi.from_url(openapi3_schema_url)
 
 
 @pytest.fixture
@@ -281,7 +281,7 @@ def graphql_url(graphql_server_host, graphql_path):
 
 @pytest.fixture
 def graphql_schema(graphql_url):
-    return schemathesis.graphql.from_url(graphql_url)
+    return autotest.graphql.from_url(graphql_url)
 
 
 @pytest.fixture
@@ -299,7 +299,7 @@ def keep_cwd():
 
 
 FLASK_MARKERS = ("* Serving Flask app", "* Debug mode")
-PACKAGE_ROOT = Path(schemathesis.__file__).parent
+PACKAGE_ROOT = Path(Autotest.__file__).parent
 SITE_PACKAGES = requests.__file__.split("requests")[0]
 IS_WINDOWS = platform.system() == "Windows"
 
@@ -394,8 +394,8 @@ class CliSnapshotConfig:
             data,
             flags=re.MULTILINE,
         )
-        version_line = "Schemathesis dev"
-        data = data.replace(f"Schemathesis v{SCHEMATHESIS_VERSION}", version_line)
+        version_line = "Autotest dev"
+        data = data.replace(f"Autotest v{AUTOTEST_VERSION}", version_line)
         data = re.sub("━+", "━" * len(version_line), data)
         data = data.replace(str(SITE_PACKAGES), site_packages)
         data = re.sub(", line [0-9]+,", ", line XXX,", data)
@@ -637,7 +637,7 @@ def cli(tmp_path):
             if hooks is not None:
                 env = kwargs.setdefault("env", {})
                 env[HOOKS_MODULE_ENV_VAR] = hooks
-            result = cli_runner.invoke(schemathesis.cli.schemathesis, args, **kwargs)
+            result = cli_runner.invoke(Autotest.cli.Autotest, args, **kwargs)
             if result.exception and not isinstance(result.exception, SystemExit):
                 raise result.exception
             return result
@@ -885,7 +885,7 @@ def simple_openapi():
 
 ROOT_SCHEMA = {
     "openapi": "3.0.2",
-    "info": {"title": "Example API", "description": "An API to test Schemathesis", "version": "1.0.0"},
+    "info": {"title": "Example API", "description": "An API to test Autotest", "version": "1.0.0"},
     "paths": {"/teapot": {"$ref": "paths/teapot.yaml#/TeapotCreatePath"}},
 }
 TEAPOT_PATHS = {
@@ -967,7 +967,7 @@ def complex_schema(testdir):
 def schema_with_recursive_references():
     return {
         "openapi": "3.0.0",
-        "info": {"title": "Example API", "description": "An API to test Schemathesis", "version": "1.0.0"},
+        "info": {"title": "Example API", "description": "An API to test Autotest", "version": "1.0.0"},
         "components": {
             "schemas": {
                 "Node": {
@@ -1000,20 +1000,20 @@ def schema_with_recursive_references():
 
 @pytest.fixture
 def swagger_20(simple_schema):
-    return schemathesis.openapi.from_dict(simple_schema)
+    return autotest.openapi.from_dict(simple_schema)
 
 
 @pytest.fixture
 def openapi_30():
     raw = make_schema("simple_openapi.yaml")
-    return schemathesis.openapi.from_dict(raw)
+    return autotest.openapi.from_dict(raw)
 
 
 @pytest.fixture
 def openapi_31():
     raw = make_schema("simple_openapi.yaml")
     raw["openapi"] = "3.1.0"
-    return schemathesis.openapi.from_dict(raw)
+    return autotest.openapi.from_dict(raw)
 
 
 @pytest.fixture
@@ -1041,10 +1041,10 @@ def testdir(testdir):
         preparation = dedent(
             f"""
         import pytest
-        import schemathesis
-        from schemathesis.core import NOT_SET
-        from schemathesis.config import *
-        from schemathesis.generation import GenerationMode
+        import autotest
+        from autotest.core import NOT_SET
+        from autotest.config import *
+        from autotest.generation import GenerationMode
         from test.utils import *
         from hypothesis import given, settings, HealthCheck, Phase, assume, strategies as st, seed
         raw_schema = {schema}
@@ -1055,10 +1055,10 @@ def testdir(testdir):
         def simple_schema():
             return schema
 
-        config = SchemathesisConfig()
+        config = AutotestConfig()
         config.output.sanitization.update(enabled={sanitize_output!r})
 
-        schema = schemathesis.openapi.from_dict(
+        schema = autotest.openapi.from_dict(
             raw_schema, config=config
         )
 
@@ -1124,12 +1124,12 @@ def fastapi_graphql_app(graphql_path):
 
 @pytest.fixture
 def real_app_schema(schema_url):
-    return schemathesis.openapi.from_url(schema_url)
+    return autotest.openapi.from_url(schema_url)
 
 
 @pytest.fixture
 def wsgi_app_schema(flask_app):
-    return schemathesis.openapi.from_wsgi("/schema.yaml", flask_app)
+    return autotest.openapi.from_wsgi("/schema.yaml", flask_app)
 
 
 @pytest.fixture
@@ -1237,4 +1237,4 @@ RESPONSE = Response(
 
 @pytest.fixture
 def mocked_call(mocker):
-    mocker.patch("schemathesis.Case.call", return_value=RESPONSE)
+    mocker.patch("autotest.Case.call", return_value=RESPONSE)

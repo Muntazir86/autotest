@@ -4,9 +4,9 @@ import pytest
 from hypothesis import given
 from hypothesis import strategies as st
 
-import schemathesis
-from schemathesis.transport.requests import REQUESTS_TRANSPORT
-from schemathesis.transport.wsgi import WSGI_TRANSPORT
+import autotest
+from autotest.transport.requests import REQUESTS_TRANSPORT
+from autotest.transport.wsgi import WSGI_TRANSPORT
 
 HERE = Path(__file__).absolute().parent
 
@@ -34,8 +34,8 @@ def test_pdf_generation(ctx):
             },
         }
     )
-    schemathesis.openapi.media_type(MEDIA_TYPE, PDFS, aliases=[ALIAS])
-    schema = schemathesis.openapi.from_dict(schema)
+    autotest.openapi.media_type(MEDIA_TYPE, PDFS, aliases=[ALIAS])
+    schema = autotest.openapi.from_dict(schema)
 
     strategy = schema["/pdf"]["post"].as_strategy()
 
@@ -68,14 +68,14 @@ def test_explicit_example_with_custom_media_type(ctx, cli, snapshot_cli, openapi
             },
         }
     )
-    schemathesis.openapi.media_type("text/csv", st.sampled_from([b"a,b,c\n2,3,4"]))
+    autotest.openapi.media_type("text/csv", st.sampled_from([b"a,b,c\n2,3,4"]))
 
     assert cli.run(str(schema_path), f"--url={openapi3_base_url}", "--mode=positive") == snapshot_cli
 
 
 def test_malformed_registered_media_type_is_skipped(ctx):
     # Register a malformed media type (no slash, so it can't be parsed)
-    schemathesis.specs.openapi.media_types.MEDIA_TYPES["invalid"] = st.binary()
+    Autotest.specs.openapi.media_types.MEDIA_TYPES["invalid"] = st.binary()
 
     # Create schema with valid content type that would trigger wildcard search
     schema = ctx.openapi.build_schema(
@@ -93,7 +93,7 @@ def test_malformed_registered_media_type_is_skipped(ctx):
             },
         }
     )
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
 
     # Should not crash when encountering the malformed registered type
     strategy = schema["/data"]["post"].as_strategy()
@@ -108,7 +108,7 @@ def test_malformed_registered_media_type_is_skipped(ctx):
 def test_coverage_phase(testdir, openapi3_base_url):
     testdir.make_test(
         f"""
-schemathesis.openapi.media_type("image/jpeg", st.just(b""))
+autotest.openapi.media_type("image/jpeg", st.just(b""))
 schema.config.update(base_url="{openapi3_base_url}")
 schema.config.phases.examples.enabled = False
 schema.config.phases.fuzzing.enabled = False
@@ -179,8 +179,8 @@ def test(case):
 def test_multipart_encoding_multiple_content_types(ctx):
     PNG_DATA = b"\x89PNG\r\n\x1a\n" + b"\x00" * 10
     JPEG_DATA = b"\xff\xd8\xff\xe0" + b"\x00" * 10
-    schemathesis.openapi.media_type("image/png", st.just(PNG_DATA))
-    schemathesis.openapi.media_type("image/jpeg", st.just(JPEG_DATA))
+    autotest.openapi.media_type("image/png", st.just(PNG_DATA))
+    autotest.openapi.media_type("image/jpeg", st.just(JPEG_DATA))
 
     spec = ctx.openapi.build_schema(
         {
@@ -205,7 +205,7 @@ def test_multipart_encoding_multiple_content_types(ctx):
         }
     )
 
-    schema = schemathesis.openapi.from_dict(spec)
+    schema = autotest.openapi.from_dict(spec)
     operation = schema["/upload"]["POST"]
     strategy = operation.as_strategy()
 
@@ -239,7 +239,7 @@ def test_multipart_encoding_multiple_content_types(ctx):
 @pytest.mark.openapi_version("3.0")
 def test_multipart_encoding_array_content_type_with_custom_strategy(ctx):
     pdf_data = b"%PDF-1.4\n1 0 obj\n<<>>\nendobj\n"
-    schemathesis.openapi.media_type("application/pdf", st.just(pdf_data))
+    autotest.openapi.media_type("application/pdf", st.just(pdf_data))
 
     spec = ctx.openapi.build_schema(
         {
@@ -264,7 +264,7 @@ def test_multipart_encoding_array_content_type_with_custom_strategy(ctx):
         }
     )
 
-    schema = schemathesis.openapi.from_dict(spec)
+    schema = autotest.openapi.from_dict(spec)
     operation = schema["/upload"]["POST"]
     strategy = operation.as_strategy()
 

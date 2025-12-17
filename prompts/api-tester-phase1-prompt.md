@@ -3,16 +3,16 @@
 ## Project Overview
 
 ### Goal
-Build an enhanced API testing tool by extending Schemathesis with two core features:
+Build an enhanced API testing tool by extending autotest with two core features:
 1. **HTML Report Generator** - Generate beautiful, interactive HTML reports with complete request/response data
 2. **Smart ID Extraction** - Automatically extract and reuse resource IDs across dependent endpoints
 
 ### Approach
-Clone the Schemathesis repository and build these features as extensions/plugins that integrate seamlessly with the existing codebase without breaking core functionality.
+Clone the autotest repository and build these features as extensions/plugins that integrate seamlessly with the existing codebase without breaking core functionality.
 
 ### Target Outcome
 A tool that can:
-- Run all existing Schemathesis tests
+- Run all existing autotest tests
 - Automatically extract IDs from responses and inject them into subsequent requests
 - Generate a comprehensive HTML report showing all test results with full request/response details
 
@@ -21,19 +21,19 @@ A tool that can:
 ## Prerequisites & Setup
 
 ### Repository Setup
-1. Fork/clone Schemathesis from `https://github.com/schemathesis/schemathesis`
+1. Fork/clone autotest from `https://github.com/autotest/autotest`
 2. Create a new branch for your extensions (e.g., `feature/enhanced-testing`)
 3. Set up a development environment with Python 3.9+
 4. Install development dependencies
 
-### Understanding Schemathesis Internals
-Before building, familiarize yourself with these key Schemathesis components:
-- `schemathesis/specs/openapi/` - OpenAPI schema parsing
-- `schemathesis/runner/` - Test execution engine
-- `schemathesis/models.py` - Core data models (Case, Response, etc.)
-- `schemathesis/hooks.py` - Hook system for customization
-- `schemathesis/cli/` - Command-line interface
-- `schemathesis/transports/` - HTTP client handling
+### Understanding autotest Internals
+Before building, familiarize yourself with these key autotest components:
+- `autotest/specs/openapi/` - OpenAPI schema parsing
+- `autotest/runner/` - Test execution engine
+- `autotest/models.py` - Core data models (Case, Response, etc.)
+- `autotest/hooks.py` - Hook system for customization
+- `autotest/cli/` - Command-line interface
+- `autotest/transports/` - HTTP client handling
 
 ### Key Classes to Understand
 - `Case` - Represents a single test case with all request data
@@ -87,7 +87,7 @@ For each API call, capture the following:
 | `test_id` | Unique identifier | `uuid4()` |
 | `operation_id` | OpenAPI operationId | `createUser` |
 | `tags` | OpenAPI tags | `["users", "admin"]` |
-| `test_phase` | Schemathesis phase | `fuzzing`, `examples`, `stateful` |
+| `test_phase` | autotest phase | `fuzzing`, `examples`, `stateful` |
 | `check_results` | Results of each check | `{"not_a_server_error": "pass"}` |
 | `failure_reason` | If failed, why | `Schema validation failed` |
 | `curl_command` | Reproducible curl | `curl -X POST ...` |
@@ -155,9 +155,9 @@ Design the HTML report with these sections:
 ### 1.4 Implementation Approach
 
 #### Step 1: Create Data Collector
-Build a collector class that hooks into Schemathesis execution:
+Build a collector class that hooks into autotest execution:
 
-**Location:** Create new module `schemathesis/reporting/collector.py`
+**Location:** Create new module `autotest/reporting/collector.py`
 
 **Responsibilities:**
 - Subscribe to test execution events
@@ -173,7 +173,7 @@ Build a collector class that hooks into Schemathesis execution:
 #### Step 2: Create Data Models
 Define Pydantic or dataclass models for structured data:
 
-**Location:** Create `schemathesis/reporting/models.py`
+**Location:** Create `autotest/reporting/models.py`
 
 **Models to Create:**
 - `TestRunInfo` - Overall test run metadata
@@ -186,7 +186,7 @@ Define Pydantic or dataclass models for structured data:
 #### Step 3: Create Report Generator
 Build the HTML generation engine:
 
-**Location:** Create `schemathesis/reporting/html_generator.py`
+**Location:** Create `autotest/reporting/html_generator.py`
 
 **Approach:**
 - Use Jinja2 templates for HTML structure
@@ -197,7 +197,7 @@ Build the HTML generation engine:
 
 **Template Structure:**
 ```
-schemathesis/reporting/templates/
+autotest/reporting/templates/
 ├── base.html           # Main template
 ├── components/
 │   ├── header.html
@@ -222,7 +222,7 @@ Add new CLI options:
 - `--report-sanitize-headers=<list>` - Headers to redact
 
 #### Step 5: Configuration Support
-Add to `schemathesis.toml` configuration:
+Add to `autotest.toml` configuration:
 
 ```toml
 [report.html]
@@ -238,7 +238,7 @@ sanitize_headers = ["Authorization", "X-API-Key"]
 
 | Package | Purpose | Why This Package |
 |---------|---------|------------------|
-| **Jinja2** | HTML templating | Already used by Schemathesis, powerful templating |
+| **Jinja2** | HTML templating | Already used by autotest, powerful templating |
 | **Pydantic** | Data validation/models | Type safety, serialization, already in project |
 | **Pygments** | Syntax highlighting | Highlight JSON in request/response bodies |
 | **humanize** | Human-readable formatting | "2 hours ago", "1.5 KB" formatting |
@@ -307,7 +307,7 @@ An intelligent system that:
 
 ### 2.2 Problem This Solves
 
-**Current Schemathesis Behavior:**
+**Current autotest Behavior:**
 ```
 POST /users (body: {"name": "John"})        → 201, {"id": 123, "name": "John"}
 GET  /users/{id} (id: randomly generated)  → 404 (ID doesn't exist!)
@@ -475,7 +475,7 @@ For each parameter needing a value:
 │   │   └─→ YES: Use stored ID (latest or random based on config)
 │   │   └─→ NO: Check by inferred resource type
 │   │       └─→ Found: Use it
-│   │       └─→ Not Found: Let Schemathesis generate random value
+│   │       └─→ Not Found: Let autotest generate random value
 │
 ├─→ Is it a body field with ID-like name?
 │   └─→ Same logic as above
@@ -489,7 +489,7 @@ For each parameter needing a value:
 Allow users to configure ID extraction behavior:
 
 ```yaml
-# schemathesis.toml or custom config
+# autotest.toml or custom config
 [id_extraction]
 enabled = true
 
@@ -520,13 +520,13 @@ ignore_fields = ["created_at", "updated_at", "version"]
 # Injection behavior
 [id_extraction.injection]
 prefer = "latest"  # "latest", "random", "first"
-fallback_to_generated = true  # If no stored ID, use Schemathesis generation
+fallback_to_generated = true  # If no stored ID, use autotest generation
 ```
 
 ### 2.7 Implementation Approach
 
 #### Step 1: Create ID Extractor Module
-**Location:** Create `schemathesis/extraction/id_extractor.py`
+**Location:** Create `autotest/extraction/id_extractor.py`
 
 **Responsibilities:**
 - Parse response bodies for ID-like fields
@@ -540,7 +540,7 @@ fallback_to_generated = true  # If no stored ID, use Schemathesis generation
 - `extract_from_headers(response_headers) → List[ExtractedID]`
 
 #### Step 2: Create ID Store
-**Location:** Create `schemathesis/extraction/id_store.py`
+**Location:** Create `autotest/extraction/id_store.py`
 
 **Responsibilities:**
 - Thread-safe storage (tests may run in parallel)
@@ -554,7 +554,7 @@ fallback_to_generated = true  # If no stored ID, use Schemathesis generation
 - Implement LRU eviction if store gets too large
 
 #### Step 3: Create ID Injector
-**Location:** Create `schemathesis/extraction/id_injector.py`
+**Location:** Create `autotest/extraction/id_injector.py`
 
 **Responsibilities:**
 - Hook into test case generation
@@ -566,7 +566,7 @@ fallback_to_generated = true  # If no stored ID, use Schemathesis generation
 - Use `before_call` hook or modify `Case` generation in `generation/` module
 
 #### Step 4: Create Resource Type Inferrer
-**Location:** Create `schemathesis/extraction/resource_inferrer.py`
+**Location:** Create `autotest/extraction/resource_inferrer.py`
 
 **Responsibilities:**
 - Infer resource type from endpoint path
@@ -582,7 +582,7 @@ fallback_to_generated = true  # If no stored ID, use Schemathesis generation
 /api/v1/customers/{customerId} → resource_type: "Customer"
 ```
 
-#### Step 5: Integration with Schemathesis Hooks
+#### Step 5: Integration with autotest Hooks
 Create hooks that tie everything together:
 
 **Hook: `after_call`**
@@ -714,7 +714,7 @@ Add ID extraction info to reports:
 │     └─→ [ID Extractor] If 2xx, extract IDs from response        │
 │     └─→ [ID Store] Store extracted IDs with context             │
 │     └─→ [Data Collector] Record extraction metadata             │
-│     └─→ Run Schemathesis checks                                 │
+│     └─→ Run autotest checks                                 │
 │     └─→ [Data Collector] Record check results                   │
 │                                                                 │
 │  5. After All Tests                                             │
@@ -727,7 +727,7 @@ Add ID extraction info to reports:
 ### Shared Components
 
 Both features share:
-- **Configuration System**: Unified config in `schemathesis.toml`
+- **Configuration System**: Unified config in `autotest.toml`
 - **Logging**: Consistent logging format
 - **CLI Integration**: Related flags grouped together
 
@@ -738,10 +738,10 @@ Both features share:
 ### Week 1-2: Foundation & Data Collection
 
 **Milestone 1: Data Collection Infrastructure**
-- [ ] Create `schemathesis/reporting/` module structure
+- [ ] Create `autotest/reporting/` module structure
 - [ ] Define Pydantic models for test data
 - [ ] Implement DataCollector class
-- [ ] Hook into Schemathesis execution
+- [ ] Hook into autotest execution
 - [ ] Write unit tests for collector
 - [ ] Verify data capture with sample API
 
@@ -774,7 +774,7 @@ Both features share:
 ### Week 5-6: ID Extraction System
 
 **Milestone 4: ID Detection & Storage**
-- [ ] Create `schemathesis/extraction/` module structure
+- [ ] Create `autotest/extraction/` module structure
 - [ ] Implement ID detection strategies
 - [ ] Create thread-safe ID Store
 - [ ] Implement resource type inference
@@ -818,7 +818,7 @@ Both features share:
 ## File Structure (Proposed)
 
 ```
-schemathesis/
+autotest/
 ├── extraction/                    # NEW: ID Extraction Module
 │   ├── __init__.py
 │   ├── id_extractor.py           # ID detection logic
@@ -894,7 +894,7 @@ schemathesis/
 
 ### Integration
 - [ ] Both features work together seamlessly
-- [ ] No regression in existing Schemathesis functionality
+- [ ] No regression in existing autotest functionality
 - [ ] Clear documentation and examples
 - [ ] Comprehensive test coverage
 
@@ -902,10 +902,10 @@ schemathesis/
 
 ## Appendix: Useful References
 
-### Schemathesis Documentation
-- Main docs: https://schemathesis.readthedocs.io/
-- Hooks reference: https://schemathesis.readthedocs.io/en/latest/reference/hooks/
-- Configuration: https://schemathesis.github.io/schemathesis/configuration/
+### autotest Documentation
+- Main docs: https://autotest.readthedocs.io/
+- Hooks reference: https://autotest.readthedocs.io/en/latest/reference/hooks/
+- Configuration: https://autotest.github.io/autotest/configuration/
 
 ### Related Projects
 - hypothesis-jsonschema: https://github.com/Zac-HD/hypothesis-jsonschema

@@ -1,10 +1,10 @@
 # Targeted Testing
 
-Schemathesis supports targeted property-based testing to guide test data generation toward specific goals, helping find problematic inputs faster by focusing on areas more likely to reveal issues.
+Autotest supports targeted property-based testing to guide test data generation toward specific goals, helping find problematic inputs faster by focusing on areas more likely to reveal issues.
 
 ## Maximizing Metrics
 
-The `--generation-maximize` option instructs Schemathesis to favor inputs that maximize a specific metric:
+The `--generation-maximize` option instructs Autotest to favor inputs that maximize a specific metric:
 
 ```console
 $ st run openapi.yaml --generation-maximize response_time
@@ -58,23 +58,23 @@ While results vary due to the random nature of property-based testing, targeted 
 
 ## Custom Metrics
 
-Schemathesis allows you to register your own metrics to guide targeted testing. A metric is simply a function that accepts a `MetricContext` (which contains the request `case` and its `response`) and returns a `float`. Once registered, you can use it with `--generation-maximize` just like built-in metrics.
+Autotest allows you to register your own metrics to guide targeted testing. A metric is simply a function that accepts a `MetricContext` (which contains the request `case` and its `response`) and returns a `float`. Once registered, you can use it with `--generation-maximize` just like built-in metrics.
 
 ### Defining and Registering a Metric
 
 ```python
 # metrics.py
-import schemathesis
+import autotest
 
-@schemathesis.metric
-def response_size(ctx: schemathesis.MetricContext) -> float:
+@autotest.metric
+def response_size(ctx: Autotest.MetricContext) -> float:
     """Favor responses with larger payloads."""
     return float(len(ctx.response.content))
 ```
 
-After defining and registering your metric, invoke Schemathesis with:
+After defining and registering your metric, invoke Autotest with:
 
 ```bash
-export SCHEMATHESIS_METRICS=metrics
+export Autotest_METRICS=metrics
 st run openapi.yaml --generation-maximize response_size
 ```

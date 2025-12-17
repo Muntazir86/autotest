@@ -2,14 +2,14 @@ import pytest
 from _pytest.main import ExitCode
 from hypothesis import HealthCheck, given, settings
 
-import schemathesis
-from schemathesis import Case
-from schemathesis.core.shell import ShellType
-from schemathesis.generation.modes import GenerationMode
+import autotest
+from autotest import Case
+from autotest.core.shell import ShellType
+from autotest.generation.modes import GenerationMode
 from test.apps.openapi._fastapi import create_app
 from test.apps.openapi._fastapi.app import app
 
-schema = schemathesis.openapi.from_dict(app.openapi())
+schema = autotest.openapi.from_dict(app.openapi())
 schema.config.generation.update(modes=[GenerationMode.POSITIVE])
 
 
@@ -26,7 +26,7 @@ def loose_schema(ctx):
         },
         version="2.0",
     )
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
     schema.config.update(base_url="http://127.0.0.1:1")
     return schema
 
@@ -57,7 +57,7 @@ def test_non_utf_8_body(curl):
 
 def test_json_payload(curl):
     new_app = create_app(operations=["create_user"])
-    schema = schemathesis.openapi.from_dict(new_app.openapi())
+    schema = autotest.openapi.from_dict(new_app.openapi())
     case = schema["/users/"]["POST"].Case(body={"foo": 42}, media_type="application/json")
     command = case.as_curl_command()
     assert command == "curl -X POST -H 'Content-Type: application/json' -d '{\"foo\": 42}' http://localhost/users/"
@@ -102,7 +102,7 @@ def test_pytest_subtests_output(testdir, openapi3_base_url, app_schema):
     testdir.make_test(
         f"""
 schema.config.update(base_url="{openapi3_base_url}")
-lazy_schema = schemathesis.pytest.from_fixture("simple_schema")
+lazy_schema = Autotest.pytest.from_fixture("simple_schema")
 
 @lazy_schema.parametrize()
 def test_(case):
@@ -178,7 +178,7 @@ def test_curl_command_validity(curl, loose_schema):
 )
 def test_shell_aware_escaping(curl, monkeypatch, shell_type, case_kwargs, expected_command):
     if shell_type is not None:
-        monkeypatch.setattr("schemathesis.core.shell._DETECTED_SHELL", shell_type)
+        monkeypatch.setattr("autotest.core.shell._DETECTED_SHELL", shell_type)
 
     case = schema["/users"]["GET"].Case(**case_kwargs)
     command = case.as_curl_command()

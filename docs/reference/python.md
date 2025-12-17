@@ -1,12 +1,12 @@
 # Python API
 
-Reference for Schemathesis public Python API.
+Reference for Autotest public Python API.
 
 ## Schema Loaders
 
 ### Open API
 
-::: schemathesis.openapi
+::: autotest.openapi
     options:
       heading_level: 4
       show_root_toc_entry: false
@@ -23,7 +23,7 @@ Reference for Schemathesis public Python API.
 
 ### GraphQL
 
-::: schemathesis.graphql
+::: autotest.graphql
     options:
       heading_level: 4
       show_root_toc_entry: false
@@ -41,7 +41,7 @@ Reference for Schemathesis public Python API.
 
 ### Pytest
 
-::: schemathesis.pytest
+::: Autotest.pytest
     options:
       heading_level: 4
       show_root_toc_entry: false
@@ -53,7 +53,7 @@ Reference for Schemathesis public Python API.
 
 ## Core Data Structures
 
-::: schemathesis
+::: Autotest
     options:
       heading_level: 3
       show_root_toc_entry: false
@@ -68,7 +68,7 @@ Reference for Schemathesis public Python API.
 
 ## Stateful Testing
 
-::: schemathesis.stateful
+::: Autotest.stateful
     options:
       heading_level: 3
       show_root_toc_entry: false
@@ -80,7 +80,7 @@ Reference for Schemathesis public Python API.
 
 ## Hooks
 
-::: schemathesis
+::: Autotest
     options:
       heading_level: 3
       show_root_toc_entry: false
@@ -93,7 +93,7 @@ Reference for Schemathesis public Python API.
 
 ## Checks
 
-::: schemathesis
+::: Autotest
     options:
       heading_level: 3
       show_root_toc_entry: false
@@ -106,7 +106,7 @@ Reference for Schemathesis public Python API.
 
 ## Authentication
 
-::: schemathesis
+::: Autotest
     options:
       heading_level: 3
       show_root_toc_entry: false
@@ -120,7 +120,7 @@ Reference for Schemathesis public Python API.
 
 ## Serialization
 
-::: schemathesis
+::: Autotest
     options:
       heading_level: 3
       show_root_toc_entry: false
@@ -132,7 +132,7 @@ Reference for Schemathesis public Python API.
 
 ### serializer
 
-::: schemathesis.transport.SerializerRegistry.__call__
+::: Autotest.transport.SerializerRegistry.__call__
     options:
       heading_level: 4
       show_root_heading: false
@@ -143,7 +143,7 @@ Reference for Schemathesis public Python API.
 
 ### serializer.alias
 
-::: schemathesis.transport.SerializerRegistry.alias
+::: Autotest.transport.SerializerRegistry.alias
     options:
       heading_level: 4
       show_root_heading: false
@@ -154,7 +154,7 @@ Reference for Schemathesis public Python API.
 
 ## Response Deserialization
 
-::: schemathesis
+::: Autotest
     options:
       heading_level: 3
       show_root_toc_entry: false
@@ -167,7 +167,7 @@ Reference for Schemathesis public Python API.
 
 ## Targeted Property-based Testing
 
-::: schemathesis
+::: Autotest
     options:
       heading_level: 3
       show_root_toc_entry: false
@@ -180,7 +180,7 @@ Reference for Schemathesis public Python API.
 
 ## Open API Extensions
 
-::: schemathesis.openapi
+::: autotest.openapi
     options:
       heading_level: 3
       show_root_toc_entry: false
@@ -193,7 +193,7 @@ Reference for Schemathesis public Python API.
 
 ## GraphQL Extensions
 
-::: schemathesis.graphql
+::: autotest.graphql
     options:
       heading_level: 3
       show_root_toc_entry: false
@@ -205,14 +205,14 @@ Reference for Schemathesis public Python API.
 
 ### AST Node Factories
 
-These factory functions from `schemathesis.graphql.nodes` convert Python values into GraphQL AST ValueNode objects for use with custom scalar strategies.
+These factory functions from `autotest.graphql.nodes` convert Python values into GraphQL AST ValueNode objects for use with custom scalar strategies.
 
 #### `String`
 
 - `value` (str): String value to wrap
 
 ```python
-from schemathesis.graphql import nodes
+from autotest.graphql import nodes
 from hypothesis import strategies as st
 
 # Email scalar using String node

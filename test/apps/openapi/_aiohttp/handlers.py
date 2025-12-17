@@ -8,9 +8,9 @@ from uuid import uuid4
 import jsonschema
 from aiohttp import web
 
-from schemathesis.config._output import MAX_PAYLOAD_SIZE
-from schemathesis.core import media_types
-from schemathesis.core.errors import MalformedMediaType
+from autotest.config._output import MAX_PAYLOAD_SIZE
+from autotest.core import media_types
+from autotest.core.errors import MalformedMediaType
 
 try:
     from ..schema import PAYLOAD_VALIDATOR
@@ -142,7 +142,7 @@ async def slow(request: web.Request) -> web.Response:
 
 async def performance(request: web.Request) -> web.Response:
     # Emulate bad performance on certain input type
-    # This API operation is for Schemathesis targeted testing, the failure should be discovered
+    # This API operation is for Autotest targeted testing, the failure should be discovered
     decoded = await request.json()
     number = str(decoded).count("0")
     if number > 0:

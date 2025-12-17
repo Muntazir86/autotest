@@ -1,6 +1,6 @@
-import schemathesis
-from schemathesis.generation import GenerationMode
-from schemathesis.generation.hypothesis.builder import _iter_coverage_cases
+import autotest
+from autotest.generation import GenerationMode
+from autotest.generation.hypothesis.builder import _iter_coverage_cases
 
 # Malformed regex - bad character range `\\-.`
 MALFORMED_REGEX = "^[A-Za-z0-9 \\\\-.'À-ÿ]+$"
@@ -51,7 +51,7 @@ def test_malformed_regex_removed_allows_body_generation(ctx):
         },
         version="3.0.2",
     )
-    schema = schemathesis.openapi.from_dict(schema_dict)
+    schema = autotest.openapi.from_dict(schema_dict)
     operation = schema["/api/orders/{orderId}"]["PUT"]
 
     cases = list(

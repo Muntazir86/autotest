@@ -1,1 +1,1 @@
-SchemathesisConfig(projects=ProjectsConfig(default=ProjectConfig(generation=GenerationConfig(database=':memory:'))))
+autotestConfig(projects=ProjectsConfig(default=ProjectConfig(generation=GenerationConfig(database=':memory:'))))

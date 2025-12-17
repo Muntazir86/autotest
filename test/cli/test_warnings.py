@@ -6,7 +6,7 @@ from _pytest.main import ExitCode
 @pytest.mark.operations("basic")
 def test_missing_auth_warning_with_fail_on_true(cli, schema_url, tmp_path, monkeypatch):
     # Given a config file that fails on all warnings
-    config_file = tmp_path / "schemathesis.toml"
+    config_file = tmp_path / "autotest.toml"
     config_file.write_text("""
 [warnings]
 fail-on = true
@@ -24,7 +24,7 @@ fail-on = true
 @pytest.mark.operations("basic")
 def test_missing_auth_warning_with_fail_on_specific(cli, schema_url, tmp_path, monkeypatch):
     # Given a config file that fails only on missing_auth warnings
-    config_file = tmp_path / "schemathesis.toml"
+    config_file = tmp_path / "autotest.toml"
     config_file.write_text("""
 [warnings]
 fail-on = ["missing_auth"]
@@ -69,7 +69,7 @@ def test_missing_deserializer_warning_displayed(cli, ctx, openapi3_base_url):
     )
     assert "GET /users" in result.stdout
     assert "Cannot validate response 200: no deserializer registered for application/msgpack" in result.stdout
-    assert "💡 Register a deserializer with @schemathesis.deserializer() to enable validation" in result.stdout
+    assert "💡 Register a deserializer with @autotest.deserializer() to enable validation" in result.stdout
 
 
 def test_missing_deserializer_warning_with_fail_on(cli, ctx, openapi3_base_url, tmp_path, monkeypatch):
@@ -93,7 +93,7 @@ def test_missing_deserializer_warning_with_fail_on(cli, ctx, openapi3_base_url, 
         }
     )
 
-    config_file = tmp_path / "schemathesis.toml"
+    config_file = tmp_path / "autotest.toml"
     config_file.write_text("""
 [warnings]
 fail-on = ["missing_deserializer"]

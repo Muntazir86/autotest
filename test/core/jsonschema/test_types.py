@@ -1,6 +1,6 @@
 import pytest
 
-from schemathesis.core.jsonschema.types import ANY_TYPE, get_type, to_json_type_name
+from autotest.core.jsonschema.types import ANY_TYPE, get_type, to_json_type_name
 
 
 @pytest.mark.parametrize(

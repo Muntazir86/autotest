@@ -1,6 +1,6 @@
 # Extending CLI
 
-Add custom command-line options and event handlers to integrate Schemathesis with your testing workflow.
+Add custom command-line options and event handlers to integrate Autotest with your testing workflow.
 
 ## When to extend the CLI
 
@@ -18,7 +18,7 @@ Group related options together for better CLI organization:
 ```python
 # cli_extensions.py
 import click
-from schemathesis import cli
+from Autotest import cli
 
 # Create a group for your options
 group = cli.add_group("Counter options")
@@ -120,10 +120,10 @@ class CounterHandler(cli.EventHandler):
 ## Using the extension
 
 ```bash
-export SCHEMATHESIS_HOOKS=cli_extensions
+export Autotest_HOOKS=cli_extensions
 
 # Use the custom options
-schemathesis run \
+autotest run \
   --counter-initial 100 \
   --counter-output results.txt \
   --counter-verbose \

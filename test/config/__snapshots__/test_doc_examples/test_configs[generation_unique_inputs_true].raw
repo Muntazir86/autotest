@@ -1,1 +1,1 @@
-SchemathesisConfig(projects=ProjectsConfig(default=ProjectConfig(generation=GenerationConfig(unique_inputs=True))))
+autotestConfig(projects=ProjectsConfig(default=ProjectConfig(generation=GenerationConfig(unique_inputs=True))))

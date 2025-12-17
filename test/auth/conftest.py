@@ -1,9 +1,9 @@
 import pytest
 
-import schemathesis
+import autotest
 
 
 @pytest.fixture(autouse=True)
 def unregister_global():
     yield
-    schemathesis.auths.unregister()
+    Autotest.auths.unregister()

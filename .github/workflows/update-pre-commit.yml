@@ -27,6 +27,6 @@ jobs:
           title: Update pre-commit
           body: Automatically update pre-commit
           commit-message: 'chore: Update pre-commit'
-          committer: 'CI on behalf of the Schemathesis team <team@schemathesis.io>'
-          author: 'CI on behalf of the Schemathesis team <team@schemathesis.io>'
+          committer: 'CI on behalf of the autotest team <team@autotest.io>'
+          author: 'CI on behalf of the autotest team <team@autotest.io>'
           branch: "create-pull-request/update-pre-commit"

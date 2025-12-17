@@ -8,7 +8,7 @@
         "parameters": {
           "path.runner_group_id": "$response.body#/runner_groups/0/id"
         },
-        "x-schemathesis": {
+        "x-autotest": {
           "is_inferred": true
         }
       }

@@ -1,1 +1,1 @@
-SchemathesisConfig(projects=ProjectsConfig(default=ProjectConfig(generation=GenerationConfig(modes=[<GenerationMode.NEGATIVE: 'negative'>]))))
+autotestConfig(projects=ProjectsConfig(default=ProjectConfig(generation=GenerationConfig(modes=[<GenerationMode.NEGATIVE: 'negative'>]))))

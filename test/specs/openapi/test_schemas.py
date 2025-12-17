@@ -1,13 +1,13 @@
 import pytest
 
-import schemathesis
-from schemathesis.core.errors import OperationNotFound
-from schemathesis.schemas import APIOperation
+import autotest
+from autotest.core.errors import OperationNotFound
+from autotest.schemas import APIOperation
 
 
 @pytest.mark.operations("get_user", "update_user")
 def test_get_operation_via_remote_reference(openapi_version, schema_url):
-    schema = schemathesis.openapi.from_url(schema_url)
+    schema = autotest.openapi.from_url(schema_url)
     resolved = schema.find_operation_by_reference(f"{schema_url}#/paths/~1users~1{{user_id}}/patch")
     assert isinstance(resolved, APIOperation)
     assert resolved.path == "/users/{user_id}"
@@ -37,7 +37,7 @@ def test_get_operation_via_remote_reference(openapi_version, schema_url):
     ],
 )
 def test_find_operation_by_path_match(method, path, expected_path, expected_method, expected_operation_id):
-    schema = schemathesis.openapi.from_dict(
+    schema = autotest.openapi.from_dict(
         {
             "openapi": "3.0.0",
             "info": {"title": "Test", "version": "1.0"},
@@ -70,7 +70,7 @@ def test_find_operation_by_path_match(method, path, expected_path, expected_meth
     ],
 )
 def test_find_operation_by_path_no_match(method, path):
-    schema = schemathesis.openapi.from_dict(
+    schema = autotest.openapi.from_dict(
         {
             "openapi": "3.0.0",
             "info": {"title": "Test", "version": "1.0"},
@@ -116,7 +116,7 @@ def test_find_operation_by_path_no_match(method, path):
     ],
 )
 def test_operation_lookup_ignores_invalid_entries(ctx, paths, reference, expected):
-    schema = schemathesis.openapi.from_dict(ctx.openapi.build_schema(paths))
+    schema = autotest.openapi.from_dict(ctx.openapi.build_schema(paths))
     schema.as_state_machine()
     assert schema.find_operation_by_reference(reference).path == expected
 
@@ -136,7 +136,7 @@ def test_operation_lookup_ignores_invalid_entries(ctx, paths, reference, expecte
     ],
 )
 def test_operation_lookup_non_mapping_shared_params(ctx, paths):
-    schema = schemathesis.openapi.from_dict(ctx.openapi.build_schema(paths))
+    schema = autotest.openapi.from_dict(ctx.openapi.build_schema(paths))
     with pytest.raises(OperationNotFound):
         schema.find_operation_by_reference("#/paths/~1alias/get")
 
@@ -161,7 +161,7 @@ def test_non_string_parameter_location():
             }
         },
     }
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     operation = schema["/test"]["PUT"]
     # Should not raise TypeError: unhashable type: 'dict'
     assert list(operation.iter_parameters()) == []

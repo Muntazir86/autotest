@@ -1,10 +1,10 @@
-# Schemathesis CLI Tutorial
+# Autotest CLI Tutorial
 
 **Estimated time: 15-20 minutes**
 
-This tutorial walks you through a complete API testing workflow with Schemathesis using a booking API. You'll see how property-based testing automatically finds bugs that manual testing typically misses.
+This tutorial walks you through a complete API testing workflow with Autotest using a booking API. You'll see how property-based testing automatically finds bugs that manual testing typically misses.
 
-If you're new to Schemathesis, check the [Quick Start Guide](../quick-start.md) first.
+If you're new to Autotest, check the [Quick Start Guide](../quick-start.md) first.
 
 ## Prerequisites
 
@@ -12,7 +12,7 @@ If you're new to Schemathesis, check the [Quick Start Guide](../quick-start.md) 
 
  - **[Docker Compose](https://docs.docker.com/get-docker/){target=_blank}** - Install Docker Desktop which includes Docker Compose
 
- - **[uv](https://docs.astral.sh/uv/getting-started/installation/){target=_blank}** - Python package manager that allows running Schemathesis without installation using `uvx`
+ - **[uv](https://docs.astral.sh/uv/getting-started/installation/){target=_blank}** - Python package manager that allows running Autotest without installation using `uvx`
 
  - **[curl](https://curl.se/download.html){target=_blank}** (optional) - for reproducing API failures manually
 
@@ -29,11 +29,11 @@ curl --version  # optional
 
 We'll test a booking API that handles hotel reservations - creating bookings and retrieving guest information.
 
-The API lives in the [Schemathesis repository](https://github.com/schemathesis/schemathesis/tree/master/examples/booking):
+The API lives in the [Autotest repository](https://github.com/Autotest/Autotest/tree/master/examples/booking):
 
 ```console
-git clone https://github.com/schemathesis/schemathesis.git
-cd schemathesis/examples/basic
+git clone https://github.com/Autotest/Autotest.git
+cd Autotest/examples/basic
 docker compose up -d
 ```
 !!! success "Verify the API is running"
@@ -46,10 +46,10 @@ docker compose up -d
 
 ## First Test Run
 
-Run Schemathesis against the API:
+Run Autotest against the API:
 
 ```bash
-uvx schemathesis run http://127.0.0.1:8080/openapi.json \
+uvx autotest run http://127.0.0.1:8080/openapi.json \
   --header 'Authorization: Bearer secret-token' \
   --output-sanitize false
 ```
@@ -74,16 +74,16 @@ Run the provided `curl` command to reproduce this failure.
 
 ## Reporting
 
-Schemathesis can export test results in multiple formats for integration with existing tools and CI/CD pipelines. Let's generate a JUnit report that can be imported into Jenkins, GitLab CI, or other test management systems:
+Autotest can export test results in multiple formats for integration with existing tools and CI/CD pipelines. Let's generate a JUnit report that can be imported into Jenkins, GitLab CI, or other test management systems:
 
 ```bash
-uvx schemathesis run http://127.0.0.1:8080/openapi.json \
+uvx autotest run http://127.0.0.1:8080/openapi.json \
   --header 'Authorization: Bearer secret-token' \
   --output-sanitize false \
   --report junit
 ```
 
-This creates a `junit.xml` file in the `schemathesis-report` directory containing structured test results. The JUnit format includes:
+This creates a `junit.xml` file in the `Autotest-report` directory containing structured test results. The JUnit format includes:
 
 - Test case details and execution times
 - Failure descriptions with reproduction steps
@@ -128,7 +128,7 @@ docker compose restart
 Now let's verify our fix by re-running the tests. Focus on the operation you just fixed:
 
 ```bash
-uvx schemathesis run http://127.0.0.1:8080/openapi.json \
+uvx autotest run http://127.0.0.1:8080/openapi.json \
   --header 'Authorization: Bearer secret-token' \
   --output-sanitize false \
   --include-operation-id create_booking_bookings_post
@@ -142,12 +142,12 @@ The `--include-operation-id` option targets only the specific operation we fixed
 ## Generating more test cases
 
 !!! question "Want to find more bugs?"
-    By default, Schemathesis stops at the first failure per operation and runs a limited number of test cases.
+    By default, Autotest stops at the first failure per operation and runs a limited number of test cases.
 
 Let's be more thorough:
 
 ```bash
-uvx schemathesis run http://127.0.0.1:8080/openapi.json \
+uvx autotest run http://127.0.0.1:8080/openapi.json \
   --header 'Authorization: Bearer secret-token' \
   --output-sanitize false \
   --max-examples 500 \
@@ -156,7 +156,7 @@ uvx schemathesis run http://127.0.0.1:8080/openapi.json \
 
 **`--max-examples 500`** generates more test cases per operation, increasing the chance of finding edge cases that smaller test runs might miss.
 
-**`--continue-on-failure`** prevents Schemathesis from stopping at the first failure, allowing it to discover multiple issues on the same API operation in a single run.
+**`--continue-on-failure`** prevents Autotest from stopping at the first failure, allowing it to discover multiple issues on the same API operation in a single run.
 
 These options are particularly valuable when:
 
@@ -170,7 +170,7 @@ The trade-off is longer execution time, but you'll get more chances to find bugs
 !!! question "Tired of long command lines?"
     Instead of repeating long commands, save your settings once and reuse them across your team.
 
-**Create `schemathesis.toml` in your project:**
+**Create `autotest.toml` in your project:**
 
 ```toml
 # Core settings from our previous commands
@@ -194,13 +194,13 @@ enabled = true
 
 **Now run with just:**
 ```bash
-uvx schemathesis run http://127.0.0.1:8080/openapi.json
+uvx autotest run http://127.0.0.1:8080/openapi.json
 ```
 
-Schemathesis automatically loads `schemathesis.toml` from the current directory or project root. You can specify a custom configuration file:
+Autotest automatically loads `autotest.toml` from the current directory or project root. You can specify a custom configuration file:
 
 ```bash
-uvx schemathesis --config-file path/to/config.toml run http://...
+uvx autotest --config-file path/to/config.toml run http://...
 ```
 
 !!! info "Configuration precedence"

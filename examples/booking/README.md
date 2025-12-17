@@ -1,8 +1,8 @@
 # Booking API Example
 
-A sample booking API that demonstrates how Schemathesis automatically discovers various types of bugs that manual testing typically misses.
+A sample booking API that demonstrates how autotest automatically discovers various types of bugs that manual testing typically misses.
 
-> 📚 **Tutorial available:** This API is used in the **[Schemathesis Tutorial](../../docs/tutorial.md)** - a 15-20 minute walkthrough of its core features.
+> 📚 **Tutorial available:** This API is used in the **[autotest Tutorial](../../docs/tutorial.md)** - a 15-20 minute walkthrough of its core features.
 
 ## Overview
 
@@ -36,14 +36,14 @@ All booking endpoints require bearer token authentication.
 Authorization: Bearer secret-token
 ```
 
-## Test with Schemathesis
+## Test with autotest
 
 ```bash
-uvx schemathesis run http://localhost:8080/openapi.json \
+uvx autotest run http://localhost:8080/openapi.json \
   --header 'Authorization: Bearer secret-token'
 ```
 
-Schemathesis will discover an edge case that causes a 500 error.
+autotest will discover an edge case that causes a 500 error.
 
 ## Example Usage
 

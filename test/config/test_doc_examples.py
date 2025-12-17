@@ -4,12 +4,12 @@ from pathlib import Path
 import pytest
 import yaml
 
-import schemathesis.config._projects
-from schemathesis.checks import CHECKS
-from schemathesis.config import SchemathesisConfig
-from schemathesis.config._validator import CONFIG_SCHEMA
-from schemathesis.core.errors import HookError
-from schemathesis.core.transforms import resolve_pointer
+import autotest.config._projects
+from autotest.checks import CHECKS
+from autotest.config import autotestConfig
+from autotest.config._validator import CONFIG_SCHEMA
+from autotest.core.errors import HookError
+from autotest.core.transforms import resolve_pointer
 
 ROOT_DIR = Path(__file__).parent.parent.parent
 DOCS_DIR = ROOT_DIR / "docs"
@@ -32,7 +32,7 @@ ALL_CONFIGS = (
     + extract_examples("reference/warnings.md")
     + extract_examples("configuration.md")
 )
-DEFAULT_CONFIG = SchemathesisConfig()
+DEFAULT_CONFIG = AutotestConfig()
 
 
 def normalize_test_name(name: str, max_length: int = 30) -> str:
@@ -45,7 +45,7 @@ def normalize_test_name(name: str, max_length: int = 30) -> str:
 def test_configs(monkeypatch, config, snapshot_config):
     monkeypatch.setenv("TEST_STRING_1", "foo")
     monkeypatch.setenv("TEST_STRING_2", "bar")
-    monkeypatch.setenv("API_HOST", "http://example.schemathesis.io")
+    monkeypatch.setenv("API_HOST", "http://example.Autotest.io")
     monkeypatch.setenv("API_TOKEN", "secret")
     monkeypatch.setenv("API_KEY", "secret-key")
     monkeypatch.setenv("ADMIN_TOKEN", "secret-admin-key")
@@ -57,9 +57,9 @@ def test_configs(monkeypatch, config, snapshot_config):
     monkeypatch.setenv("SESSION_ID", "secret-session-id!")
     monkeypatch.setenv("USER_ID", "42")
     monkeypatch.setenv("ENVIRONMENT", "test")
-    monkeypatch.setattr(schemathesis.config._projects, "get_workers_count", lambda: 4)
+    monkeypatch.setattr(Autotest.config._projects, "get_workers_count", lambda: 4)
     try:
-        config = SchemathesisConfig.from_str(config)
+        config = AutotestConfig.from_str(config)
         assert config == snapshot_config
     except HookError as exc:
         assert str(exc) == snapshot_config

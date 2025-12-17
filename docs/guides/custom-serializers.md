@@ -4,13 +4,13 @@ Transform generated data into specialized formats like CSV, MessagePack, or othe
 
 ## When to use custom serializers
 
-Use custom serializers when your API accepts structured data in formats that Schemathesis doesn't support by default:
+Use custom serializers when your API accepts structured data in formats that Autotest doesn't support by default:
 
 - **Binary serialization** - MessagePack, Protocol Buffers, or other compact formats
 - **Data processing** - CSV, TSV, or other delimited formats for bulk operations
 - **Custom text formats** - Specialized configuration files or domain-specific structures
 
-Schemathesis generates data based on your JSON Schema but only supports common serialization formats out of the box.
+Autotest generates data based on your JSON Schema but only supports common serialization formats out of the box.
 
 !!! note "Custom Serializers vs Media Types"
     Use custom **serializers** when you have a JSON Schema describing your data structure but need a different output format. Use custom [media types](custom-media-types.md) when you need to generate raw data without a schema structure (like PDFs or images).
@@ -39,7 +39,7 @@ paths:
                     pattern: "^[A-Za-z]+$"
 ```
 
-This schema tells Schemathesis to generate lists of dictionaries like:
+This schema tells Autotest to generate lists of dictionaries like:
 ```python
 [
     {"first_name": "John", "last_name": "Doe"},
@@ -52,10 +52,10 @@ Register a serializer that converts these dictionaries to CSV bytes:
 ```python
 # csv_serializer.py
 import csv
-import schemathesis
+import autotest
 from io import StringIO
 
-@schemathesis.serializer("text/csv")
+@autotest.serializer("text/csv")
 def csv_serializer(ctx, value):
     """Convert list of dictionaries to CSV bytes"""
     # Handle binary data from external examples
@@ -81,8 +81,8 @@ def csv_serializer(ctx, value):
 ```
 
 ```bash
-export SCHEMATHESIS_HOOKS=csv_serializer
-schemathesis run http://localhost:8000/openapi.json
+export Autotest_HOOKS=csv_serializer
+autotest run http://localhost:8000/openapi.json
 ```
 
 **Result:** Your `/upload-users` endpoint receives properly formatted CSV data instead of JSON.
@@ -97,16 +97,16 @@ schemathesis run http://localhost:8000/openapi.json
 Reuse existing serializers (YAML, JSON, XML) for custom media types:
 
 ```python
-import schemathesis
+import autotest
 
 # Reuse built-in YAML serializer for non-standard YAML variants
-schemathesis.serializer.alias("application/x-yaml-custom", "application/yaml")
+Autotest.serializer.alias("application/x-yaml-custom", "application/yaml")
 
 # Reuse JSON for internal company formats
-schemathesis.serializer.alias("application/vnd.company.internal", "application/json")
+Autotest.serializer.alias("application/vnd.company.internal", "application/json")
 
 # Register multiple aliases at once
-schemathesis.serializer.alias(
+Autotest.serializer.alias(
     ["text/x-json", "application/jsonrequest"],
     "application/json"
 )
@@ -117,7 +117,7 @@ schemathesis.serializer.alias(
 ### Multiple aliases for the same format
 
 ```python
-@schemathesis.serializer(
+@autotest.serializer(
     "text/csv", "text/comma-separated-values", "application/csv"
 )
 def csv_serializer(ctx, value):
@@ -130,7 +130,7 @@ def csv_serializer(ctx, value):
 ### Context-aware serialization
 
 ```python
-@schemathesis.serializer("text/csv")
+@autotest.serializer("text/csv")
 def context_aware_csv(ctx, value):
     """Use test case information to customize serialization"""
     if isinstance(value, bytes):
@@ -151,5 +151,5 @@ def context_aware_csv(ctx, value):
 ## What's Next
 
 - **[Custom Media Types](custom-media-types.md)** - Generate raw data when there's no JSON Schema
-- **[Extending Schemathesis](extending.md)** - Other customization options
+- **[Extending Autotest](extending.md)** - Other customization options
 - **[Serialization API Reference](../reference/python.md#serialization)**

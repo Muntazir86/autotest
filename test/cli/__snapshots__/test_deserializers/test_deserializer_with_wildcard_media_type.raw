@@ -1,7 +1,7 @@
 Exit code: 0
 ---
 Stdout:
-Schemathesis dev
+autotest dev
 ━━━━━━━━━━━━━━━━
 
 
@@ -38,7 +38,7 @@ Schema validation skipped: 2 operations cannot validate responses due to missing
   - GET /data2
     Cannot validate response 200: no deserializer registered for application/vnd.other+custom
 
-💡 Register a deserializer with @schemathesis.deserializer() to enable validation
+💡 Register a deserializer with @autotest.deserializer() to enable validation
 
 =================================== SUMMARY ====================================
 

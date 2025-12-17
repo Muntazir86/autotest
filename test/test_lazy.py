@@ -3,7 +3,7 @@ import re
 import pytest
 from hypothesis import settings
 
-from schemathesis.generation.modes import GenerationMode
+from autotest.generation.modes import GenerationMode
 
 
 @pytest.fixture
@@ -16,7 +16,7 @@ def test_default(testdir):
     # When LazySchema is used
     testdir.make_test(
         """
-lazy_schema = schemathesis.pytest.from_fixture("simple_schema")
+lazy_schema = Autotest.pytest.from_fixture("simple_schema")
 
 @lazy_schema.parametrize()
 def test_(case):
@@ -33,7 +33,7 @@ def test_with_settings(testdir):
     # When hypothesis settings are applied to the test function
     testdir.make_test(
         """
-lazy_schema = schemathesis.pytest.from_fixture("simple_schema")
+lazy_schema = Autotest.pytest.from_fixture("simple_schema")
 
 @settings(phases=[])
 @lazy_schema.parametrize()
@@ -53,7 +53,7 @@ def test_invalid_operation(testdir, hypothesis_max_examples):
     # And schema validation is disabled
     testdir.make_test(
         """
-lazy_schema = schemathesis.pytest.from_fixture("simple_schema")
+lazy_schema = Autotest.pytest.from_fixture("simple_schema")
 
 @lazy_schema.parametrize()
 def test_(request, case):
@@ -95,7 +95,7 @@ def test_with_fixtures(testdir):
     # When the test uses custom arguments for pytest fixtures
     testdir.make_test(
         """
-lazy_schema = schemathesis.pytest.from_fixture("simple_schema")
+lazy_schema = Autotest.pytest.from_fixture("simple_schema")
 
 @pytest.fixture
 def another():
@@ -118,7 +118,7 @@ def test_with_parametrize_filters(testdir):
     # When the test uses method / endpoint / tag / operation-id filter
     testdir.make_test(
         """
-lazy_schema = schemathesis.pytest.from_fixture("simple_schema")
+lazy_schema = Autotest.pytest.from_fixture("simple_schema")
 
 @lazy_schema.include(path_regex="/first").parametrize()
 def test_a(request, case):
@@ -175,7 +175,7 @@ def test_with_schema_filters(testdir):
     # When the test uses method / endpoint filter
     testdir.make_test(
         """
-lazy_schema = schemathesis.pytest.from_fixture("simple_schema").include(path_regex="/pets", method="POST")
+lazy_schema = Autotest.pytest.from_fixture("simple_schema").include(path_regex="/pets", method="POST")
 
 @lazy_schema.parametrize()
 def test_a(request, case):
@@ -201,7 +201,7 @@ def test_invalid_fixture(testdir):
 def bad_schema():
     return 1
 
-lazy_schema = schemathesis.pytest.from_fixture("bad_schema")
+lazy_schema = Autotest.pytest.from_fixture("bad_schema")
 
 @lazy_schema.parametrize()
 def test_(request, case):
@@ -228,7 +228,7 @@ def test_schema_given(testdir, given):
         f"""
 from hypothesis.strategies._internal.core import DataObject
 
-lazy_schema = schemathesis.pytest.from_fixture("simple_schema")
+lazy_schema = Autotest.pytest.from_fixture("simple_schema")
 OPERATIONS = []
 
 @lazy_schema.parametrize()
@@ -259,7 +259,7 @@ def test_schema_given_before_parametrize(testdir):
     # When `schema.given` is applied before `schema.parametrize`
     testdir.make_test(
         """
-lazy_schema = schemathesis.pytest.from_fixture("simple_schema")
+lazy_schema = Autotest.pytest.from_fixture("simple_schema")
 
 
 @lazy_schema.given(user_id=st.sampled_from([1, 2, 3]))
@@ -291,7 +291,7 @@ def test_invalid_given_usage(testdir):
     # When `schema.given` is used incorrectly (e.g. called without arguments)
     testdir.make_test(
         """
-lazy_schema = schemathesis.pytest.from_fixture("simple_schema")
+lazy_schema = Autotest.pytest.from_fixture("simple_schema")
 
 @lazy_schema.parametrize()
 @lazy_schema.given()
@@ -316,7 +316,7 @@ schema.config.update(base_url="{openapi3_base_url}")
 def parametrized_lazy_schema(request):
     return schema
 
-lazy_schema = schemathesis.pytest.from_fixture("parametrized_lazy_schema")
+lazy_schema = Autotest.pytest.from_fixture("parametrized_lazy_schema")
 
 @lazy_schema.parametrize()
 {settings}
@@ -341,11 +341,11 @@ def test_generation_modes(testdir):
         """
 @pytest.fixture()
 def api_schema():
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     schema.config.generation.update(modes=list(GenerationMode))
     return schema
 
-lazy_schema = schemathesis.pytest.from_fixture("api_schema")
+lazy_schema = Autotest.pytest.from_fixture("api_schema")
 
 @lazy_schema.parametrize()
 @settings(max_examples=1)
@@ -395,9 +395,9 @@ def test_error_on_no_matches(testdir):
         """
 @pytest.fixture()
 def api_schema():
-    return schemathesis.openapi.from_dict(raw_schema)
+    return autotest.openapi.from_dict(raw_schema)
 
-lazy_schema = schemathesis.pytest.from_fixture("api_schema")
+lazy_schema = Autotest.pytest.from_fixture("api_schema")
 
 @lazy_schema.include(operation_id=["does-not-exist"]).parametrize()
 @settings(max_examples=1)
@@ -434,7 +434,7 @@ def test_marks_transfer(testdir, decorators):
 def web_app():
     1 / 0
 
-schema = schemathesis.pytest.from_fixture("web_app")
+schema = Autotest.pytest.from_fixture("web_app")
 
 {decorators}
 def test_schema(case):
@@ -453,11 +453,11 @@ def test_skip_negative_without_parameters(testdir):
         """
 @pytest.fixture()
 def api_schema():
-    schema = schemathesis.openapi.from_dict(raw_schema)
-    schema.config.generation.update(modes=[schemathesis.GenerationMode.NEGATIVE])
+    schema = autotest.openapi.from_dict(raw_schema)
+    schema.config.generation.update(modes=[Autotest.GenerationMode.NEGATIVE])
     return schema
 
-lazy_schema = schemathesis.pytest.from_fixture("api_schema")
+lazy_schema = Autotest.pytest.from_fixture("api_schema")
 
 @lazy_schema.parametrize()
 def test_(case):
@@ -474,7 +474,7 @@ def test_trimmed_output(testdir):
     # And tests are failing
     testdir.make_test(
         """
-lazy_schema = schemathesis.pytest.from_fixture("simple_schema")
+lazy_schema = Autotest.pytest.from_fixture("simple_schema")
 
 @lazy_schema.parametrize()
 def test_(case):
@@ -483,7 +483,7 @@ def test_(case):
     result = testdir.runpytest()
     result.assert_outcomes(passed=1, failed=1)
     stdout = result.stdout.str()
-    # Internal Schemathesis' frames should not appear in the output
+    # Internal Autotest' frames should not appear in the output
     assert "def run_subtest" not in stdout
 
 
@@ -494,11 +494,11 @@ def test_multiple_failures(testdir, openapi3_schema_url):
         f"""
 @pytest.fixture
 def api_schema():
-    schema = schemathesis.openapi.from_url('{openapi3_schema_url}')
+    schema = autotest.openapi.from_url('{openapi3_schema_url}')
     schema.config.generation.update(modes=[GenerationMode.POSITIVE])
     return schema
 
-lazy_schema = schemathesis.pytest.from_fixture("api_schema")
+lazy_schema = Autotest.pytest.from_fixture("api_schema")
 
 @lazy_schema.parametrize()
 @settings(derandomize=True)
@@ -522,9 +522,9 @@ def test_flaky(testdir, openapi3_schema_url):
         f"""
 @pytest.fixture
 def api_schema():
-    return schemathesis.openapi.from_url('{openapi3_schema_url}')
+    return autotest.openapi.from_url('{openapi3_schema_url}')
 
-lazy_schema = schemathesis.pytest.from_fixture("api_schema")
+lazy_schema = Autotest.pytest.from_fixture("api_schema")
 
 @lazy_schema.parametrize()
 def test_(case):
@@ -549,11 +549,11 @@ def test_output_sanitization(testdir, openapi3_schema_url, openapi3_base_url, va
         f"""
 @pytest.fixture
 def api_schema():
-    schema = schemathesis.openapi.from_url('{openapi3_schema_url}')
+    schema = autotest.openapi.from_url('{openapi3_schema_url}')
     schema.config.output.sanitization.enabled = {value}
     return schema
 
-lazy_schema = schemathesis.pytest.from_fixture("api_schema")
+lazy_schema = Autotest.pytest.from_fixture("api_schema")
 
 @lazy_schema.parametrize()
 def test_(case):
@@ -575,11 +575,11 @@ def test_rate_limit(testdir, openapi3_schema_url):
         f"""
 @pytest.fixture
 def api_schema():
-    schema = schemathesis.openapi.from_url('{openapi3_schema_url}')
+    schema = autotest.openapi.from_url('{openapi3_schema_url}')
     schema.config.update(rate_limit="1/s")
     return schema
 
-lazy_schema = schemathesis.pytest.from_fixture("api_schema")
+lazy_schema = Autotest.pytest.from_fixture("api_schema")
 
 @lazy_schema.parametrize()
 def test_(case):
@@ -598,11 +598,11 @@ def test_override(testdir, openapi3_schema_url):
         f"""
 @pytest.fixture
 def api_schema():
-    schema = schemathesis.openapi.from_url('{openapi3_schema_url}')
+    schema = autotest.openapi.from_url('{openapi3_schema_url}')
     schema.config.update(parameters={{"key": "foo", "id": "bar"}})
     return schema
 
-lazy_schema = schemathesis.pytest.from_fixture("api_schema")
+lazy_schema = Autotest.pytest.from_fixture("api_schema")
 
 @lazy_schema.include(path_regex="path_variable|custom_format").parametrize()
 def test(case):
@@ -623,15 +623,15 @@ def test_async_fixture(testdir, openapi3_schema_url):
     testdir.make_test(
         f"""
 import pytest_asyncio
-import schemathesis
+import autotest
 
 
 @pytest_asyncio.fixture
 async def lazy_schema():
-    return schemathesis.openapi.from_url('{openapi3_schema_url}')
+    return autotest.openapi.from_url('{openapi3_schema_url}')
 
 
-schema = schemathesis.pytest.from_fixture("lazy_schema")
+schema = Autotest.pytest.from_fixture("lazy_schema")
 
 
 @schema.parametrize()
@@ -649,10 +649,10 @@ async def test_fail(case):
 
 
 def test_phases_from_config(testdir):
-    # When test phases are configured in schemathesis.toml
+    # When test phases are configured in autotest.toml
     testdir.makefile(
         ".toml",
-        schemathesis="""
+        Autotest="""
 [phases.examples]
 enabled = false
 
@@ -665,11 +665,11 @@ enabled = false
     testdir.make_test(
         """
 import pytest
-import schemathesis
+import autotest
 
 @pytest.fixture
 def api_schema():
-    return schemathesis.openapi.from_dict({
+    return autotest.openapi.from_dict({
         "openapi": "3.0.0",
         "paths": {
             "/users": {
@@ -680,7 +680,7 @@ def api_schema():
         }
     })
 
-lazy_schema = schemathesis.pytest.from_fixture("api_schema")
+lazy_schema = Autotest.pytest.from_fixture("api_schema")
 
 @lazy_schema.parametrize()
 def test_api(case):
@@ -692,10 +692,10 @@ def test_api(case):
 
 
 def test_hypothesis_settings_from_config(testdir):
-    # When hypothesis settings are configured in schemathesis.toml for a specific operation
+    # When hypothesis settings are configured in autotest.toml for a specific operation
     testdir.makefile(
         ".toml",
-        schemathesis="""
+        Autotest="""
 [[operations]]
 include-path = "/users"
 
@@ -714,11 +714,11 @@ enabled = false
     testdir.make_test(
         """
 import pytest
-import schemathesis
+import autotest
 
 @pytest.fixture
 def api_schema():
-    return schemathesis.openapi.from_dict({
+    return autotest.openapi.from_dict({
         "openapi": "3.0.0",
         "paths": {
             "/users": {
@@ -732,7 +732,7 @@ def api_schema():
         }
     })
 
-lazy_schema = schemathesis.pytest.from_fixture("api_schema")
+lazy_schema = Autotest.pytest.from_fixture("api_schema")
 
 call_count = 0
 
@@ -755,11 +755,11 @@ def test_lazy_fixture_with_test_class(testdir):
     testdir.make_test(
         """
 import pytest
-import schemathesis
+import autotest
 
 @pytest.fixture
 def api_schema():
-    return schemathesis.openapi.from_dict({
+    return autotest.openapi.from_dict({
         "openapi": "3.0.0",
         "paths": {
             "/users": {
@@ -770,7 +770,7 @@ def api_schema():
         }
     })
 
-lazy_schema = schemathesis.pytest.from_fixture("api_schema")
+lazy_schema = Autotest.pytest.from_fixture("api_schema")
 
 class TestAPI:
     @lazy_schema.parametrize()
@@ -792,12 +792,12 @@ def test_checks_available_with_from_fixture(tmp_path):
     test_file = tmp_path / "test_isolated.py"
     test_file.write_text("""
 import pytest
-import schemathesis
+import autotest
 from hypothesis import settings, Phase
 
 @pytest.fixture
 def api_schema():
-    return schemathesis.openapi.from_dict({
+    return autotest.openapi.from_dict({
         "openapi": "3.0.0",
         "paths": {
             "/users": {
@@ -808,12 +808,12 @@ def api_schema():
         }
     })
 
-lazy_schema = schemathesis.pytest.from_fixture("api_schema")
+lazy_schema = Autotest.pytest.from_fixture("api_schema")
 
 @lazy_schema.parametrize()
 @settings(max_examples=1, phases=[Phase.generate])
 def test_checks_are_loaded(case):
-    _ = schemathesis.checks.status_code_conformance
+    _ = Autotest.checks.status_code_conformance
 """)
 
     result = subprocess.run(
@@ -827,10 +827,10 @@ def test_checks_are_loaded(case):
 
 
 def test_operations_disabled_via_config_with_from_fixture(testdir):
-    # Given a schemathesis.toml that disables a specific operation
+    # Given a autotest.toml that disables a specific operation
     testdir.makefile(
         ".toml",
-        schemathesis="""
+        Autotest="""
 [[operations]]
 include-name = "POST /users"
 enabled = false
@@ -841,11 +841,11 @@ enabled = false
     testdir.make_test(
         """
 import pytest
-import schemathesis
+import autotest
 
 @pytest.fixture
 def api_schema():
-    return schemathesis.openapi.from_dict({
+    return autotest.openapi.from_dict({
         "openapi": "3.0.0",
         "info": {"title": "Test API", "version": "1.0.0"},
         "paths": {
@@ -865,7 +865,7 @@ def api_schema():
         }
     })
 
-lazy_schema = schemathesis.pytest.from_fixture("api_schema")
+lazy_schema = Autotest.pytest.from_fixture("api_schema")
 
 @lazy_schema.parametrize()
 def test_api(case):
@@ -901,7 +901,7 @@ custom_db = database.DirectoryBasedExampleDatabase(custom_db_path)
 hyp_settings.register_profile("custom_db_profile", database=custom_db, derandomize=False)
 hyp_settings.load_profile("custom_db_profile")
 
-lazy_schema = schemathesis.pytest.from_fixture("simple_schema")
+lazy_schema = Autotest.pytest.from_fixture("simple_schema")
 
 @lazy_schema.parametrize()
 @hyp_settings(max_examples=1)
@@ -933,7 +933,7 @@ from hypothesis import settings as hyp_settings, database
 custom_db_path = tempfile.mkdtemp()
 custom_db = database.DirectoryBasedExampleDatabase(custom_db_path)
 
-lazy_schema = schemathesis.pytest.from_fixture("simple_schema")
+lazy_schema = Autotest.pytest.from_fixture("simple_schema")
 
 @lazy_schema.parametrize()
 @hyp_settings(max_examples=1, database=custom_db, derandomize=False)

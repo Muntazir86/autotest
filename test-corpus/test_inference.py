@@ -6,8 +6,8 @@ import sys
 import pytest
 from syrupy.extensions.json import JSONSnapshotExtension
 
-import schemathesis
-from schemathesis.specs.openapi.stateful import dependencies
+import autotest
+from autotest.specs.openapi.stateful import dependencies
 
 CURRENT_DIR = pathlib.Path(__file__).parent.absolute()
 sys.path.append(str(CURRENT_DIR.parent))
@@ -134,7 +134,7 @@ def test_dependency_graph(corpus, filename, snapshot_json):
     # Corpus is sampled due to its size
     raw_content = CORPUS_FILES[corpus].extractfile(filename).read()
     raw_schema = json_loads(raw_content)
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     graph = dependencies.analyze(schema)
     serialized = graph.serialize()
 
@@ -146,7 +146,7 @@ def test_dependency_graph(corpus, filename, snapshot_json):
 
 def _process_member(raw_content):
     raw_schema = json_loads(raw_content)
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     graph = dependencies.analyze(schema)
 
     resources = len(graph.resources)

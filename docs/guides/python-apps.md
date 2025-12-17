@@ -1,6 +1,6 @@
 # Testing Python Apps
 
-This guide shows how to test Python web applications (FastAPI, Flask, etc.) directly with Schemathesis instead of making network requests. You'll learn basic setup patterns and advanced integration techniques for existing test suites.
+This guide shows how to test Python web applications (FastAPI, Flask, etc.) directly with Autotest instead of making network requests. You'll learn basic setup patterns and advanced integration techniques for existing test suites.
 
 ## Why Test Python Apps Directly?
 
@@ -15,7 +15,7 @@ This guide shows how to test Python web applications (FastAPI, Flask, etc.) dire
 
 ```python
 from fastapi import FastAPI
-import schemathesis
+import autotest
 
 app = FastAPI()
 
@@ -24,7 +24,7 @@ async def get_users():
     return [{"id": 1, "name": "Alice"}]
 
 # Load schema directly from the app
-schema = schemathesis.openapi.from_asgi("/openapi.json", app)
+schema = autotest.openapi.from_asgi("/openapi.json", app)
 
 @schema.parametrize()
 def test_api(case):
@@ -35,7 +35,7 @@ def test_api(case):
 
 ```python
 from flask import Flask, jsonify
-import schemathesis
+import autotest
 
 app = Flask(__name__)
 
@@ -47,7 +47,7 @@ def get_users():
 def openapi_spec():
     return {...}  # Your OpenAPI schema
 
-schema = schemathesis.openapi.from_wsgi("/openapi.json", app)
+schema = autotest.openapi.from_wsgi("/openapi.json", app)
 
 @schema.parametrize()
 def test_api(case):
@@ -63,7 +63,7 @@ Use custom test clients for shared configuration, authentication, or application
 ```python
 from fastapi import FastAPI
 from starlette.testclient import TestClient
-import schemathesis
+import autotest
 
 app = FastAPI()
 
@@ -71,7 +71,7 @@ app = FastAPI()
 async def get_users():
     return [{"id": 1, "name": "Alice"}]
 
-schema = schemathesis.openapi.from_asgi("/openapi.json", app)
+schema = autotest.openapi.from_asgi("/openapi.json", app)
 
 @schema.parametrize()
 def test_api_with_session(case):
@@ -93,7 +93,7 @@ Combine direct app testing with existing pytest fixtures:
 ```python
 import pytest
 from fastapi import FastAPI
-import schemathesis
+import autotest
 
 @pytest.fixture
 def configured_app(database_session):
@@ -108,9 +108,9 @@ def configured_app(database_session):
 
 @pytest.fixture
 def api_schema(configured_app):
-    return schemathesis.openapi.from_asgi("/openapi.json", configured_app)
+    return autotest.openapi.from_asgi("/openapi.json", configured_app)
 
-schema = schemathesis.pytest.from_fixture("api_schema")
+schema = Autotest.pytest.from_fixture("api_schema")
 
 @schema.parametrize()
 def test_operations(case):
@@ -123,9 +123,9 @@ For scenarios where you need to dynamically obtain authentication tokens (login 
 
 ```python
 from starlette.testclient import TestClient
-import schemathesis
+import autotest
 
-schema = schemathesis.openapi.from_asgi("/openapi.json", app)
+schema = autotest.openapi.from_asgi("/openapi.json", app)
 
 @schema.auth()
 class AppAuth:

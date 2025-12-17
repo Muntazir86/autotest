@@ -2,7 +2,7 @@ import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
-from schemathesis.openapi.generation.filters import is_valid_path, is_valid_query
+from autotest.openapi.generation.filters import is_valid_path, is_valid_query
 
 
 @pytest.mark.parametrize(

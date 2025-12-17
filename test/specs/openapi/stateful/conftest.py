@@ -9,11 +9,11 @@ import hypothesis
 import pytest
 from flask import Flask, abort, jsonify, request
 
-import schemathesis
-from schemathesis.config import SchemathesisConfig
-from schemathesis.engine.context import EngineContext
-from schemathesis.engine.phases import Phase, PhaseName, stateful
-from schemathesis.generation.modes import GenerationMode
+import autotest
+from autotest.config import autotestConfig
+from autotest.engine.context import EngineContext
+from autotest.engine.phases import Phase, PhaseName, stateful
+from autotest.generation.modes import GenerationMode
 
 
 @dataclass
@@ -398,7 +398,7 @@ def app_factory(ctx):
 
         config.merge_body = merge_body
         if not merge_body:
-            schema["paths"]["/users"]["post"]["responses"]["201"]["links"]["UpdateUser"]["x-schemathesis"] = {
+            schema["paths"]["/users"]["post"]["responses"]["201"]["links"]["UpdateUser"]["x-autotest"] = {
                 "merge_body": merge_body
             }
         config.independent_500 = independent_500
@@ -503,7 +503,7 @@ def engine_factory(app_factory, app_runner, stop_event):
     ):
         app = app_factory(**(app_kwargs or {}))
         port = app_runner.run_flask_app(app)
-        config = SchemathesisConfig()
+        config = AutotestConfig()
         config.update(max_failures=max_failures)
         config.projects.override.checks.update(
             included_check_names=[func.__name__ for func in checks] if isinstance(checks, list) else None,
@@ -519,7 +519,7 @@ def engine_factory(app_factory, app_runner, stop_event):
             maximize=maximize,
         )
         config.projects.override.update(headers=headers)
-        schema = schemathesis.openapi.from_url(f"http://127.0.0.1:{port}/openapi.json", config=config)
+        schema = autotest.openapi.from_url(f"http://127.0.0.1:{port}/openapi.json", config=config)
 
         if hypothesis_settings is not None:
             current = schema.config.get_hypothesis_settings()

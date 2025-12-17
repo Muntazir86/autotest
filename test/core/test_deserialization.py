@@ -1,6 +1,6 @@
 import pytest
 
-from schemathesis.core.deserialization import deserialize_yaml
+from autotest.core.deserialization import deserialize_yaml
 
 
 @pytest.mark.parametrize(

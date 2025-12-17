@@ -2,10 +2,10 @@
 
 import pytest
 
-import schemathesis
-from schemathesis.schemas import PayloadAlternatives
-from schemathesis.specs.openapi.adapter import v2, v3_0
-from schemathesis.specs.openapi.adapter.parameters import OpenApiBody
+import autotest
+from autotest.schemas import PayloadAlternatives
+from autotest.specs.openapi.adapter import v2, v3_0
+from autotest.specs.openapi.adapter.parameters import OpenApiBody
 
 
 @pytest.mark.parametrize(
@@ -86,7 +86,7 @@ def test_payload_open_api_3(media_types, assert_parameters, make_openapi_3_schem
 def test_parameter_set_get(make_openapi_3_schema):
     header = {"in": "header", "name": "id", "required": True, "schema": {}}
     raw_schema = make_openapi_3_schema(parameters=[header])
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     headers = schema["/users"]["POST"].headers
     assert "id" in headers
     assert "foo" not in headers

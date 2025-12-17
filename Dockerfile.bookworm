@@ -1,11 +1,11 @@
 FROM python:3.14-bookworm
 
-LABEL Name=Schemathesis
+LABEL Name=autotest
 
 WORKDIR /app
 
-RUN groupadd --gid 1000 --system schemathesis && \
-    useradd --uid 1000 --system schemathesis -g schemathesis -s /sbin/nologin
+RUN groupadd --gid 1000 --system autotest && \
+    useradd --uid 1000 --system autotest -g autotest -s /sbin/nologin
 
 COPY --chown=1000:1000 pyproject.toml README.md src ./
 
@@ -22,8 +22,8 @@ RUN apt-get update \
 # Needed for the `.hypothesis` directory
 RUN chown -R 1000:1000 /app
 
-USER schemathesis
+USER autotest
 
-ENV SCHEMATHESIS_DOCKER_IMAGE=3.14-bookworm
+ENV autotest_DOCKER_IMAGE=3.14-bookworm
 
-ENTRYPOINT ["schemathesis"]
+ENTRYPOINT ["autotest"]

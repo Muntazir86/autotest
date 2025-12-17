@@ -5,10 +5,10 @@ from urllib.parse import quote, unquote
 import pytest
 from hypothesis import given, settings
 
-import schemathesis
-from schemathesis.core import SCHEMATHESIS_TEST_CASE_HEADER
-from schemathesis.generation.modes import GenerationMode
-from schemathesis.specs.openapi.serialization import (
+import autotest
+from autotest.core import autotest_TEST_CASE_HEADER
+from autotest.generation.modes import GenerationMode
+from autotest.specs.openapi.serialization import (
     comma_delimited_object,
     conversion,
     deep_object,
@@ -22,7 +22,7 @@ from schemathesis.specs.openapi.serialization import (
     matrix_object,
     matrix_primitive,
 )
-from schemathesis.transport.prepare import get_default_headers
+from autotest.transport.prepare import get_default_headers
 from test.utils import assert_requests_call
 
 PRIMITIVE_SCHEMA = {"type": "integer", "enum": [1]}
@@ -117,7 +117,7 @@ def make_openapi_schema(*parameters):
 
 
 def assert_generates(testdir, raw_schema, expected, parameter):
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
 
     attribute = "path_parameters" if parameter == "path" else parameter
 
@@ -315,7 +315,7 @@ def test_path_serialization_styles_openapi3(schema, style, explode, expected):
             }
         },
     }
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
 
     @given(case=schema["/teapot/{color}"]["GET"].as_strategy())
     def test(case):
@@ -556,7 +556,7 @@ def test_unusual_form_schema(ctx, type_name):
             }
         }
     )
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
 
     @given(case=schema["/multipart"]["POST"].as_strategy())
     @settings(max_examples=5, deadline=None)
@@ -584,6 +584,6 @@ def test_unusual_form_schema(ctx, type_name):
         # And it should be case-insensitive
         headers = case.as_transport_kwargs(headers={"content-type": "text/plain"})["headers"]
         assert headers["content-type"] == "text/plain"
-        assert list(headers) == [*list(get_default_headers()), SCHEMATHESIS_TEST_CASE_HEADER, "content-type"]
+        assert list(headers) == [*list(get_default_headers()), AUTOTEST_TEST_CASE_HEADER, "content-type"]
 
     test()

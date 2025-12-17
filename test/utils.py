@@ -10,15 +10,15 @@ import requests
 import urllib3
 from syrupy import SnapshotAssertion
 
-import schemathesis
-from schemathesis import Case
-from schemathesis.core.deserialization import deserialize_yaml
-from schemathesis.core.errors import format_exception
-from schemathesis.engine import Status, events, from_schema
-from schemathesis.engine.events import EngineEvent, EngineFinished, NonFatalError, ScenarioFinished
-from schemathesis.engine.phases import PhaseName
-from schemathesis.engine.recorder import Interaction
-from schemathesis.schemas import BaseSchema
+import autotest
+from autotest import Case
+from autotest.core.deserialization import deserialize_yaml
+from autotest.core.errors import format_exception
+from autotest.engine import Status, events, from_schema
+from autotest.engine.events import EngineEvent, EngineFinished, NonFatalError, ScenarioFinished
+from autotest.engine.phases import PhaseName
+from autotest.engine.recorder import Interaction
+from autotest.schemas import BaseSchema
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
@@ -32,7 +32,7 @@ SIMPLE_PATH = get_schema_path("simple_swagger.yaml")
 
 def get_schema(schema_name: str = "simple_swagger.yaml", **kwargs: Any) -> BaseSchema:
     schema = make_schema(schema_name, **kwargs)
-    return schemathesis.openapi.from_dict(schema)
+    return autotest.openapi.from_dict(schema)
 
 
 def merge_recursively(a: dict[str, Any], b: dict[str, Any]) -> dict[str, Any]:

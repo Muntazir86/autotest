@@ -1,9 +1,9 @@
 import pytest
 from flask import Flask, jsonify, request
 
-import schemathesis
-from schemathesis.core.errors import InvalidStateMachine
-from schemathesis.core.result import Ok
+import autotest
+from autotest.core.errors import InvalidStateMachine
+from autotest.core.result import Ok
 
 pytestmark = [pytest.mark.openapi_version("3.0")]
 
@@ -107,7 +107,7 @@ def test_missing_operation(ctx):
         }
     )
 
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
 
     with pytest.raises(InvalidStateMachine) as exc:
         schema.as_state_machine()
@@ -126,7 +126,7 @@ def count_links(schema):
 
 @pytest.mark.parametrize("enable_inference", [True, False])
 def test_inference_respects_config(ctx, customer_order_schema, enable_inference):
-    schema = schemathesis.openapi.from_dict(ctx.openapi.build_schema(customer_order_schema))
+    schema = autotest.openapi.from_dict(ctx.openapi.build_schema(customer_order_schema))
 
     if not enable_inference:
         schema.config.phases.stateful.inference.algorithms = []

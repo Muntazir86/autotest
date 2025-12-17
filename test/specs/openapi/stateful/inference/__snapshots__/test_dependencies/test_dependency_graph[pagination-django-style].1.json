@@ -8,7 +8,7 @@
         "parameters": {
           "path.channel_id": "$response.body#/id"
         },
-        "x-schemathesis": {
+        "x-autotest": {
           "is_inferred": true
         }
       }

@@ -1,6 +1,6 @@
 import pytest
 
-import schemathesis
+import autotest
 
 # See GH-999
 # Tests for behavior when the API schema contains operations that are valid but contains an unresolvable reference
@@ -9,7 +9,7 @@ import schemathesis
 
 @pytest.fixture
 def schema(open_api_3_schema_with_recoverable_errors):
-    return schemathesis.openapi.from_dict(open_api_3_schema_with_recoverable_errors)
+    return autotest.openapi.from_dict(open_api_3_schema_with_recoverable_errors)
 
 
 EXPECTED_OUTPUT_LINES = [
@@ -44,7 +44,7 @@ def test_(case):
 def test_in_pytest_subtests(testdir, open_api_3_schema_with_recoverable_errors):
     testdir.make_test(
         """
-lazy_schema = schemathesis.pytest.from_fixture("simple_schema")
+lazy_schema = Autotest.pytest.from_fixture("simple_schema")
 
 @lazy_schema.parametrize()
 @settings(max_examples=1)
@@ -74,7 +74,7 @@ def test_(case):
 def test_jsonschema_error(testdir, openapi_3_schema_with_invalid_security):
     testdir.make_test(
         """
-lazy_schema = schemathesis.pytest.from_fixture("simple_schema")
+lazy_schema = Autotest.pytest.from_fixture("simple_schema")
 
 @lazy_schema.parametrize()
 @settings(max_examples=1)

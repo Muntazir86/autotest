@@ -6,7 +6,7 @@ You don’t need a config file to get started. Add one when you need auth, diffe
 
 ### Create your first config file
 
-Create `schemathesis.toml` in your project directory:
+Create `autotest.toml` in your project directory:
 
 ```toml
 # Run more tests for better coverage
@@ -21,7 +21,7 @@ basic = { username = "${USERNAME}", password = "${PASSWORD}" }
 ```
 
 !!! note ""
-    Variables like `${USERNAME}` are read from your environment when Schemathesis loads the config.
+    Variables like `${USERNAME}` are read from your environment when Autotest loads the config.
 
 Set environment variables:
 ```bash
@@ -29,14 +29,14 @@ export USERNAME="your_username"
 export PASSWORD="your_password"
 ```
 
-Run Schemathesis. It automatically loads `schemathesis.toml`.
+Run Autotest. It automatically loads `autotest.toml`.
 ```bash
-schemathesis run https://api.example.com/openapi.json
+autotest run https://api.example.com/openapi.json
 ```
 
 ### Config file location
 
-Schemathesis looks for `schemathesis.toml` in:
+Autotest looks for `autotest.toml` in:
 
 1. Current directory
 2. Parent directories (up to repository root)
@@ -44,7 +44,7 @@ Schemathesis looks for `schemathesis.toml` in:
 To use a config file from a different location, pass `--config-file` before the `run` command:
 
 ```bash
-schemathesis --config-file /path/to/config.toml run https://api.example.com/openapi.json
+Autotest --config-file /path/to/config.toml run https://api.example.com/openapi.json
 ```
 
 ## Common configuration scenarios

@@ -1,1 +1,1 @@
-SchemathesisConfig(output=OutputConfig(sanitization=SanitizationConfig(sensitive_markers=('secret', 'auth', 'key'))))
+autotestConfig(output=OutputConfig(sanitization=SanitizationConfig(sensitive_markers=('secret', 'auth', 'key'))))

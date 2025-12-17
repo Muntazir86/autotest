@@ -1,6 +1,6 @@
 import pytest
 
-from schemathesis.core.shell import (
+from autotest.core.shell import (
     ShellType,
     _escape_with_ansi_c,
     _escape_with_hex,
@@ -214,7 +214,7 @@ def test_parse_shell_name(shell_name, expected):
     ],
 )
 def test_detect_shell_from_environment(monkeypatch, shell_env, expected, delete_env):
-    monkeypatch.setattr("schemathesis.core.shell._DETECTED_SHELL", None)
+    monkeypatch.setattr("autotest.core.shell._DETECTED_SHELL", None)
     if delete_env:
         monkeypatch.delenv("SHELL", raising=False)
     else:

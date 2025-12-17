@@ -6,15 +6,15 @@ import requests
 from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 
-from schemathesis.core.transforms import UNRESOLVABLE, resolve_pointer
-from schemathesis.core.transport import Response
-from schemathesis.generation.stateful.state_machine import StepOutput
-from schemathesis.schemas import APIOperation, OperationDefinition
-from schemathesis.specs.openapi import expressions
-from schemathesis.specs.openapi.adapter import v3_0
-from schemathesis.specs.openapi.adapter.parameters import OpenApiBody
-from schemathesis.specs.openapi.expressions.errors import RuntimeExpressionError
-from schemathesis.specs.openapi.expressions.lexer import Token
+from autotest.core.transforms import UNRESOLVABLE, resolve_pointer
+from autotest.core.transport import Response
+from autotest.generation.stateful.state_machine import StepOutput
+from autotest.schemas import APIOperation, OperationDefinition
+from autotest.specs.openapi import expressions
+from autotest.specs.openapi.adapter import v3_0
+from autotest.specs.openapi.adapter.parameters import OpenApiBody
+from autotest.specs.openapi.expressions.errors import RuntimeExpressionError
+from autotest.specs.openapi.expressions.lexer import Token
 
 DOCUMENT = {
     "foo": ["bar", "baz"],

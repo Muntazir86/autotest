@@ -1,14 +1,14 @@
 from dataclasses import dataclass
 
-import schemathesis
-from schemathesis import cli
-from schemathesis.cli.commands.run.context import ExecutionContext
-from schemathesis.cli.commands.run.handlers.base import EventHandler
-from schemathesis.core.result import Ok
-from schemathesis.engine import events
+import autotest
+from autotest import cli
+from autotest.cli.commands.run.context import ExecutionContext
+from autotest.cli.commands.run.handlers.base import EventHandler
+from autotest.core.result import Ok
+from autotest.engine import events
 
 
-@schemathesis.hook
+@autotest.hook
 def after_load_schema(ctx, schema):
     for op in schema.get_all_operations():
         if isinstance(op, Ok):

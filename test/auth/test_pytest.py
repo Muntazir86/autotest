@@ -10,7 +10,7 @@ def schema_definition(request):
         return ""
     if request.param == "graphql":
         return """
-schema = schemathesis.graphql.from_file(
+schema = autotest.graphql.from_file(
 '''
 type Book {
   title: String
@@ -32,7 +32,7 @@ type Query {
 @pytest.mark.parametrize(
     ("class_decorator", "pre_parametrize_decorator", "post_parametrize_decorator"),
     [
-        ("@schemathesis.auth()", "", ""),
+        ("@autotest.auth()", "", ""),
         ("@schema.auth()", "", ""),
         ("", f"@schema.auth({AUTH_CLASS_NAME})", ""),
         ("", "", f"@schema.auth({AUTH_CLASS_NAME})"),
@@ -134,7 +134,7 @@ def token():
         return {{"access_token": "{APP_TEST_TOKEN}"}}
     return {{"detail": "Unauthorized"}}, 401
 
-schema = schemathesis.openapi.from_wsgi("/schema.json", app=app)"""
+schema = autotest.openapi.from_wsgi("/schema.json", app=app)"""
     if python_app_type == "asgi":
         return f"""
 from fastapi import FastAPI, HTTPException
@@ -153,7 +153,7 @@ def token(data: AuthInput):
         return {{"access_token": "{APP_TEST_TOKEN}"}}
     raise HTTPException(status_code=401, detail="Unauthorized")
 
-schema = schemathesis.openapi.from_asgi("/openapi.json", app=app)
+schema = autotest.openapi.from_asgi("/openapi.json", app=app)
 """
 
 
@@ -261,7 +261,7 @@ def openapi():
     }
 
 
-schema = schemathesis.openapi.from_wsgi("/openapi.json", app)
+schema = autotest.openapi.from_wsgi("/openapi.json", app)
 
 
 @schema.parametrize()
@@ -324,23 +324,23 @@ def test(case):
 @pytest.mark.operations("success")
 def test_basic_auth_from_fixture_with_toml_config(testdir, openapi3_base_url):
     # When a user:
-    # 1. Has a schemathesis.toml with basic auth configured
-    # 2. Uses the pytest schema loader `schemathesis.pytest.from_fixture`
+    # 1. Has a autotest.toml with basic auth configured
+    # 2. Uses the pytest schema loader `Autotest.pytest.from_fixture`
     # 3. Calls `case.call()`
     testdir.makefile(
         ".toml",
-        schemathesis=f"""
+        Autotest=f"""
 base-url = "{openapi3_base_url}"
 [auth]
 basic = {{ username = "testuser", password = "testpass" }}
 """,
     )
 
-    # Then the auth credentials from schemathesis.toml should be automatically applied to the request
+    # Then the auth credentials from autotest.toml should be automatically applied to the request
     testdir.makepyfile(
         """
 import pytest
-import schemathesis
+import autotest
 from hypothesis import settings, Phase
 
 @pytest.fixture
@@ -355,9 +355,9 @@ def api_schema():
             }
         }
     }
-    return schemathesis.openapi.from_dict(raw_schema)
+    return autotest.openapi.from_dict(raw_schema)
 
-lazy_schema = schemathesis.pytest.from_fixture("api_schema")
+lazy_schema = Autotest.pytest.from_fixture("api_schema")
 
 @lazy_schema.parametrize()
 @settings(max_examples=1, phases=[Phase.generate])
@@ -373,10 +373,10 @@ def test_api_with_auth(case):
 @pytest.mark.openapi_version("3.0")
 @pytest.mark.operations("success")
 def test_headers_from_fixture_with_toml_config(testdir, openapi3_base_url):
-    # When headers are configured in schemathesis.toml
+    # When headers are configured in autotest.toml
     testdir.makefile(
         ".toml",
-        schemathesis=f"""
+        Autotest=f"""
 base-url = "{openapi3_base_url}"
 [headers]
 X-API-Key = "secret-key"
@@ -388,12 +388,12 @@ X-Client-ID = "test-client"
     testdir.makepyfile(
         """
 import pytest
-import schemathesis
+import autotest
 from hypothesis import settings, Phase
 
 @pytest.fixture
 def api_schema():
-    return schemathesis.openapi.from_dict({
+    return autotest.openapi.from_dict({
         "openapi": "3.0.0",
         "paths": {
             "/success": {
@@ -404,7 +404,7 @@ def api_schema():
         }
     })
 
-lazy_schema = schemathesis.pytest.from_fixture("api_schema")
+lazy_schema = Autotest.pytest.from_fixture("api_schema")
 
 @lazy_schema.parametrize()
 @settings(max_examples=1, phases=[Phase.generate])
@@ -420,10 +420,10 @@ def test_api_with_headers(case):
 @pytest.mark.openapi_version("3.0")
 @pytest.mark.operations("success")
 def test_overrides_from_fixture_with_toml_config(testdir, openapi3_base_url):
-    # When operation-specific overrides are configured in schemathesis.toml
+    # When operation-specific overrides are configured in autotest.toml
     testdir.makefile(
         ".toml",
-        schemathesis=f"""
+        Autotest=f"""
 base-url = "{openapi3_base_url}"
 
 [[operations]]
@@ -436,12 +436,12 @@ parameters = {{ id = 42, status = "active" }}
     testdir.makepyfile(
         """
 import pytest
-import schemathesis
+import autotest
 from hypothesis import settings, Phase
 
 @pytest.fixture
 def api_schema():
-    return schemathesis.openapi.from_dict({
+    return autotest.openapi.from_dict({
         "openapi": "3.0.0",
         "paths": {
             "/success": {
@@ -456,7 +456,7 @@ def api_schema():
         }
     })
 
-lazy_schema = schemathesis.pytest.from_fixture("api_schema")
+lazy_schema = Autotest.pytest.from_fixture("api_schema")
 
 @lazy_schema.parametrize()
 @settings(max_examples=1, phases=[Phase.generate])

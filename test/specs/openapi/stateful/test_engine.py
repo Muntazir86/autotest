@@ -6,13 +6,13 @@ import hypothesis.errors
 import pytest
 from flask import Flask, jsonify, request
 
-import schemathesis
-from schemathesis.checks import not_a_server_error
-from schemathesis.engine import Status, events
-from schemathesis.engine.context import EngineContext
-from schemathesis.engine.phases import Phase, PhaseName, stateful
-from schemathesis.generation import GenerationMode
-from schemathesis.specs.openapi.checks import (
+import autotest
+from autotest.checks import not_a_server_error
+from autotest.engine import Status, events
+from autotest.engine.context import EngineContext
+from autotest.engine.phases import Phase, PhaseName, stateful
+from autotest.generation import GenerationMode
+from autotest.specs.openapi.checks import (
     ignored_auth,
     response_schema_conformance,
     use_after_free,
@@ -85,7 +85,7 @@ def stop_engine(e):
 @pytest.mark.parametrize("func", [keyboard_interrupt, stop_engine])
 @pytest.mark.usefixtures("restore_checks")
 def test_stop_in_check(engine_factory, func, stop_event):
-    @schemathesis.check
+    @autotest.check
     def stop_immediately(*args, **kwargs):
         func(stop_event)
 
@@ -116,7 +116,7 @@ def test_stop_outside_of_state_machine_execution(engine_factory, mocker, stop_ev
         app_kwargs={"independent_500": True},
     )
     mocker.patch(
-        "schemathesis.engine.phases.stateful._executor.StatefulContext.mark_as_seen_in_run",
+        "autotest.engine.phases.stateful._executor.StatefulContext.mark_as_seen_in_run",
         side_effect=lambda *_, **__: stop_event.set(),
     )
     result = collect_result(engine)
@@ -129,7 +129,7 @@ def test_stop_outside_of_state_machine_execution(engine_factory, mocker, stop_ev
 )
 @pytest.mark.usefixtures("restore_checks")
 def test_internal_error_in_check(engine_factory, kwargs):
-    @schemathesis.check
+    @autotest.check
     def bugged_check(*args, **kwargs):
         raise ZeroDivisionError("Oops!")
 
@@ -142,7 +142,7 @@ def test_internal_error_in_check(engine_factory, kwargs):
 @pytest.mark.parametrize("exception_args", [(), ("Oops!",)])
 @pytest.mark.usefixtures("restore_checks")
 def test_custom_assertion_in_check(engine_factory, exception_args):
-    @schemathesis.check
+    @autotest.check
     def custom_check(*args, **kwargs):
         raise AssertionError(*exception_args)
 
@@ -162,7 +162,7 @@ def test_custom_assertion_in_check(engine_factory, exception_args):
 def test_custom_assertion_with_random_message(engine_factory):
     counter = 0
 
-    @schemathesis.check
+    @autotest.check
     def custom_check(*args, **kwargs):
         nonlocal counter
         counter += 1
@@ -181,7 +181,7 @@ def test_distinct_assertions(engine_factory):
     counter = 0
 
     # When a check contains different failing assertions
-    @schemathesis.check
+    @autotest.check
     def custom_check(ctx, response, case):
         nonlocal counter
         counter += 1
@@ -214,7 +214,7 @@ def test_flaky_assertions(engine_factory, kwargs):
     counter = 0
 
     # When a check contains different failing assertions and one of them is considered flaky by Hypothesis
-    @schemathesis.check
+    @autotest.check
     def custom_check(ctx, response, case):
         nonlocal counter
         counter += 1
@@ -245,7 +245,7 @@ def test_failure_hidden_behind_another_failure(engine_factory):
 
     suite_number = 0
 
-    @schemathesis.check
+    @autotest.check
     def dynamic_check(*args, **kwargs):
         if suite_number == 0:
             not_a_server_error(*args, **kwargs)
@@ -299,7 +299,7 @@ def test_find_use_after_free(engine_factory):
 
 @pytest.mark.usefixtures("restore_checks")
 def test_failed_health_check(engine_factory):
-    @schemathesis.check
+    @autotest.check
     def rejected_check(*args, **kwargs):
         hypothesis.reject()
 
@@ -322,7 +322,7 @@ def test_failed_health_check(engine_factory):
 def test_flaky(engine_factory, kwargs):
     found = False
 
-    @schemathesis.check
+    @autotest.check
     def flaky_check(*args, **kwargs):
         nonlocal found
         if not found:
@@ -523,7 +523,7 @@ def test_external_link(ctx, app_factory, app_runner):
     )
     root_app = app_factory(independent_500=True)
     root_app_port = app_runner.run_flask_app(root_app)
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
     schema.config.update(base_url=f"http://127.0.0.1:{root_app_port}/")
     schema.config.generation.update(max_examples=75, database="none", modes=[GenerationMode.POSITIVE])
     engine = stateful.execute(
@@ -657,7 +657,7 @@ def test_negative_changing_to_positive(app_runner):
 
     app_port = app_runner.run_flask_app(app)
 
-    config = schemathesis.Config.from_dict(
+    config = Autotest.Config.from_dict(
         {
             "checks": {
                 "enabled": False,
@@ -665,7 +665,7 @@ def test_negative_changing_to_positive(app_runner):
             }
         }
     )
-    schema = schemathesis.openapi.from_dict(schema, config=config)
+    schema = autotest.openapi.from_dict(schema, config=config)
     schema.config.update(base_url=f"http://127.0.0.1:{app_port}/")
     schema.config.generation.update(database="none")
     engine = stateful.execute(
@@ -715,7 +715,7 @@ def test_explicit_auth_header_does_not_trigger_negative_data_rejection(app_runne
 
     app_port = app_runner.run_flask_app(app)
 
-    config = schemathesis.Config.from_dict(
+    config = Autotest.Config.from_dict(
         {
             "base-url": f"http://127.0.0.1:{app_port}/",
             "headers": {"Authorization": "Bearer secret"},
@@ -728,7 +728,7 @@ def test_explicit_auth_header_does_not_trigger_negative_data_rejection(app_runne
             },
         }
     )
-    schema = schemathesis.openapi.from_dict(schema, config=config)
+    schema = autotest.openapi.from_dict(schema, config=config)
     engine = stateful.execute(
         engine=EngineContext(schema=schema, stop_event=threading.Event()),
         phase=Phase(name=PhaseName.STATEFUL_TESTING, is_supported=True, is_enabled=True),
@@ -783,7 +783,7 @@ def test_ignored_auth_invalid(engine_factory):
 
 def test_multiple_incoming_link_without_override(app_factory):
     app = app_factory(multiple_incoming_links_with_same_status=True)
-    schema = schemathesis.openapi.from_dict(app.config["schema"])
+    schema = autotest.openapi.from_dict(app.config["schema"])
     state_machine = schema.as_state_machine()
     assert (
         sum(len(operation.outgoing) for operation in state_machine._transitions.operations.values())

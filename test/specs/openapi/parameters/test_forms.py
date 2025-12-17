@@ -1,8 +1,8 @@
 import pytest
 
-from schemathesis.schemas import PayloadAlternatives
-from schemathesis.specs.openapi.adapter import v2, v3_0
-from schemathesis.specs.openapi.adapter.parameters import OpenApiBody, form_data_to_json_schema
+from autotest.schemas import PayloadAlternatives
+from autotest.specs.openapi.adapter import v2, v3_0
+from autotest.specs.openapi.adapter.parameters import OpenApiBody, form_data_to_json_schema
 
 
 @pytest.mark.parametrize(
@@ -120,7 +120,7 @@ def test_loose_urlencoded_form_open_api_3(assert_parameters, make_openapi_3_sche
                 )
             ]
         ),
-        # But when it is converted to JSON Schema, Schemathesis sets `type` to `object`
+        # But when it is converted to JSON Schema, Autotest sets `type` to `object`
         # Therefore it corresponds to the default JSON Schema defined for a User
         [user_jsonschema],
     )

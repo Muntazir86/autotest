@@ -1,6 +1,6 @@
 # Adding Schema Conformance Validation to Existing Tests
 
-Use Schemathesis to validate API responses in your existing test suite without changing your current data generation or test structure.
+Use Autotest to validate API responses in your existing test suite without changing your current data generation or test structure.
 
 ### `validate_response()` - Raises on Validation Errors
 
@@ -27,11 +27,11 @@ def test_with_conditional_logic():
 
 ```python
 import pytest
-import schemathesis
+import autotest
 
 @pytest.fixture(scope="session")
 def api_schema():
-    return schemathesis.openapi.from_url("http://api.example.com/openapi.json")
+    return autotest.openapi.from_url("http://api.example.com/openapi.json")
 
 def test_user_workflow(api_schema):
     create_response = requests.post(

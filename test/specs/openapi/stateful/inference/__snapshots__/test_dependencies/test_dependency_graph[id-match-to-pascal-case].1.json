@@ -8,7 +8,7 @@
         "parameters": {
           "path.brandId": "$response.body#/BrandId"
         },
-        "x-schemathesis": {
+        "x-autotest": {
           "is_inferred": true
         }
       }

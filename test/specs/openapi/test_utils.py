@@ -1,6 +1,6 @@
 import pytest
 
-from schemathesis.specs.openapi.utils import expand_status_code
+from autotest.specs.openapi.utils import expand_status_code
 
 
 @pytest.mark.parametrize(

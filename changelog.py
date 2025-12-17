@@ -8,7 +8,7 @@ import sys
 
 PYPROJECT_PATH = "pyproject.toml"
 CHANGELOG_PATH = "CHANGELOG.md"
-COMPARE_URL_PREFIX = "https://github.com/schemathesis/schemathesis/compare/"
+COMPARE_URL_PREFIX = "https://github.com/autotest/autotest/compare/"
 
 
 def _read_changelog() -> list[str]:
@@ -32,7 +32,7 @@ def bump(new_version: str) -> None:
 
     # Extract the old version from the compare URL.
     old_version = (
-        changelog[unreleased_idx].split("https://github.com/schemathesis/schemathesis/compare/")[1].split("...")[0][1:]
+        changelog[unreleased_idx].split("https://github.com/autotest/autotest/compare/")[1].split("...")[0][1:]
     )
 
     # Replace the unreleased header with the new compare URL.
@@ -81,7 +81,7 @@ def notes(version: str) -> None:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    argument_parser = argparse.ArgumentParser(description="Manage Schemathesis changelog.")
+    argument_parser = argparse.ArgumentParser(description="Manage autotest changelog.")
     subparsers = argument_parser.add_subparsers(title="subcommands", dest="subcommand")
 
     bump_parser = subparsers.add_parser("bump", help="Bump the version of the changelog")

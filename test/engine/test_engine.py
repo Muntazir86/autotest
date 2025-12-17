@@ -10,17 +10,17 @@ from aiohttp.streams import EmptyStreamReader
 from fastapi import FastAPI
 from py import sys
 
-import schemathesis
-from schemathesis.checks import not_a_server_error
-from schemathesis.config import SchemathesisWarning
-from schemathesis.core import SCHEMATHESIS_TEST_CASE_HEADER
-from schemathesis.core.transport import USER_AGENT
-from schemathesis.engine import Status, events, from_schema
-from schemathesis.engine.phases import PhaseName
-from schemathesis.engine.recorder import Request
-from schemathesis.generation import GenerationMode
-from schemathesis.generation.hypothesis.builder import add_examples
-from schemathesis.specs.openapi.checks import (
+import autotest
+from autotest.checks import not_a_server_error
+from autotest.config import autotestWarning
+from autotest.core import autotest_TEST_CASE_HEADER
+from autotest.core.transport import USER_AGENT
+from autotest.engine import Status, events, from_schema
+from autotest.engine.phases import PhaseName
+from autotest.engine.recorder import Request
+from autotest.generation import GenerationMode
+from autotest.generation.hypothesis.builder import add_examples
+from autotest.specs.openapi.checks import (
     content_type_conformance,
     response_schema_conformance,
     status_code_conformance,
@@ -68,7 +68,7 @@ def assert_schema_requests_num(app, number):
 
 def test_execute_base_url_not_found(openapi3_base_url, schema_url, app):
     # When base URL is pointing to an unknown location
-    schema = schemathesis.openapi.from_url(schema_url)
+    schema = autotest.openapi.from_url(schema_url)
     schema.config.update(base_url=f"{openapi3_base_url}/404/")
     EventStream(schema).execute()
     # Then the engine should use this base
@@ -113,7 +113,7 @@ def test_interactions(openapi3_base_url, real_app_schema, workers):
             "Accept-Encoding": encoding,
             "Connection": ["keep-alive"],
             "User-Agent": [USER_AGENT],
-            SCHEMATHESIS_TEST_CASE_HEADER: [ANY],
+            AUTOTEST_TEST_CASE_HEADER: [ANY],
         },
     }
     assert failure.response.status_code == 500
@@ -134,7 +134,7 @@ def test_interactions(openapi3_base_url, real_app_schema, workers):
             "Accept-Encoding": encoding,
             "Connection": ["keep-alive"],
             "User-Agent": [USER_AGENT],
-            SCHEMATHESIS_TEST_CASE_HEADER: [ANY],
+            AUTOTEST_TEST_CASE_HEADER: [ANY],
         },
     }
     assert success.response.status_code == 200
@@ -146,7 +146,7 @@ def test_interactions(openapi3_base_url, real_app_schema, workers):
 
 @pytest.mark.operations("root")
 def test_asgi_interactions(fastapi_app):
-    schema = schemathesis.openapi.from_asgi("/openapi.json", fastapi_app)
+    schema = autotest.openapi.from_asgi("/openapi.json", fastapi_app)
     stream = EventStream(schema).execute()
     interactions = stream.find_all_interactions()
     assert interactions[0].request.uri == "http://localhost/users"
@@ -191,7 +191,7 @@ def test_auth(app, real_app_schema):
 def test_base_url(openapi3_base_url, schema_url, app, converter):
     base_url = converter(openapi3_base_url)
     # When `base_url` is specified explicitly with or without trailing slash
-    schema = schemathesis.openapi.from_url(schema_url)
+    schema = autotest.openapi.from_url(schema_url)
     schema.config.update(base_url=base_url)
     execute(schema)
 
@@ -215,7 +215,7 @@ def test_root_url():
         assert case.as_transport_kwargs()["url"] == "/"
         assert response.status_code == 200
 
-    schema = schemathesis.openapi.from_asgi("/openapi.json", app=app)
+    schema = autotest.openapi.from_asgi("/openapi.json", app=app)
     stream = execute(schema, checks=(check,))
     stream.assert_no_failures()
 
@@ -232,7 +232,7 @@ def test_execute_with_headers(app, real_app_schema):
 
 
 def test_execute_filter_endpoint(app, schema_url):
-    schema = schemathesis.openapi.from_url(schema_url).include(path_regex="success")
+    schema = autotest.openapi.from_url(schema_url).include(path_regex="success")
     # When `endpoint` is passed in the `execute` call
     execute(schema)
 
@@ -243,7 +243,7 @@ def test_execute_filter_endpoint(app, schema_url):
 
 
 def test_execute_filter_method(app, schema_url):
-    schema = schemathesis.openapi.from_url(schema_url).include(method="POST")
+    schema = autotest.openapi.from_url(schema_url).include(method="POST")
     # When `method` corresponds to a method that is not defined in the app schema
     execute(schema)
     # Then engine will not make any requests
@@ -458,7 +458,7 @@ def filter_path_parameters():
             lambda x: x["key"] not in ("..", ".", "", "/") and not (isinstance(x["key"], str) and "/" in x["key"])
         )
 
-    schemathesis.hook(before_generate_path_parameters)
+    Autotest.hook(before_generate_path_parameters)
     return
 
 
@@ -480,7 +480,7 @@ def test_path_parameters_encoding(real_app_schema):
 
 @pytest.mark.operations("slow")
 def test_exceptions(schema_url):
-    schema = schemathesis.openapi.from_url(schema_url)
+    schema = autotest.openapi.from_url(schema_url)
     schema.config.update(base_url="http://127.0.0.1:1/")
     stream = execute(schema)
     assert any(event.status == Status.ERROR for event in stream.find_all(events.ScenarioFinished))
@@ -491,7 +491,7 @@ def test_internal_exceptions(real_app_schema, mocker):
     # GH: #236
     # When there is an exception during the test
     # And Hypothesis consider this test as a flaky one
-    mocker.patch("schemathesis.Case.call", side_effect=ValueError)
+    mocker.patch("autotest.Case.call", side_effect=ValueError)
     stream = execute(real_app_schema, max_examples=3)
     # Then the execution result should indicate errors
     stream.assert_errors()
@@ -540,7 +540,7 @@ def test_explicit_examples_from_response(ctx, openapi3_base_url):
         },
         components={"schemas": {"Item": {"properties": {"id": {"type": "string"}}}}},
     )
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
     schema.config.update(base_url=openapi3_base_url)
     stream = EventStream(schema, max_examples=1, phases=[PhaseName.EXAMPLES]).execute()
     assert [case.value.path_parameters for case in stream.find(events.ScenarioFinished).recorder.cases.values()] == [
@@ -553,7 +553,7 @@ def test_explicit_examples_from_response(ctx, openapi3_base_url):
 async def test_explicit_example_disable(app, real_app_schema, mocker):
     # When API operation has an example specified
     # And the `explicit` phase is excluded
-    spy = mocker.patch("schemathesis.generation.hypothesis.builder.add_examples", wraps=add_examples)
+    spy = mocker.patch("autotest.generation.hypothesis.builder.add_examples", wraps=add_examples)
     stream = execute(
         real_app_schema,
         max_examples=1,
@@ -589,9 +589,9 @@ def test_plain_text_body(app, real_app_schema):
 def test_invalid_path_parameter(schema_url):
     # When a path parameter is marked as not required
     # And schema validation is disabled
-    schema = schemathesis.openapi.from_url(schema_url)
+    schema = autotest.openapi.from_url(schema_url)
     stream = execute(schema, max_examples=3)
-    # Then Schemathesis enforces all path parameters to be required
+    # Then Autotest enforces all path parameters to be required
     # And there should be no errors
     stream.assert_no_errors()
 
@@ -621,7 +621,7 @@ def test_max_failures(real_app_schema):
 @pytest.mark.skipif(platform.system() == "Windows", reason="Fails on Windows due to recursion")
 def test_skip_operations_with_recursive_references(schema_with_recursive_references):
     # When the test schema contains recursive references
-    schema = schemathesis.openapi.from_dict(schema_with_recursive_references)
+    schema = autotest.openapi.from_dict(schema_with_recursive_references)
     schema.config.generation.update(modes=[GenerationMode.POSITIVE])
     stream = EventStream(schema).execute()
     # Then it causes an error with a proper error message
@@ -672,7 +672,7 @@ def test_unsatisfiable_example(ctx, phases, expected, total_errors):
         }
     )
     # Then the testing process should not raise an internal error
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
     schema.config.generation.update(modes=[GenerationMode.POSITIVE])
     stream = EventStream(schema, max_examples=1, phases=phases).execute()
     # And the tests are failing because of the unsatisfiable schema
@@ -720,7 +720,7 @@ def test_non_serializable_example(ctx, phases, expected):
         }
     )
     # Then the testing process should not raise an internal error
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
     stream = EventStream(schema, phases=phases, max_examples=1).execute()
     # And the tests are failing because of the serialization error
     stream.assert_errors()
@@ -762,7 +762,7 @@ def test_unsupported_regex_removed_with_warning(ctx):
         }
     )
     # Then the pattern is removed and a warning is emitted
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
     warnings = list(schema.analysis.iter_warnings())
     assert len(warnings) > 0
     assert any("^[\\w\\s\\-\\/\\pL,.#;:()']+$" in w.message for w in warnings)
@@ -788,7 +788,7 @@ def test_unsupported_regex_in_parameter_removed_with_warning(ctx):
         }
     )
     # Then the pattern is removed and a warning is emitted
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
     warnings = list(schema.analysis.iter_warnings())
     assert len(warnings) > 0
     assert any("\\p{Alpha}+" in w.message for w in warnings)
@@ -814,7 +814,7 @@ def test_invalid_header_in_example(ctx, openapi3_base_url):
         }
     )
     # Then the testing process should not raise an internal error
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
     schema.config.update(base_url=openapi3_base_url)
     stream = EventStream(schema, max_examples=1).execute()
     # And the tests are failing
@@ -829,7 +829,7 @@ def test_invalid_header_in_example(ctx, openapi3_base_url):
 
 def test_connection_error(ctx):
     schema = ctx.openapi.build_schema({"/success": {"post": {"responses": {"200": {"description": "OK"}}}}})
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
     schema.config.update(base_url="http://127.0.0.1:1")
     stream = EventStream(schema, max_examples=1).execute()
     # And the tests are failing
@@ -856,7 +856,7 @@ def test_reserved_characters_in_operation_name(real_app_schema):
 
 def test_hypothesis_errors_propagation(ctx, openapi3_base_url):
     # See: GH-1046
-    # When the operation contains a media type, that Schemathesis can't serialize
+    # When the operation contains a media type, that Autotest can't serialize
     # And there is still a supported media type
     schema = ctx.openapi.build_schema(
         {
@@ -886,7 +886,7 @@ def test_hypothesis_errors_propagation(ctx, openapi3_base_url):
     )
 
     max_examples = 10
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
     schema.config.update(base_url=openapi3_base_url)
     stream = EventStream(
         schema,
@@ -925,7 +925,7 @@ def test_encoding_octet_stream(ctx, openapi3_base_url):
             }
         }
     )
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
     schema.config.update(base_url=openapi3_base_url)
     stream = EventStream(
         schema,
@@ -939,7 +939,7 @@ def test_encoding_octet_stream(ctx, openapi3_base_url):
 
 
 def test_graphql(graphql_url):
-    schema = schemathesis.graphql.from_url(graphql_url)
+    schema = autotest.graphql.from_url(graphql_url)
     stream = EventStream(schema, max_examples=5).execute()
     for event, expected in zip(
         stream.find_all(events.ScenarioFinished), ["Query.getBooks", "Query.getAuthors"], strict=False
@@ -953,7 +953,7 @@ def test_graphql(graphql_url):
 @pytest.mark.usefixtures("restore_checks")
 def test_interrupted_in_test(openapi3_schema):
     # When an interrupt happens within a test body (check is called within a test body)
-    @schemathesis.check
+    @autotest.check
     def interrupt_check(ctx, response, case):
         raise KeyboardInterrupt
 
@@ -971,7 +971,7 @@ def test_interrupted_in_test(openapi3_schema):
 def test_interrupted_outside_test(mocker, openapi3_schema):
     # See GH-1325
     # When an interrupt happens outside a test body
-    mocker.patch("schemathesis.engine.events.ScenarioFinished.__init__", side_effect=KeyboardInterrupt)
+    mocker.patch("autotest.engine.events.ScenarioFinished.__init__", side_effect=KeyboardInterrupt)
 
     stream = EventStream(openapi3_schema).execute()
     try:
@@ -1051,7 +1051,7 @@ else:
 def test_malformed_path_template(ctx, path, expected):
     # When schema contains a malformed path template
     schema = ctx.openapi.build_schema({path: {"get": {"responses": {"200": {"description": "OK"}}}}})
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
     # Then it should not cause a fatal error
     stream = EventStream(schema).execute()
     stream.assert_after_execution_status(Status.ERROR)
@@ -1079,7 +1079,7 @@ def test_explicit_header_negative(ctx, parameters, expected, openapi3_base_url):
         },
         components={"securitySchemes": {"basicAuth": {"type": "http", "scheme": "basic"}}},
     )
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
     schema.config.generation.update(modes=[GenerationMode.NEGATIVE])
     schema.config.update(base_url=openapi3_base_url)
     stream = EventStream(schema, headers={"Authorization": "TEST"}, max_examples=1).execute()
@@ -1100,7 +1100,7 @@ def test_skip_non_negated_headers(ctx):
             }
         }
     )
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
     schema.config.generation.update(modes=[GenerationMode.NEGATIVE])
     stream = EventStream(schema, max_examples=1).execute()
     # There should not be unsatisfiable
@@ -1157,7 +1157,7 @@ def test_stateful_seed(real_app_schema):
         interactions = stream.find(events.ScenarioFinished).recorder.interactions
         for interaction in interactions.values():
             data = {key: getattr(interaction.request, key) for key in Request.__slots__}
-            del data["headers"][SCHEMATHESIS_TEST_CASE_HEADER]
+            del data["headers"][AUTOTEST_TEST_CASE_HEADER]
             current.append(data)
         requests.append(current)
     assert requests[0][0] == requests[1][0] == requests[2][0]
@@ -1217,7 +1217,7 @@ def test_generation_config_in_explicit_examples(ctx, openapi2_base_url):
         },
         version="2.0",
     )
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
     schema.config.update(base_url=openapi2_base_url)
     schema.config.generation.update(
         with_security_parameters=False,
@@ -1252,7 +1252,7 @@ def test_missing_deserializer_warnings_collected(ctx, openapi3_base_url):
             }
         }
     )
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     schema.config.update(base_url=openapi3_base_url)
     stream = EventStream(schema, max_examples=1).execute()
 
@@ -1260,7 +1260,7 @@ def test_missing_deserializer_warnings_collected(ctx, openapi3_base_url):
     assert warning_event is not None
     assert len(warning_event.warnings) == 1
     warning = warning_event.warnings[0]
-    assert warning.kind == SchemathesisWarning.MISSING_DESERIALIZER
+    assert warning.kind == AutotestWarning.MISSING_DESERIALIZER
     assert warning.operation_label == "GET /users"
     assert warning.status_code == "200"
     assert warning.content_type == "application/msgpack"
@@ -1285,7 +1285,7 @@ def test_no_warnings_for_json(ctx, openapi3_base_url):
             }
         }
     )
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     schema.config.update(base_url=openapi3_base_url)
     stream = EventStream(schema, max_examples=1).execute()
 
@@ -1346,7 +1346,7 @@ def test_stateful_phase_missing_deserializer_warnings(ctx, openapi3_base_url):
         }
     )
 
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     schema.config.update(base_url=openapi3_base_url)
 
     # Run only stateful phase

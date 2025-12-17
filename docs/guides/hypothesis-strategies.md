@@ -1,17 +1,17 @@
-# Using Hypothesis Strategies with Schemathesis
+# Using Hypothesis Strategies with Autotest
 
-Schemathesis is built on top of Hypothesis, which means every API operation becomes a Hypothesis strategy that generates `Case` objects. 
+Autotest is built on top of Hypothesis, which means every API operation becomes a Hypothesis strategy that generates `Case` objects. 
 
-This foundation enables two powerful patterns: enhancing Schemathesis tests with custom data generation, and using Schemathesis strategies in custom testing workflows.
+This foundation enables two powerful patterns: enhancing Autotest tests with custom data generation, and using Autotest strategies in custom testing workflows.
 
-## Foundation: Schemathesis API Operations as Strategies
+## Foundation: Autotest API Operations as Strategies
 
 Every API operation in your schema can be converted to a Hypothesis strategy:
 
 ```python
-import schemathesis
+import autotest
 
-schema = schemathesis.openapi.from_url("http://api.example.com/openapi.json")
+schema = autotest.openapi.from_url("http://api.example.com/openapi.json")
 
 # Single operation strategy
 create_user = schema["/users"]["POST"].as_strategy()
@@ -32,11 +32,11 @@ These strategies generate `Case` objects containing HTTP method, path, headers, 
 !!! tip "Read More"
     For detailed information about working with strategies, see the [Hypothesis documentation](https://hypothesis.readthedocs.io/en/latest/data.html).
 
-## Adding Custom Strategies to Schemathesis Tests
+## Adding Custom Strategies to Autotest Tests
 
 ### Simple Data Injection
 
-Use `@schema.given()` to inject custom data into your Schemathesis tests. This works like Hypothesis's `@given` decorator but integrates with Schemathesis's parametrization:
+Use `@schema.given()` to inject custom data into your Autotest tests. This works like Hypothesis's `@given` decorator but integrates with Autotest's parametrization:
 
 ```python
 from hypothesis import strategies as st
@@ -125,7 +125,7 @@ regular_operations = schema["/posts"].as_strategy()
 @schema.parametrize()
 def test_user_workflow(case, data):
     if case.method == "POST" and case.path == "/users":
-        # Let Schemathesis generate and execute user creation
+        # Let Autotest generate and execute user creation
         response = case.call_and_validate()
         user_data = response.json()
 
@@ -145,9 +145,9 @@ def test_user_workflow(case, data):
         case.call_and_validate()
 ```
 
-The `st.data()` strategy lets you draw additional values during test execution, enabling dynamic decision-making based on API responses. This pattern lets you build workflows where Schemathesis handles initial data generation, and you make decisions about subsequent testing based on actual results.
+The `st.data()` strategy lets you draw additional values during test execution, enabling dynamic decision-making based on API responses. This pattern lets you build workflows where Autotest handles initial data generation, and you make decisions about subsequent testing based on actual results.
 
-## Using Schemathesis Strategies Elsewhere
+## Using Autotest Strategies Elsewhere
 
 ### Custom Stateful Testing with Dynamic Steps
 
@@ -185,7 +185,7 @@ def test_user_lifecycle(data):
     delete_case.call_and_validate()
 ```
 
-This approach gives you complete control over the test sequence while benefiting from Schemathesis's schema-based data generation for each step.
+This approach gives you complete control over the test sequence while benefiting from Autotest's schema-based data generation for each step.
 
 ### Integration with Other Frameworks
 
@@ -216,4 +216,4 @@ class TestAPI(TestCase):
         self.assertEqual(get_response.json()["id"], pet_id)
 ```
 
-You can use Schemathesis strategies with regular `@given` decorators in any testing framework that supports Hypothesis.
+You can use Autotest strategies with regular `@given` decorators in any testing framework that supports Hypothesis.

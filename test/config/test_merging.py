@@ -1,6 +1,6 @@
 import pytest
 
-from schemathesis.config import (
+from autotest.config import (
     ChecksConfig,
     NotAServerErrorConfig,
     PositiveDataAcceptanceConfig,

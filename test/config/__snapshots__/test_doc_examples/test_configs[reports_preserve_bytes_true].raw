@@ -1,1 +1,1 @@
-SchemathesisConfig(reports=ReportsConfig(preserve_bytes=True))
+autotestConfig(reports=ReportsConfig(preserve_bytes=True))

@@ -7,12 +7,12 @@ from hypothesis.provisional import urls
 from hypothesis_jsonschema import from_schema
 from requests import Response
 
-from schemathesis import GenerationMode
-from schemathesis.checks import CHECKS
-from schemathesis.cli.commands.run.handlers.output import DEFAULT_INTERNAL_ERROR_MESSAGE
-from schemathesis.config._validator import CONFIG_SCHEMA
-from schemathesis.core.transforms import deepclone
-from schemathesis.generation.metrics import METRICS
+from autotest import GenerationMode
+from autotest.checks import CHECKS
+from autotest.cli.commands.run.handlers.output import DEFAULT_INTERNAL_ERROR_MESSAGE
+from autotest.config._validator import CONFIG_SCHEMA
+from autotest.core.transforms import deepclone
+from autotest.generation.metrics import METRICS
 
 
 @pytest.fixture(scope="module")
@@ -43,7 +43,7 @@ servers:
 @pytest.fixture(scope="module")
 def schema_url(server):
     # In this module we don't care about resetting the app or testing different Open API versions
-    # Only whether Schemathesis crashes on allowed input
+    # Only whether Autotest crashes on allowed input
     return f"http://127.0.0.1:{server['port']}/schema.yaml"
 
 

@@ -4,17 +4,17 @@ from contextlib import suppress
 
 import pytest
 
-import schemathesis
-from schemathesis.core.transport import USER_AGENT
+import autotest
+from autotest.core.transport import USER_AGENT
 
 
 @pytest.mark.parametrize(
     "loader",
     [
-        schemathesis.openapi.from_asgi,
-        schemathesis.openapi.from_wsgi,
-        schemathesis.graphql.from_asgi,
-        schemathesis.graphql.from_wsgi,
+        autotest.openapi.from_asgi,
+        autotest.openapi.from_wsgi,
+        autotest.graphql.from_asgi,
+        autotest.graphql.from_wsgi,
     ],
 )
 def test_absolute_urls_for_apps(loader):
@@ -27,8 +27,8 @@ def test_absolute_urls_for_apps(loader):
 @pytest.mark.parametrize(
     ("loader", "url_fixture"),
     [
-        (schemathesis.openapi.from_url, "openapi3_schema_url"),
-        (schemathesis.graphql.from_url, "graphql_url"),
+        (autotest.openapi.from_url, "openapi3_schema_url"),
+        (autotest.graphql.from_url, "graphql_url"),
     ],
 )
 @pytest.mark.parametrize("base_url", ["http://example.com/", "http://example.com"])
@@ -45,8 +45,8 @@ def test_base_url_override(request, loader, url_fixture, base_url):
 @pytest.mark.parametrize(
     ("target", "loader"),
     [
-        ("requests.get", schemathesis.openapi.from_url),
-        ("requests.post", schemathesis.graphql.from_url),
+        ("requests.get", autotest.openapi.from_url),
+        ("requests.post", autotest.graphql.from_url),
     ],
 )
 def test_uri_loader_custom_kwargs(mocker, target, loader):
@@ -59,5 +59,5 @@ def test_uri_loader_custom_kwargs(mocker, target, loader):
 
 
 def test_auth_loader_options(schema_url, app):
-    schemathesis.openapi.from_url(schema_url, auth=("test", "test"))
+    autotest.openapi.from_url(schema_url, auth=("test", "test"))
     assert app["schema_requests"][0].headers["Authorization"] == "Basic dGVzdDp0ZXN0"

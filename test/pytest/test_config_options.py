@@ -3,7 +3,7 @@ import pytest
 
 @pytest.mark.parametrize("is_lazy", [False, True])
 def test_config_seed_is_used(testdir, is_lazy, mocker):
-    from schemathesis.generation.hypothesis import builder
+    from autotest.generation.hypothesis import builder
 
     spy = mocker.spy(builder, "create_test")
     seed = 42
@@ -12,12 +12,12 @@ def test_config_seed_is_used(testdir, is_lazy, mocker):
         schema_setup = f"""
 @pytest.fixture
 def api_schema():
-    return schemathesis.openapi.from_dict(raw_schema, config=SchemathesisConfig(seed={seed}))
+    return autotest.openapi.from_dict(raw_schema, config=AutotestConfig(seed={seed}))
 
-schema = schemathesis.pytest.from_fixture("api_schema")
+schema = Autotest.pytest.from_fixture("api_schema")
 """
     else:
-        schema_setup = f"schema = schemathesis.openapi.from_dict(raw_schema, config=SchemathesisConfig(seed={seed}))"
+        schema_setup = f"schema = autotest.openapi.from_dict(raw_schema, config=AutotestConfig(seed={seed}))"
 
     testdir.make_test(
         f"""
@@ -36,7 +36,7 @@ def test_seed(case):
 
 @pytest.mark.parametrize("is_lazy", [False, True])
 def test_explicit_seed_not_overridden(testdir, is_lazy, mocker):
-    from schemathesis.generation.hypothesis import builder
+    from autotest.generation.hypothesis import builder
 
     spy = mocker.spy(builder, "create_test")
 
@@ -44,12 +44,12 @@ def test_explicit_seed_not_overridden(testdir, is_lazy, mocker):
         schema_setup = """
 @pytest.fixture
 def api_schema():
-    return schemathesis.openapi.from_dict(raw_schema, config=SchemathesisConfig(seed=999))
+    return autotest.openapi.from_dict(raw_schema, config=AutotestConfig(seed=999))
 
-schema = schemathesis.pytest.from_fixture("api_schema")
+schema = Autotest.pytest.from_fixture("api_schema")
 """
     else:
-        schema_setup = "schema = schemathesis.openapi.from_dict(raw_schema, config=SchemathesisConfig(seed=999))"
+        schema_setup = "schema = autotest.openapi.from_dict(raw_schema, config=AutotestConfig(seed=999))"
 
     testdir.make_test(
         f"""
@@ -78,17 +78,17 @@ def test_config_proxy_is_used(testdir, is_lazy, openapi3_base_url):
         schema_setup = f"""
 @pytest.fixture
 def api_schema():
-    config = SchemathesisConfig()
+    config = AutotestConfig()
     config.projects.default.update(proxy="{proxy_url}", base_url="{openapi3_base_url}")
-    return schemathesis.openapi.from_dict(raw_schema, config=config)
+    return autotest.openapi.from_dict(raw_schema, config=config)
 
-schema = schemathesis.pytest.from_fixture("api_schema")
+schema = Autotest.pytest.from_fixture("api_schema")
 """
     else:
         schema_setup = f"""
-config = SchemathesisConfig()
+config = AutotestConfig()
 config.projects.default.update(proxy="{proxy_url}", base_url="{openapi3_base_url}")
-schema = schemathesis.openapi.from_dict(raw_schema, config=config)
+schema = autotest.openapi.from_dict(raw_schema, config=config)
 """
 
     testdir.make_test(
@@ -113,17 +113,17 @@ def test_config_request_timeout_is_used(testdir, is_lazy, openapi3_base_url):
         schema_setup = f"""
 @pytest.fixture
 def api_schema():
-    config = SchemathesisConfig()
+    config = AutotestConfig()
     config.projects.default.update(request_timeout={timeout}, base_url="{openapi3_base_url}")
-    return schemathesis.openapi.from_dict(raw_schema, config=config)
+    return autotest.openapi.from_dict(raw_schema, config=config)
 
-schema = schemathesis.pytest.from_fixture("api_schema")
+schema = Autotest.pytest.from_fixture("api_schema")
 """
     else:
         schema_setup = f"""
-config = SchemathesisConfig()
+config = AutotestConfig()
 config.projects.default.update(request_timeout={timeout}, base_url="{openapi3_base_url}")
-schema = schemathesis.openapi.from_dict(raw_schema, config=config)
+schema = autotest.openapi.from_dict(raw_schema, config=config)
 """
 
     testdir.make_test(
@@ -143,20 +143,20 @@ def test_timeout(case):
 
 
 def test_wait_for_schema_is_used(mocker):
-    import schemathesis
+    import autotest
 
     # Mock requests.get to track wait_for_schema parameter
-    mock_load_from_url = mocker.patch("schemathesis.openapi.loaders.load_from_url")
+    mock_load_from_url = mocker.patch("autotest.openapi.loaders.load_from_url")
     mock_response = mocker.Mock()
     mock_response.headers = {"Content-Type": "application/json"}
     mock_response.text = '{"openapi": "3.0.0", "info": {"title": "Test", "version": "1.0.0"}, "paths": {}}'
     mock_load_from_url.return_value = mock_response
 
     wait_for_schema_value = 42.5
-    config = schemathesis.config.SchemathesisConfig(wait_for_schema=wait_for_schema_value)
+    config = Autotest.config.AutotestConfig(wait_for_schema=wait_for_schema_value)
 
     # Call from_url without explicit wait_for_schema - should use config
-    schemathesis.openapi.from_url("http://example.com/openapi.json", config=config)
+    autotest.openapi.from_url("http://example.com/openapi.json", config=config)
 
     # Verify wait_for_schema from config was passed to load_from_url
     assert mock_load_from_url.called
@@ -171,18 +171,18 @@ def test_fuzzing_phase_max_examples_is_used(testdir, is_lazy):
         schema_setup = f"""
 @pytest.fixture
 def api_schema():
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     schema.config.phases.fuzzing.generation.update(max_examples={max_examples})
     schema.config.phases.examples.enabled = False
     schema.config.phases.coverage.enabled = False
     schema.config.phases.stateful.enabled = False
     return schema
 
-schema = schemathesis.pytest.from_fixture("api_schema")
+schema = Autotest.pytest.from_fixture("api_schema")
 """
     else:
         schema_setup = f"""
-schema = schemathesis.openapi.from_dict(raw_schema)
+schema = autotest.openapi.from_dict(raw_schema)
 schema.config.phases.fuzzing.generation.update(max_examples={max_examples})
 schema.config.phases.examples.enabled = False
 schema.config.phases.coverage.enabled = False

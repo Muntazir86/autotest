@@ -8,7 +8,7 @@
         "parameters": {
           "path.groupId": "$response.body#/value/0/id"
         },
-        "x-schemathesis": {
+        "x-autotest": {
           "is_inferred": true
         }
       }

@@ -1,1 +1,1 @@
-SchemathesisConfig(projects=ProjectsConfig(default=ProjectConfig(phases=PhasesConfig(stateful=StatefulPhaseConfig(inference=InferenceConfig(algorithms=[]))))))
+autotestConfig(projects=ProjectsConfig(default=ProjectConfig(phases=PhasesConfig(stateful=StatefulPhaseConfig(inference=InferenceConfig(algorithms=[]))))))

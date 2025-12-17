@@ -1,13 +1,13 @@
 # Configuration Options
 
-This page lists every `schemathesis.toml` option and how it is resolved at runtime. The settings are organized into two main categories:
+This page lists every `autotest.toml` option and how it is resolved at runtime. The settings are organized into two main categories:
 
 - **Global**: These control CLI behavior, output formatting, and overall test execution. They are defined at the top level and affect the CLI invocation.
 - **Project**: Settings under `[[project]]` customize a single API. If you place project settings at the top level (without `[[project]]`), they become defaults for all projects.
 
 ## Configuration Resolution
 
-Schemathesis applies settings from highest to lowest precedence:
+Autotest applies settings from highest to lowest precedence:
 
 1. CLI options
 2. Operation-specific phase settings
@@ -18,7 +18,7 @@ Schemathesis applies settings from highest to lowest precedence:
 
 ## Environment Variable Substitution
 
-Schemathesis supports using environment variables in configuration files with the `${VAR_NAME}` syntax:
+Autotest supports using environment variables in configuration files with the `${VAR_NAME}` syntax:
 
 ```toml
 base-url = "https://${API_HOST}/v1"
@@ -28,11 +28,11 @@ headers = { Authorization = "Bearer ${API_TOKEN}" }
 This allows you to maintain a single configuration file across different environments by changing environment variables rather than the configuration itself.
 
 !!! note ""
-    With `pytest`, variables are resolved when `SchemathesisConfig` is created (typically inside `schemathesis.openapi.from_url`).
+    With `pytest`, variables are resolved when `AutotestConfig` is created (typically inside `autotest.openapi.from_url`).
 
 ## Operation-Specific Configuration
 
-Schemathesis allows applying custom configuration to specific API operations in a few ways:
+Autotest allows applying custom configuration to specific API operations in a few ways:
 
 ```toml
 [[operations]]
@@ -81,14 +81,14 @@ parameters = { "path.user_id" = 42, "query.user_id" = 100 }
     **Type**: `Boolean or None`  
     **Default**: `null`  
 
-    Use color in CLI output. Schemathesis auto-detects color support by default Set `true` to force color, `false` to disable.
+    Use color in CLI output. Autotest auto-detects color support by default Set `true` to force color, `false` to disable.
 
     ```toml
     color = false
     ```
 
 !!! info "CLI Only"
-    This option only applies when using the `schemathesis run` command.
+    This option only applies when using the `autotest run` command.
 
 #### `suppress-health-check`
 
@@ -130,7 +130,7 @@ parameters = { "path.user_id" = 42, "query.user_id" = 100 }
     ```
 
 !!! info "CLI Only"
-    This option only applies when using the `schemathesis run` command. For pytest, use pytest's own `-x` or `--maxfail` options instead.
+    This option only applies when using the `autotest run` command. For pytest, use pytest's own `-x` or `--maxfail` options instead.
 
 #### `warnings`
 
@@ -170,7 +170,7 @@ parameters = { "path.user_id" = 42, "query.user_id" = 100 }
     fail-on = true
     ```
 
-    When `fail-on` is configured, Schemathesis will exit with code 1 if any of the specified warnings are encountered, even if all checks pass. This is useful for CI/CD pipelines that should fail when configuration or test data issues are detected.
+    When `fail-on` is configured, Autotest will exit with code 1 if any of the specified warnings are encountered, even if all checks pass. This is useful for CI/CD pipelines that should fail when configuration or test data issues are detected.
 
     Available warnings:
 
@@ -181,19 +181,19 @@ parameters = { "path.user_id" = 42, "query.user_id" = 100 }
     - `unused_openapi_auth`: Configured OpenAPI auth scheme is not defined in the schema
 
 !!! info "CLI Only"
-    This option only applies when using the `schemathesis run` command. The pytest plugin uses pytest's own warning system.
+    This option only applies when using the `autotest run` command. The pytest plugin uses pytest's own warning system.
 
 ### Reporting
 
 !!! info "CLI Only"
-    These options only apply when using the `schemathesis run` command. Reports are not generated when using the pytest plugin, as pytest has its own reporting mechanisms.
+    These options only apply when using the `autotest run` command. Reports are not generated when using the pytest plugin, as pytest has its own reporting mechanisms.
 
 #### `reports.directory`
 
 !!! note "" 
 
     **Type**: `String`  
-    **Default**: `"schemathesis-report"`  
+    **Default**: `"Autotest-report"`  
 
     Specifies the directory where all test reports are stored.
 
@@ -243,7 +243,7 @@ parameters = { "path.user_id" = 42, "query.user_id" = 100 }
 
     ```toml
     [reports.junit]
-    path = "./test-reports/schemathesis-results.xml"
+    path = "./test-reports/Autotest-results.xml"
     ```
 
 ### Output
@@ -386,7 +386,7 @@ These settings can only be applied at the project level.
     **Type:** `String`  
     **Default:** `null`  
 
-    Specifies a Python module path where custom hooks for extending Schemathesis functionality are located. This allows you to define custom checks, adjust data generation, or extend CLI.
+    Specifies a Python module path where custom hooks for extending Autotest functionality are located. This allows you to define custom checks, adjust data generation, or extend CLI.
 
     ```toml
     # Global hooks for all projects
@@ -415,7 +415,7 @@ These settings can only be applied at the project level.
     ```
 
 !!! info "CLI Only"
-    This option only applies when using the `schemathesis run` command. For parallel execution with pytest, use `pytest-xdist`.
+    This option only applies when using the `autotest run` command. For parallel execution with pytest, use `pytest-xdist`.
 
 #### `wait-for-schema`
 
@@ -444,7 +444,7 @@ These settings can only be applied at the project level.
     ```
 
 !!! info "CLI Only"
-    This option only applies when using the `schemathesis run` command.
+    This option only applies when using the `autotest run` command.
 
 ### Phases
 
@@ -501,7 +501,7 @@ These settings can only be applied at the project level.
     ```
 
 !!! info "CLI Only"
-    This option only applies when using the `schemathesis run` command for non-stateful phases (examples, coverage, fuzzing). The pytest plugin uses its own test execution model via `@schema.parametrize()`.
+    This option only applies when using the `autotest run` command for non-stateful phases (examples, coverage, fuzzing). The pytest plugin uses its own test execution model via `@schema.parametrize()`.
 
 #### `phases.<phase>.extra-data-sources`
 
@@ -510,7 +510,7 @@ These settings can only be applied at the project level.
     **Type**: `Object`
     **Default**: `{ responses = true }`
 
-    Configure extra data sources to augment test generation. When enabled, Schemathesis uses data from previous API responses in addition to randomly generated values, producing test cases more likely to be accepted by the API.
+    Configure extra data sources to augment test generation. When enabled, Autotest uses data from previous API responses in addition to randomly generated values, producing test cases more likely to be accepted by the API.
 
     ```toml
     [phases.fuzzing.extra-data-sources]
@@ -518,7 +518,7 @@ These settings can only be applied at the project level.
     ```
 
 !!! info "CLI Only"
-    This option only applies when using the `schemathesis run` command for the fuzzing phase.
+    This option only applies when using the `autotest run` command for the fuzzing phase.
 
     **Available sources:**
 
@@ -561,7 +561,7 @@ These settings can only be applied at the project level.
     **Default**: `[]`  
 
     Lists the HTTP methods to use when generating test cases with methods not specified in the API during the **coverage** phase.
-    Schemathesis will limit negative testing of unexpected methods to those in the array; if omitted, all HTTP methods not specified in the spec are applied.
+    Autotest will limit negative testing of unexpected methods to those in the array; if omitted, all HTTP methods not specified in the spec are applied.
 
     ```toml
     [phases.coverage]
@@ -575,7 +575,7 @@ These settings can only be applied at the project level.
     **Type**: `Integer (≥2)`  
     **Default**: `null`  
 
-    Specifies the maximum number of stateful steps (i.e., transitions between states) to perform in the **stateful** phase. When set, Schemathesis will stop exploring new state transitions once this limit is reached, even if additional valid transitions are available.
+    Specifies the maximum number of stateful steps (i.e., transitions between states) to perform in the **stateful** phase. When set, Autotest will stop exploring new state transitions once this limit is reached, even if additional valid transitions are available.
 
     ```toml
     [phases.stateful]
@@ -589,7 +589,7 @@ These settings can only be applied at the project level.
     **Type**: `Array[String]`  
     **Default**: `["location-headers", "dependency-analysis"]`  
 
-    Specifies which inference algorithms to use during the **stateful** phase. Schemathesis will use the specified algorithms to automatically analyze API responses and generate OpenAPI links for stateful testing.
+    Specifies which inference algorithms to use during the **stateful** phase. Autotest will use the specified algorithms to automatically analyze API responses and generate OpenAPI links for stateful testing.
 
     Available algorithms:
 
@@ -641,7 +641,7 @@ These settings can only be applied at the project level.
     **Type:** `Object`
     **Default:** `null`
 
-    OpenAPI-aware authentication that aligns with schema security definitions. Each `<scheme>` name must match a `securityScheme` from your OpenAPI spec. Schemathesis reads parameter names and locations from the schema.
+    OpenAPI-aware authentication that aligns with schema security definitions. Each `<scheme>` name must match a `securityScheme` from your OpenAPI spec. Autotest reads parameter names and locations from the schema.
 
     **API Key authentication:**
 
@@ -760,7 +760,7 @@ These settings can only be applied at the project level.
 
 ### Network
 
-The following settings control how Schemathesis makes network requests to the API under test.
+The following settings control how Autotest makes network requests to the API under test.
 
 #### `headers`
 
@@ -925,7 +925,7 @@ The following settings control how Schemathesis makes network requests to the AP
 
 ### Data Generation
 
-The following settings control how Schemathesis generates test data for your API testing.
+The following settings control how Autotest generates test data for your API testing.
 
 #### `generation.mode`
 
@@ -934,7 +934,7 @@ The following settings control how Schemathesis generates test data for your API
     **Type:** `String`  
     **Default:** `"all"`  
     
-    Test data generation mode. Controls whether Schemathesis generates valid data, invalid data, or both.
+    Test data generation mode. Controls whether Autotest generates valid data, invalid data, or both.
     
     Possible values:
 
@@ -956,7 +956,7 @@ The following settings control how Schemathesis generates test data for your API
 
     Maximum number of test cases generated per API operation. Must be greater than or equal to 1.
 
-    Schemathesis generates diverse examples based on your API schema, distributed across enabled generation modes (e.g., positive and negative test cases). See [Data Generation](../explanations/data-generation.md) for details.
+    Autotest generates diverse examples based on your API schema, distributed across enabled generation modes (e.g., positive and negative test cases). See [Data Generation](../explanations/data-generation.md) for details.
 
     This setting has different effects depending on the test phase:
 
@@ -976,7 +976,7 @@ The following settings control how Schemathesis generates test data for your API
     **Type:** `Boolean`  
     **Default:** `false`  
 
-    Disable test case shrinking. When enabled, Schemathesis won't attempt to simplify failing test cases. This improves performance but makes test failures harder to debug.
+    Disable test case shrinking. When enabled, Autotest won't attempt to simplify failing test cases. This improves performance but makes test failures harder to debug.
 
     ```toml
     [generation]
@@ -1018,7 +1018,7 @@ The following settings control how Schemathesis generates test data for your API
     **Type:** `Boolean`  
     **Default:** `true`  
 
-Controls whether Schemathesis produces unexpected query, header, or cookie parameters. Leave it enabled (default) to exercise `additionalProperties: false`; set it to `false` to skip generating those extras entirely.
+Controls whether Autotest produces unexpected query, header, or cookie parameters. Leave it enabled (default) to exercise `additionalProperties: false`; set it to `false` to skip generating those extras entirely.
 
     ```toml
     [generation]
@@ -1079,7 +1079,7 @@ Controls whether Schemathesis produces unexpected query, header, or cookie param
     **Type:** `Boolean`  
     **Default:** `true`  
 
-    Controls whether to generate security parameters during testing. When enabled, Schemathesis will include appropriate security-related parameters in test data based on the API's security schemes defined in the schema.
+    Controls whether to generate security parameters during testing. When enabled, Autotest will include appropriate security-related parameters in test data based on the API's security schemes defined in the schema.
 
     ```toml
     [generation]
@@ -1107,13 +1107,13 @@ Controls whether Schemathesis produces unexpected query, header, or cookie param
     **Type:** `String`  
     **Default:** `.hypothesis/examples`  
     
-    Storage for examples discovered by Schemathesis. Options:
+    Storage for examples discovered by Autotest. Options:
 
     - `"none"`: Disable storage
     - `":memory:"`: Use temporary in-memory storage
     - File path: For persistent storage in a custom location
 
-    By default, Schemathesis creates a directory-based example database in your current working directory under `.hypothesis/examples`. If this location is unusable, Schemathesis will emit a warning and use an alternative.
+    By default, Autotest creates a directory-based example database in your current working directory under `.hypothesis/examples`. If this location is unusable, Autotest will emit a warning and use an alternative.
 
     ```toml
     [generation]
@@ -1124,7 +1124,7 @@ Controls whether Schemathesis produces unexpected query, header, or cookie param
 
     ```toml
     [generation]
-    database = "./.schemathesis/examples/"
+    database = "./.Autotest/examples/"
     ```
 
 #### `generation.unique-inputs`
@@ -1134,7 +1134,7 @@ Controls whether Schemathesis produces unexpected query, header, or cookie param
     **Type:** `Boolean`  
     **Default:** `false`  
 
-    Force the generation of unique test cases. When enabled, Schemathesis will ensure that no duplicate test inputs are used within a single test phase.
+    Force the generation of unique test cases. When enabled, Autotest will ensure that no duplicate test inputs are used within a single test phase.
 
     ```toml
     [generation]

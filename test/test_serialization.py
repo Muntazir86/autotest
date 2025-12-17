@@ -12,17 +12,17 @@ import pytest
 from hypothesis import HealthCheck, Phase, given, settings
 from hypothesis import strategies as st
 
-import schemathesis
-from schemathesis.core.errors import (
+import autotest
+from autotest.core.errors import (
     SERIALIZATION_FOR_TYPE_IS_NOT_POSSIBLE_MESSAGE,
     SerializationError,
     SerializationNotPossible,
 )
-from schemathesis.core.transforms import deepclone
-from schemathesis.transport.asgi import ASGI_TRANSPORT
-from schemathesis.transport.requests import REQUESTS_TRANSPORT, RequestsTransport
-from schemathesis.transport.serialization import Binary
-from schemathesis.transport.wsgi import WSGI_TRANSPORT, WSGITransport
+from autotest.core.transforms import deepclone
+from autotest.transport.asgi import ASGI_TRANSPORT
+from autotest.transport.requests import REQUESTS_TRANSPORT, RequestsTransport
+from autotest.transport.serialization import Binary
+from autotest.transport.wsgi import WSGI_TRANSPORT, WSGITransport
 from test.utils import assert_requests_call
 
 
@@ -39,7 +39,7 @@ def to_csv(data):
 
 @pytest.fixture
 def csv_serializer():
-    @schemathesis.serializer("text/csv")
+    @autotest.serializer("text/csv")
     def serialize_csv(ctx, value):
         return to_csv(value)
 
@@ -53,9 +53,9 @@ def csv_serializer():
 def api_schema(request, openapi_version):
     if request.param == "aiohttp":
         schema_url = request.getfixturevalue("schema_url")
-        return schemathesis.openapi.from_url(schema_url)
+        return autotest.openapi.from_url(schema_url)
     app = request.getfixturevalue("flask_app")
-    return schemathesis.openapi.from_wsgi("/schema.yaml", app=app)
+    return autotest.openapi.from_wsgi("/schema.yaml", app=app)
 
 
 @pytest.mark.hypothesis_nested
@@ -78,7 +78,7 @@ def test_text_csv(api_schema):
 
 @pytest.fixture
 def tsv_schema(schema_url):
-    schema = schemathesis.openapi.from_url(schema_url)
+    schema = autotest.openapi.from_url(schema_url)
     definition = schema.raw_schema["paths"]["/csv"]["post"]
     if "consumes" in definition:
         definition["consumes"] = ["text/tsv"]
@@ -117,7 +117,7 @@ def test_in_cli(ctx, cli, tsv_schema, snapshot_cli, openapi3_base_url):
 def test_serialize_yaml(open_api_3_schema_with_yaml_payload, transport):
     # See GH-1010
     # When API expects `text/yaml`
-    schema = schemathesis.openapi.from_dict(open_api_3_schema_with_yaml_payload)
+    schema = autotest.openapi.from_dict(open_api_3_schema_with_yaml_payload)
 
     if transport is WSGITransport:
         schema.app = 42
@@ -125,7 +125,7 @@ def test_serialize_yaml(open_api_3_schema_with_yaml_payload, transport):
     @given(case=schema["/yaml"]["POST"].as_strategy())
     @settings(max_examples=1)
     def test(case):
-        # Then Schemathesis should generate valid YAML, not JSON with `application/json` media type
+        # Then Autotest should generate valid YAML, not JSON with `application/json` media type
         kwargs = case.as_transport_kwargs()
         assert kwargs["headers"]["Content-Type"] == "text/yaml"
         assert kwargs["data"] == "- 42\n"
@@ -149,12 +149,12 @@ def test_serialize_any(ctx):
             },
         }
     )
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
 
     @given(case=schema["/any"]["POST"].as_strategy())
     @settings(max_examples=1)
     def test(case):
-        # Then Schemathesis should generate valid data of any supported type
+        # Then Autotest should generate valid data of any supported type
         assert case.as_transport_kwargs()["headers"]["Content-Type"] in REQUESTS_TRANSPORT._serializers
 
     test()
@@ -178,7 +178,7 @@ def test_serialization_not_possible_manual(ctx):
             },
         }
     )
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
 
     @given(case=schema["/test"]["POST"].as_strategy())
     @settings(max_examples=1)
@@ -215,7 +215,7 @@ def test_binary_data(ctx, media_type):
             },
         }
     )
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
     operation = schema["/test"]["POST"]
     # When an explicit bytes value is passed as body (it happens with `externalValue`)
     body = b"\x92\x42"
@@ -257,7 +257,7 @@ def test_unknown_multipart_fields_openapi3(ctx):
             },
         }
     )
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
     operation = schema["/test"]["POST"]
     case = operation.Case(
         body={"data": b"\x92\x42", "note": "foo", "unknown": "seen"}, media_type="multipart/form-data"
@@ -297,7 +297,7 @@ def test_unknown_multipart_fields_openapi2(ctx):
         },
         version="2.0",
     )
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
     operation = schema["/test"]["POST"]
     case = operation.Case(
         body={"data": b"\x92\x42", "note": "foo", "unknown": "seen"}, media_type="multipart/form-data"
@@ -355,7 +355,7 @@ def test_multipart_with_references(ctx):
             "/test": {"$ref": f"{paths}#/paths/Test"},
         }
     )
-    schema = schemathesis.openapi.from_path(schema)
+    schema = autotest.openapi.from_path(schema)
     operation = schema["/test"]["POST"]
     case = operation.Case(body={}, media_type="multipart/form-data")
     serialized = REQUESTS_TRANSPORT.serialize_case(case)
@@ -480,7 +480,7 @@ def test_get_matching_serializers(media_type, expected):
 )
 def test_serialize_xml(openapi_3_schema_with_xml, path, expected):
     # When the schema contains XML payload
-    schema = schemathesis.openapi.from_dict(openapi_3_schema_with_xml)
+    schema = autotest.openapi.from_dict(openapi_3_schema_with_xml)
 
     @given(case=schema[path]["POST"].as_strategy())
     @settings(max_examples=1)
@@ -536,7 +536,7 @@ def test_serialize_xml_unbound_prefix(ctx, schema_object):
         components={"schemas": {"Main": schema_object}},
     )
 
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
 
     @given(case=schema["/test"]["POST"].as_strategy())
     @settings(max_examples=1)
@@ -596,7 +596,7 @@ def test_serialize_xml_hypothesis(data, schema_object, media_type):
         "components": {"schemas": {"Main": schema_object}},
     }
 
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
 
     case = data.draw(schema["/test"]["POST"].as_strategy())
 
@@ -623,7 +623,7 @@ def test_xml_with_binary(ctx):
         }
     )
 
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
 
     @given(case=schema["/test"]["POST"].as_strategy())
     @settings(max_examples=1)
@@ -664,7 +664,7 @@ def test_duplicate_xml_attributes(ctx):
         }
     )
 
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
     case = schema["/test"]["POST"].Case(body={"prop1": 1, "prop2": 2})
 
     serialized_data = case.as_transport_kwargs()["data"].decode("utf8")
@@ -707,7 +707,7 @@ def test_xml_with_referenced_property_schema(ctx):
         },
     )
 
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
     case = schema["/test"]["POST"].Case(body={"id": 42})
 
     # Then the XML should use the configuration from the referenced schema
@@ -747,7 +747,7 @@ def test_xml_with_referenced_array_items(ctx):
         },
     )
 
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
     case = schema["/test"]["POST"].Case(body=[42, 43])
 
     # Then the XML should use the referenced item configuration
@@ -792,7 +792,7 @@ def test_xml_with_nested_schema_references(ctx):
         },
     )
 
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
     case = schema["/test"]["POST"].Case(body={"user": {"profile": "admin"}})
 
     # Then XML should resolve the entire reference chain correctly
@@ -827,7 +827,7 @@ def test_xml_root_tag_from_reference_openapi2(ctx):
         version="2.0",
     )
 
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
     case = schema["/test"]["POST"].Case(body={"name": "John", "age": 30}, media_type="application/xml")
 
     # Then the root XML tag should be derived from the reference name "UserProfile"
@@ -857,10 +857,10 @@ def test_serializer_alias_single(ctx, target, source, body, expected_content):
         }
     )
 
-    schemathesis.serializer.alias(target, source)
+    autotest.serializer.alias(target, source)
 
     try:
-        schema = schemathesis.openapi.from_dict(raw_schema)
+        schema = autotest.openapi.from_dict(raw_schema)
         case = schema["/test"]["POST"].Case(body=body, media_type=target)
 
         for transport in (REQUESTS_TRANSPORT, WSGI_TRANSPORT, ASGI_TRANSPORT):
@@ -888,10 +888,10 @@ def test_serializer_alias_multiple_targets(ctx):
         }
     )
 
-    schemathesis.serializer.alias(["application/x-custom-yaml", "text/vnd.yaml.custom"], "application/yaml")
+    autotest.serializer.alias(["application/x-custom-yaml", "text/vnd.yaml.custom"], "application/yaml")
 
     try:
-        schema = schemathesis.openapi.from_dict(raw_schema)
+        schema = autotest.openapi.from_dict(raw_schema)
 
         for media_type in ["application/x-custom-yaml", "text/vnd.yaml.custom"]:
             case = schema["/test"]["POST"].Case(body={"id": 42}, media_type=media_type)
@@ -918,12 +918,12 @@ def test_serializer_alias_multiple_targets(ctx):
 )
 def test_serializer_alias_validation(target, source, expected_error):
     with pytest.raises(ValueError, match=re.escape(expected_error)):
-        schemathesis.serializer.alias(target, source)
+        autotest.serializer.alias(target, source)
 
 
 def test_serializer_alias_empty_target_in_list():
     with pytest.raises(ValueError, match="Target media type cannot be empty"):
-        schemathesis.serializer.alias(["application/custom", ""], "application/json")
+        autotest.serializer.alias(["application/custom", ""], "application/json")
 
 
 def test_binary_not_a_dataclass():

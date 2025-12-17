@@ -90,10 +90,10 @@ jobs:
 
       - run: uv tool install ".[dev]"
 
-      - run: uv tool run schemathesis run /openapi.json --app=cp1252_app:app -c custom_check > out.txt || true
+      - run: uv tool run autotest run /openapi.json --app=cp1252_app:app -c custom_check > out.txt || true
         working-directory: ./test/apps
         env:
-          SCHEMATHESIS_HOOKS: hooks
+          autotest_HOOKS: hooks
           PYTHONIOENCODING: cp1252
 
       - run: |

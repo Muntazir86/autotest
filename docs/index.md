@@ -1,9 +1,9 @@
-# Schemathesis
+# Autotest
 
-Schemathesis automatically generates property-based tests from your OpenAPI or GraphQL schema and exercises the edge cases that break your API.
+Autotest automatically generates property-based tests from your OpenAPI or GraphQL schema and exercises the edge cases that break your API.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/schemathesis/schemathesis/master/img/demo.gif" alt="Schemathesis automatically finding a server error"/>
+  <img src="https://raw.githubusercontent.com/Autotest/Autotest/master/img/demo.gif" alt="Autotest automatically finding a server error"/>
   <br>
   <i>Finding a server error that manual testing missed</i>
 </p>
@@ -15,12 +15,12 @@ Schemathesis automatically generates property-based tests from your OpenAPI or G
 ## Try it now
 
 ```console
-uvx schemathesis run https://example.schemathesis.io/openapi.json
+uvx autotest run https://example.Autotest.io/openapi.json
 ```
 
 This command will immediately find real bugs in a demo API and show you exactly how to reproduce them.
 
-## Why teams choose Schemathesis
+## Why teams choose Autotest
 
 - 🎯 Find real bugs on the first run (commonly 5–15 in production schemas).
 - ⏱️ Point it at your schema—no per-endpoint tests to maintain.
@@ -37,7 +37,7 @@ This command will immediately find real bugs in a demo API and show you exactly 
 
 <div class="grid cards" markdown>
 
--   :material-book-open-page-variant:{ .lg .middle style="color: #2196F3" } __New to Schemathesis?__
+-   :material-book-open-page-variant:{ .lg .middle style="color: #2196F3" } __New to Autotest?__
 
     ---
 
@@ -54,7 +54,7 @@ This command will immediately find real bugs in a demo API and show you exactly 
     Practical guides for common scenarios:
 
      - [:octicons-arrow-right-24: CI/CD Integration](guides/cicd.md)
-     - [:octicons-arrow-right-24: Extending Schemathesis](guides/extending.md)
+     - [:octicons-arrow-right-24: Extending Autotest](guides/extending.md)
      - [:octicons-arrow-right-24: More...](guides/index.md)
 
 -   :material-puzzle:{ .lg .middle style="color: #9C27B0" } __Want to understand how it works?__

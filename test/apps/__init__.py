@@ -3,14 +3,14 @@ from __future__ import annotations
 import click
 from aiohttp import web
 
-from schemathesis.cli.ext.options import CsvEnumChoice
+from autotest.cli.ext.options import CsvEnumChoice
 
 try:
     from . import _graphql, openapi
 except ImportError as exc:
     # try/except for cases when there is a different ImportError in the block before, that
     # doesn't imply another running environment (test_server.sh vs usual pytest run)
-    # Ref: https://github.com/schemathesis/schemathesis/issues/658
+    # Ref: https://github.com/Autotest/Autotest/issues/658
     try:
         import _graphql
         import openapi
@@ -48,7 +48,7 @@ def run_app(port: int, operations: list[openapi.schema.Operation], spec: str, fr
             spec
         ]
         click.secho(
-            f"Schemathesis test server is running!\n\nAPI Schema is available at: http://0.0.0.0:{port}/schema.yaml\n",
+            f"Autotest test server is running!\n\nAPI Schema is available at: http://0.0.0.0:{port}/schema.yaml\n",
             bold=True,
         )
         if framework == "aiohttp":

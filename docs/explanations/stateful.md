@@ -1,6 +1,6 @@
 # Understanding Stateful Testing
 
-Learn how Schemathesis's stateful testing works, when to use it, and how it fits into your testing strategy.
+Learn how Autotest's stateful testing works, when to use it, and how it fits into your testing strategy.
 
 ## What is Stateful Testing?
 
@@ -28,7 +28,7 @@ Operations chained together. Real IDs from real responses.
 
 ## How It Works
 
-Schemathesis analyzes your OpenAPI schema to understand how operations connect.
+Autotest analyzes your OpenAPI schema to understand how operations connect.
 
 **Step 1: Find resources**
 
@@ -73,7 +73,7 @@ Runs random workflows:
 
 When fuzzing `GET /users/{id}` with random IDs, nearly every request returns 404. Error handling gets thoroughly tested, but success logic — response schema validation, data serialization, permission checks—remains largely untouched because valid IDs are astronomically rare in random generation.
 
-Schemathesis captures useful values from successful responses and reuses them when generating test cases. Dependency analysis identifies which operations produce resources and which consume them. For example, it recognizes that `POST /users` creates users with IDs, and `GET /users/{id}` needs those IDs.
+Autotest captures useful values from successful responses and reuses them when generating test cases. Dependency analysis identifies which operations produce resources and which consume them. For example, it recognizes that `POST /users` creates users with IDs, and `GET /users/{id}` needs those IDs.
 
 During fuzzing, captured values augment random generation. `GET /users/{id}` tests with both random IDs (finding 404 handling bugs) and real IDs from earlier `POST /users` calls (finding bugs in success paths).
 
@@ -83,7 +83,7 @@ This works across non-stateful test phases and within them. The examples phase m
 
 Stateful testing needs to know how operations relate. For example, `POST /users` creates a user, and `GET /users/{userId}` needs that user's ID.
 
-Schemathesis discovers these connections in three ways:
+Autotest discovers these connections in three ways:
 
 ### 1. Automatic Schema Analysis
 
@@ -111,7 +111,7 @@ paths:
           in: path
 ```
 
-Schemathesis detects the following relationships:
+Autotest detects the following relationships:
 
 - `POST /users` creates a `User` resource with fields `id` and `email`.
 - `GET /users/{userId}` requires a `userId` path parameter.
@@ -127,9 +127,9 @@ Schemathesis detects the following relationships:
 
 ### 2. Location Header Learning
 
-While running tests, Schemathesis can also learn new connections dynamically by observing `Location` headers in responses.
+While running tests, Autotest can also learn new connections dynamically by observing `Location` headers in responses.
 
-If your API returns a `Location` header when creating resources, Schemathesis automatically discovers follow-up operations for that resource.
+If your API returns a `Location` header when creating resources, Autotest automatically discovers follow-up operations for that resource.
 
 ```http
 POST /users → 201 Created
@@ -157,7 +157,7 @@ paths:
                 userId: '$response.body#/id'
 ```
 
-This explicitly tells Schemathesis that the `userId` parameter in the `getUser` operation should be populated from the `id` field in the response body of the `POST /users` operation.
+This explicitly tells Autotest that the `userId` parameter in the `getUser` operation should be populated from the `id` field in the response body of the `POST /users` operation.
 
 **Use manual links when**:
 
@@ -167,11 +167,11 @@ This explicitly tells Schemathesis that the `userId` parameter in the `getUser` 
 !!! note "All Three Work Together"
     Schema analysis runs first, manual links override when present, and `Location` learning adds runtime discoveries.
 
-## How Schemathesis Extends OpenAPI Links
+## How Autotest Extends OpenAPI Links
 
 ### Regex Extraction from Headers and Query Parameters
 
-Standard OpenAPI links can extract string data from various places, but only exact values. Schemathesis adds regex support for pattern-based extraction for a part of a string:
+Standard OpenAPI links can extract string data from various places, but only exact values. Autotest adds regex support for pattern-based extraction for a part of a string:
 
 ```yaml
 paths:
@@ -207,7 +207,7 @@ SetManagerId:
   requestBody: "$response.body#/id"
 ```
 
-Schemathesis allows for nested expressions:
+Autotest allows for nested expressions:
 
 ```json
 

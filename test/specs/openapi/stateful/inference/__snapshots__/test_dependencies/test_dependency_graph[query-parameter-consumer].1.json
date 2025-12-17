@@ -8,7 +8,7 @@
         "parameters": {
           "query.itemId": "$response.body#/id"
         },
-        "x-schemathesis": {
+        "x-autotest": {
           "is_inferred": true
         }
       }

@@ -6,8 +6,8 @@ import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
-import schemathesis
-from schemathesis.generation import GenerationMode
+import autotest
+from autotest.generation import GenerationMode
 
 
 def is_structural_mutation(body: Any, required_field: str) -> bool:
@@ -28,7 +28,7 @@ def is_type_mutation(body: Any, field: str, expected_type: type) -> bool:
 def test_binary_format_negative_mutations(encoding):
     if encoding:
         # Register custom media type to test that it's skipped in negative mode
-        schemathesis.openapi.media_type("image/png", st.just(b"\x89PNG\r\n\x1a\n"))
+        autotest.openapi.media_type("image/png", st.just(b"\x89PNG\r\n\x1a\n"))
 
     content = {
         "schema": {
@@ -40,7 +40,7 @@ def test_binary_format_negative_mutations(encoding):
     if encoding:
         content["encoding"] = encoding
 
-    schema = schemathesis.openapi.from_dict(
+    schema = autotest.openapi.from_dict(
         {
             "openapi": "3.0.2",
             "info": {"title": "Test", "version": "1.0"},
@@ -70,9 +70,9 @@ def test_binary_format_negative_mutations(encoding):
 
 
 def test_custom_media_type_raw_binary_body_in_negative_mode():
-    schemathesis.openapi.media_type("application/x-tar", st.just(b""))
+    autotest.openapi.media_type("application/x-tar", st.just(b""))
 
-    schema = schemathesis.openapi.from_dict(
+    schema = autotest.openapi.from_dict(
         {
             "openapi": "3.0.3",
             "info": {"title": "Test", "version": "1.0"},

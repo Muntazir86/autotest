@@ -1,8 +1,8 @@
 import pytest
 
-from schemathesis.core.transforms import transform
-from schemathesis.specs.openapi import converter
-from schemathesis.specs.openapi.converter import is_read_only, is_write_only, rewrite_properties
+from autotest.core.transforms import transform
+from autotest.specs.openapi import converter
+from autotest.specs.openapi.converter import is_read_only, is_write_only, rewrite_properties
 
 
 @pytest.mark.parametrize(

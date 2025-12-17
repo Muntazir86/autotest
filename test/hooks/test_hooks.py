@@ -4,12 +4,12 @@ import pytest
 from hypothesis import HealthCheck, Phase, given, settings
 from hypothesis import strategies as st
 
-import schemathesis
-from schemathesis.core.transport import USER_AGENT
-from schemathesis.generation.modes import GenerationMode
-from schemathesis.hooks import HookDispatcher, HookDispatcherMark, HookScope
-from schemathesis.pytest.plugin import SchemaHandleMark
-from schemathesis.transport.prepare import get_default_headers
+import autotest
+from autotest.core.transport import USER_AGENT
+from autotest.generation.modes import GenerationMode
+from autotest.hooks import HookDispatcher, HookDispatcherMark, HookScope
+from autotest.pytest.plugin import SchemaHandleMark
+from autotest.transport.prepare import get_default_headers
 from test.utils import assert_requests_call, flaky
 
 
@@ -22,25 +22,25 @@ def integer_id(query):
 def global_hook(request):
     if request.param == "default-direct":
 
-        @schemathesis.hook
+        @autotest.hook
         def filter_query(context, query):
             return integer_id(query)
 
     if request.param == "default-named":
 
-        @schemathesis.hook("filter_query")
+        @autotest.hook("filter_query")
         def hook(context, query):
             return integer_id(query)
 
     if request.param == "generate-direct":
 
-        @schemathesis.hook
+        @autotest.hook
         def before_generate_query(context, strategy):
             return strategy.filter(integer_id)
 
     if request.param == "generate-named":
 
-        @schemathesis.hook("before_generate_query")
+        @autotest.hook("before_generate_query")
         def hook(context, strategy):
             return strategy.filter(integer_id)
 
@@ -74,7 +74,7 @@ def test_case_hook(wsgi_app_schema):
         case.body["extra"] = 42
         return case
 
-    @schemathesis.hook
+    @autotest.hook
     def map_case(context, case):  # noqa: F811
         case.body["first_name"] = case.body["last_name"]
         return case
@@ -501,7 +501,7 @@ def test_graphql_query(graphql_schema, graphql_server_host):
             "headers": {
                 **get_default_headers(),
                 "User-Agent": USER_AGENT,
-                "X-Schemathesis-TestCaseId": ANY,
+                "x-autotest-TestCaseId": ANY,
                 "Content-Type": "application/json",
                 "h": "3",
             },

@@ -1,6 +1,6 @@
 # Enhanced Features: HTML Reports & Smart ID Extraction
 
-Schemathesis includes two powerful features for enhanced API testing:
+Autotest includes two powerful features for enhanced API testing:
 
 1. **HTML Report Generator** - Generate beautiful, interactive HTML reports
 2. **Smart ID Extraction** - Automatically extract and reuse resource IDs
@@ -13,21 +13,21 @@ Generate self-contained, interactive HTML reports with complete request/response
 
 ```bash
 # Generate an HTML report
-schemathesis run https://api.example.com/openapi.json \
+autotest run https://api.example.com/openapi.json \
   --report-html=./reports/api-test-report.html
 
 # With custom title
-schemathesis run https://api.example.com/openapi.json \
+autotest run https://api.example.com/openapi.json \
   --report-html=./reports/report.html \
   --report-html-title="My API Test Report"
 
 # Include full details for passed tests
-schemathesis run https://api.example.com/openapi.json \
+autotest run https://api.example.com/openapi.json \
   --report-html=./reports/report.html \
   --report-include-passed
 ```
 
-### Configuration (schemathesis.toml)
+### Configuration (autotest.toml)
 
 ```toml
 [reports.html]
@@ -42,8 +42,8 @@ sanitize-headers = ["Authorization", "X-API-Key"]
 ### Python API
 
 ```python
-import schemathesis
-from schemathesis.reporting import enable_html_report, generate_report
+import autotest
+from Autotest.reporting import enable_html_report, generate_report
 
 # Enable HTML report generation
 enable_html_report(
@@ -54,7 +54,7 @@ enable_html_report(
 )
 
 # Run your tests...
-schema = schemathesis.openapi.from_url("https://api.example.com/openapi.json")
+schema = autotest.openapi.from_url("https://api.example.com/openapi.json")
 
 @schema.parametrize()
 def test_api(case):
@@ -84,7 +84,7 @@ Automatically extract IDs from API responses and inject them into subsequent req
 
 ### The Problem
 
-Without ID extraction, Schemathesis generates random IDs for path parameters:
+Without ID extraction, Autotest generates random IDs for path parameters:
 
 ```
 POST /users (body: {"name": "John"})        → 201, {"id": 123, "name": "John"}
@@ -107,20 +107,20 @@ DELETE /users/{id} (id: 123)                → 204 ✓
 
 ```bash
 # Enable ID extraction
-schemathesis run https://api.example.com/openapi.json --extract-ids
+autotest run https://api.example.com/openapi.json --extract-ids
 
 # With verbose logging
-schemathesis run https://api.example.com/openapi.json \
+autotest run https://api.example.com/openapi.json \
   --extract-ids \
   --id-verbose
 
 # Choose injection strategy
-schemathesis run https://api.example.com/openapi.json \
+autotest run https://api.example.com/openapi.json \
   --extract-ids \
   --id-injection-strategy=latest  # or "random" or "first"
 ```
 
-### Configuration (schemathesis.toml)
+### Configuration (autotest.toml)
 
 ```toml
 [id-extraction]
@@ -148,8 +148,8 @@ ignore-fields = [
 ### Python API
 
 ```python
-import schemathesis
-from schemathesis.extraction import enable_id_extraction, get_extraction_summary
+import autotest
+from Autotest.extraction import enable_id_extraction, get_extraction_summary
 
 # Enable ID extraction
 enable_id_extraction(
@@ -161,7 +161,7 @@ enable_id_extraction(
 )
 
 # Run your tests...
-schema = schemathesis.openapi.from_url("https://api.example.com/openapi.json")
+schema = autotest.openapi.from_url("https://api.example.com/openapi.json")
 
 @schema.parametrize()
 def test_api(case):
@@ -202,7 +202,7 @@ The extractor uses multiple strategies to detect IDs:
 The HTML report includes ID extraction information when both features are enabled:
 
 ```bash
-schemathesis run https://api.example.com/openapi.json \
+autotest run https://api.example.com/openapi.json \
   --extract-ids \
   --report-html=./reports/report.html
 ```

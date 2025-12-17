@@ -2,7 +2,7 @@ from typing import Any
 
 import pytest
 
-from schemathesis.core.jsonschema.references import sanitize
+from autotest.core.jsonschema.references import sanitize
 
 
 def ref_schema(ref: str) -> dict[str, Any]:

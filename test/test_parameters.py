@@ -4,13 +4,13 @@ import pytest
 from hypothesis import HealthCheck, assume, find, given, settings
 from hypothesis.errors import FailedHealthCheck, NoSuchExample, Unsatisfiable
 
-import schemathesis
-from schemathesis.core import NOT_SET
-from schemathesis.core.errors import InvalidSchema
-from schemathesis.generation.modes import GenerationMode
-from schemathesis.openapi.generation.filters import is_valid_header
-from schemathesis.specs.openapi._hypothesis import get_default_format_strategies
-from schemathesis.specs.openapi.adapter.security import ORIGINAL_SECURITY_TYPE_KEY
+import autotest
+from autotest.core import NOT_SET
+from autotest.core.errors import InvalidSchema
+from autotest.generation.modes import GenerationMode
+from autotest.openapi.generation.filters import is_valid_header
+from autotest.specs.openapi._hypothesis import get_default_format_strategies
+from autotest.specs.openapi.adapter.security import ORIGINAL_SECURITY_TYPE_KEY
 
 from .utils import as_param
 
@@ -238,7 +238,7 @@ def test_(case):
 
 def _assert_parameter(schema, schema_spec, location, expected=None):
     # When security definition is defined as "apiKey"
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
     if schema_spec == "swagger":
         operation = schema["/users"]["get"]
         expected = (
@@ -422,7 +422,7 @@ def test_date_deserializing(ctx):
     )
     # Then yaml loader should ignore it
     # And data generation should work without errors
-    schema = schemathesis.openapi.from_path(str(schema_path))
+    schema = autotest.openapi.from_path(str(schema_path))
 
     @given(case=schema["/teapot"]["GET"].as_strategy())
     @settings(suppress_health_check=[HealthCheck.filter_too_much])
@@ -499,7 +499,7 @@ def test_nullable_body_behind_a_reference(ctx):
         },
     )
     # Then it should be properly collected
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     operation = schema["/payload"]["POST"]
     # And its definition is not transformed to JSON Schema
     assert operation.body[0].definition == {
@@ -546,7 +546,7 @@ def api_schema(ctx, request, openapi_version):
                 }
             }
         )
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
     if request.param == "aiohttp":
         base_url = request.getfixturevalue("base_url")
         schema.config.update(base_url=base_url)
@@ -576,7 +576,7 @@ def test_null_body(api_schema):
 @pytest.mark.operations("read_only")
 def test_read_only(schema_url):
     # When API operation has `readOnly` properties
-    schema = schemathesis.openapi.from_url(schema_url)
+    schema = autotest.openapi.from_url(schema_url)
 
     @given(case=schema["/read_only"]["GET"].as_strategy())
     @settings(max_examples=1, deadline=None)
@@ -592,7 +592,7 @@ def test_read_only(schema_url):
 @pytest.mark.operations("write_only")
 def test_write_only(schema_url):
     # When API operation has `writeOnly` properties
-    schema = schemathesis.openapi.from_url(schema_url)
+    schema = autotest.openapi.from_url(schema_url)
 
     @given(case=schema["/write_only"]["POST"].as_strategy())
     @settings(max_examples=1)
@@ -614,7 +614,7 @@ def test_missing_content_and_schema(ctx, location):
     schema = ctx.openapi.build_schema(
         {"/foo": {"get": {"parameters": [{"in": location, "name": "X-Foo", "required": True}]}}}
     )
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
 
     @given(schema["/foo"]["GET"].as_strategy())
     @settings(max_examples=1)
@@ -632,7 +632,7 @@ def test_missing_content_and_schema(ctx, location):
 
 @pytest.mark.operations("headers")
 def test_ascii_codec_for_headers(openapi3_schema_url):
-    schema = schemathesis.openapi.from_url(openapi3_schema_url)
+    schema = autotest.openapi.from_url(openapi3_schema_url)
     schema.config.generation.codec = "ascii"
 
     @given(case=schema["/headers"]["GET"].as_strategy())
@@ -645,7 +645,7 @@ def test_ascii_codec_for_headers(openapi3_schema_url):
 
 @pytest.mark.operations("headers")
 def test_exclude_chars_and_no_x00_for_headers(openapi3_schema_url):
-    schema = schemathesis.openapi.from_url(openapi3_schema_url)
+    schema = autotest.openapi.from_url(openapi3_schema_url)
     schema.config.generation.exclude_header_characters = "abc"
     schema.config.generation.allow_x00 = False
 
@@ -684,7 +684,7 @@ def test_parameter_with_boolean_true_schema(ctx, cli, openapi3_base_url, snapsho
     }
     raw_schema = ctx.openapi.build_schema(paths, version="3.1.0")
 
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     operation = schema["/success"]["GET"]
 
     # Then the optimized schema should handle boolean true correctly
@@ -736,7 +736,7 @@ def test_parameter_with_boolean_false_schema(ctx):
         version="3.1.0",
     )
     # Then it should load without crashing
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     operation = schema["/test"]["GET"]
     parameter = operation.query[0]
     # The optimized schema should be preserved or handled
@@ -763,7 +763,7 @@ def test_request_body_with_boolean_true_schema(ctx, cli, openapi3_base_url, snap
     }
     raw_schema = ctx.openapi.build_schema(paths, version="3.1.0")
 
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     operation = schema["/payload"]["POST"]
 
     # Then the optimized schema should handle boolean true correctly

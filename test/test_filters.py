@@ -1,6 +1,6 @@
 import pytest
 
-from schemathesis.generation.modes import GenerationMode
+from autotest.generation.modes import GenerationMode
 
 from .utils import integer
 

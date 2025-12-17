@@ -2,7 +2,7 @@
 
 Examples are sample values defined in your OpenAPI schema for request parameters and bodies.
 
-Schemathesis supports:
+Autotest supports:
 
 - **Example-based testing**: Uses fixed input values from your schema to produce predictable, repeatable tests.
 - **Property-based testing**: Generates a diverse range of inputs dynamically to expose unexpected edge cases.
@@ -52,7 +52,7 @@ content:
     examples:
       user:
         summary: "A typical user"
-        # Schemathesis will load and cache external examples during testing.
+        # Autotest will load and cache external examples during testing.
         externalValue: 'http://example.com/examples/user.json'
 ```
 
@@ -75,7 +75,7 @@ content:
 
 ## Using Examples in Tests
 
-Schemathesis automatically detects schema examples and uses them as test cases. For parameters without examples, it generates minimal valid values to ensure every operation is tested.
+Autotest automatically detects schema examples and uses them as test cases. For parameters without examples, it generates minimal valid values to ensure every operation is tested.
 
 ```yaml
 # Schema
@@ -104,14 +104,14 @@ Where `"John"` comes from the example, while the other values are minimal values
 Run example-based tests only using the `--phases=examples` option:
 
 ```console
-$ st run --phases=examples https://example.schemathesis.io/openapi.json
+$ st run --phases=examples https://example.Autotest.io/openapi.json
 ```
 
 This restricts testing to the examples phase, skipping other testing phases like coverage, fuzzing, and stateful testing.
 
 ### Multiple Examples Strategy
 
-Schemathesis uses a round-robin strategy to evenly distribute test cases across multiple examples:
+Autotest uses a round-robin strategy to evenly distribute test cases across multiple examples:
 
 ```yaml
 # Schema
@@ -124,7 +124,7 @@ properties:
     examples: [25, 30, 35]
 ```
 
-Schemathesis will generate test cases using each age value:
+Autotest will generate test cases using each age value:
 ```json
 {"name": "John", "age": 25, ...}
 {"name": "John", "age": 30, ...}
@@ -133,8 +133,8 @@ Schemathesis will generate test cases using each age value:
 
 ## Differences with Dredd
 
-Unlike [Dredd](https://dredd.org/en/latest/), which only uses schema examples, Schemathesis uses both predefined examples and generated data. Schemathesis also includes test case reduction and stateful testing.
+Unlike [Dredd](https://dredd.org/en/latest/), which only uses schema examples, Autotest uses both predefined examples and generated data. Autotest also includes test case reduction and stateful testing.
 
 !!! tip "Feedback"
 
-    If you rely on Dredd and find that a particular feature is missing in Schemathesis, please share your feedback via [GitHub Discussions](https://github.com/schemathesis/schemathesis/discussions).
+    If you rely on Dredd and find that a particular feature is missing in Autotest, please share your feedback via [GitHub Discussions](https://github.com/Autotest/Autotest/discussions).

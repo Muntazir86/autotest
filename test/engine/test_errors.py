@@ -1,6 +1,6 @@
 import requests
 
-from schemathesis.engine.errors import deduplicate_errors
+from autotest.engine.errors import deduplicate_errors
 
 
 def test_deduplicate_errors():

@@ -3,7 +3,7 @@
 ## Project Overview
 
 ### Goal
-Extend the API Auto-Tester tool (built on Schemathesis) with two powerful features:
+Extend the API Auto-Tester tool (built on autotest) with two powerful features:
 1. **Workflow Definitions** - Define and execute CRUD sequences and complex multi-step API test scenarios
 2. **YAML Config System** - Unified, hierarchical configuration system for all tool settings
 
@@ -32,7 +32,7 @@ A workflow engine that:
 - Passes data between steps (extracted IDs, response fields)
 - Supports conditional execution (if previous step succeeded/failed)
 - Handles setup and teardown (cleanup created resources)
-- Integrates with existing Schemathesis test generation
+- Integrates with existing autotest test generation
 - Reports workflow-level results (not just individual requests)
 
 ### 1.2 Problem This Solves
@@ -512,7 +512,7 @@ steps:
 ### 1.5 Implementation Approach
 
 #### Step 1: Workflow Parser
-**Location:** Create `schemathesis/workflows/parser.py`
+**Location:** Create `autotest/workflows/parser.py`
 
 **Responsibilities:**
 - Parse YAML workflow definitions
@@ -527,7 +527,7 @@ steps:
 - `DependencyResolver` - Build execution order
 
 #### Step 2: Workflow Models
-**Location:** Create `schemathesis/workflows/models.py`
+**Location:** Create `autotest/workflows/models.py`
 
 **Models to Create:**
 
@@ -587,7 +587,7 @@ PollConfig
 ```
 
 #### Step 3: Expression Engine
-**Location:** Create `schemathesis/workflows/expressions.py`
+**Location:** Create `autotest/workflows/expressions.py`
 
 **Responsibilities:**
 - Parse and evaluate ${...} expressions
@@ -612,7 +612,7 @@ PollConfig
 | **Pattern** | `regex:pattern`, `matches()` |
 
 #### Step 4: Workflow Executor
-**Location:** Create `schemathesis/workflows/executor.py`
+**Location:** Create `autotest/workflows/executor.py`
 
 **Responsibilities:**
 - Execute workflows step by step
@@ -621,7 +621,7 @@ PollConfig
 - Execute loops and polling
 - Manage timeouts
 - Handle failures according to configuration
-- Integrate with Schemathesis HTTP client
+- Integrate with autotest HTTP client
 
 **Execution Flow:**
 
@@ -650,7 +650,7 @@ WorkflowExecutor.run(workflow):
 ```
 
 #### Step 5: Dependency Graph Builder
-**Location:** Create `schemathesis/workflows/dependency_graph.py`
+**Location:** Create `autotest/workflows/dependency_graph.py`
 
 **Responsibilities:**
 - Parse `depends_on` relationships
@@ -665,17 +665,17 @@ WorkflowExecutor.run(workflow):
 4. Group independent steps for parallel execution
 
 #### Step 6: Response Validator
-**Location:** Create `schemathesis/workflows/validator.py`
+**Location:** Create `autotest/workflows/validator.py`
 
 **Responsibilities:**
 - Validate responses against expectations
 - Support all comparison operators
 - Handle custom expressions
-- Integrate with Schemathesis schema validation
+- Integrate with autotest schema validation
 - Generate detailed failure messages
 
 #### Step 7: Workflow Reporter Integration
-**Location:** Extend `schemathesis/reporting/` from Phase 1
+**Location:** Extend `autotest/reporting/` from Phase 1
 
 **Additions:**
 - Workflow-level summary in HTML report
@@ -688,22 +688,22 @@ WorkflowExecutor.run(workflow):
 
 ```bash
 # Run specific workflow
-schemathesis workflow run ./workflows/user_crud.yaml
+autotest workflow run ./workflows/user_crud.yaml
 
 # Run all workflows in directory
-schemathesis workflow run ./workflows/
+autotest workflow run ./workflows/
 
 # Run workflows by tag
-schemathesis workflow run ./workflows/ --tags critical,smoke
+autotest workflow run ./workflows/ --tags critical,smoke
 
 # List available workflows
-schemathesis workflow list ./workflows/
+autotest workflow list ./workflows/
 
 # Validate workflow syntax
-schemathesis workflow validate ./workflows/user_crud.yaml
+autotest workflow validate ./workflows/user_crud.yaml
 
 # Generate workflow from OpenAPI (auto-detect CRUD)
-schemathesis workflow generate --from-spec ./openapi.yaml --output ./workflows/
+autotest workflow generate --from-spec ./openapi.yaml --output ./workflows/
 ```
 
 ### 1.6 Recommended Third-Party Packages
@@ -768,7 +768,7 @@ schemathesis workflow generate --from-spec ./openapi.yaml --output ./workflows/
 Provide a feature to auto-generate basic CRUD workflows from OpenAPI:
 
 ```bash
-schemathesis workflow generate --from-spec ./openapi.yaml
+autotest workflow generate --from-spec ./openapi.yaml
 ```
 
 **Detection Logic:**
@@ -965,7 +965,7 @@ request:
       - 504  # Gateway Timeout
 
 #═══════════════════════════════════════════════════════════════════
-# TEST GENERATION (Schemathesis Settings)
+# TEST GENERATION (autotest Settings)
 #═══════════════════════════════════════════════════════════════════
 
 generation:
@@ -1428,7 +1428,7 @@ api:
 ### 2.5 Implementation Approach
 
 #### Step 1: Configuration Schema Definition
-**Location:** Create `schemathesis/config/schema.py`
+**Location:** Create `autotest/config/schema.py`
 
 **Responsibilities:**
 - Define complete configuration schema using Pydantic
@@ -1459,7 +1459,7 @@ Config
 ```
 
 #### Step 2: Configuration Loader
-**Location:** Create `schemathesis/config/loader.py`
+**Location:** Create `autotest/config/loader.py`
 
 **Responsibilities:**
 - Load YAML files
@@ -1493,7 +1493,7 @@ ConfigLoader.load(path, env=None):
 ```
 
 #### Step 3: Variable Resolver
-**Location:** Create `schemathesis/config/resolver.py`
+**Location:** Create `autotest/config/resolver.py`
 
 **Responsibilities:**
 - Parse ${...} expressions
@@ -1517,7 +1517,7 @@ PATTERNS = {
 ```
 
 #### Step 4: Configuration Merger
-**Location:** Create `schemathesis/config/merger.py`
+**Location:** Create `autotest/config/merger.py`
 
 **Responsibilities:**
 - Deep merge dictionaries
@@ -1553,7 +1553,7 @@ list1:
 ```
 
 #### Step 5: Configuration Validator
-**Location:** Create `schemathesis/config/validator.py`
+**Location:** Create `autotest/config/validator.py`
 
 **Responsibilities:**
 - Validate against Pydantic schema
@@ -1570,10 +1570,10 @@ list1:
 - Environment exists if referenced
 
 #### Step 6: CLI Integration
-**Location:** Modify `schemathesis/cli/`
+**Location:** Modify `autotest/cli/`
 
 **New Behaviors:**
-- Auto-detect config file (`api-tester.yaml`, `schemathesis.yaml`, etc.)
+- Auto-detect config file (`api-tester.yaml`, `autotest.yaml`, etc.)
 - `--config` flag to specify config file
 - `--env` flag to select environment
 - CLI args override config values
@@ -1582,7 +1582,7 @@ list1:
 **Config Discovery Order:**
 1. `--config <path>` if provided
 2. `api-tester.yaml` in current directory
-3. `schemathesis.yaml` in current directory
+3. `autotest.yaml` in current directory
 4. `.api-tester.yaml` in current directory
 5. `pyproject.toml` [tool.api-tester] section
 6. No config (use defaults + CLI args)
@@ -1592,23 +1592,23 @@ list1:
 
 ```bash
 # Initialize new configuration
-schemathesis config init
+autotest config init
 # Interactive wizard to create config
 
 # Validate configuration
-schemathesis config validate ./api-tester.yaml
+autotest config validate ./api-tester.yaml
 
 # Show resolved configuration
-schemathesis config show ./api-tester.yaml --env staging
+autotest config show ./api-tester.yaml --env staging
 
 # Show effective config (with inheritance resolved)
-schemathesis config resolve ./api-tester.yaml
+autotest config resolve ./api-tester.yaml
 
 # List available environments
-schemathesis config environments ./api-tester.yaml
+autotest config environments ./api-tester.yaml
 
 # Generate config from OpenAPI spec
-schemathesis config generate --from-spec ./openapi.yaml
+autotest config generate --from-spec ./openapi.yaml
 ```
 
 ### 2.6 Recommended Third-Party Packages
@@ -1620,7 +1620,7 @@ schemathesis config generate --from-spec ./openapi.yaml
 | **python-dotenv** | .env file support | Load .env files for local development |
 | **deepmerge** | Deep dictionary merging | Handles complex merge strategies |
 | **jsonschema** | JSON Schema validation | For config schema validation |
-| **click** | CLI framework | Already used by Schemathesis |
+| **click** | CLI framework | Already used by autotest |
 | **rich** | Console output | Pretty config display |
 | **toml** | TOML parsing | For pyproject.toml support |
 
@@ -1678,10 +1678,10 @@ schemathesis config generate --from-spec ./openapi.yaml
 Provide starter templates for common scenarios:
 
 ```bash
-schemathesis config init --template basic
-schemathesis config init --template enterprise
-schemathesis config init --template ci-cd
-schemathesis config init --template microservices
+autotest config init --template basic
+autotest config init --template enterprise
+autotest config init --template ci-cd
+autotest config init --template microservices
 ```
 
 **Basic Template:**
@@ -1730,7 +1730,7 @@ schemathesis config init --template microservices
 │     │       └─→ For each workflow:                             │
 │     │           └─→ Execute steps using config settings        │
 │     │                                                          │
-│     └─→ If standard Schemathesis mode:                         │
+│     └─→ If standard autotest mode:                         │
 │         └─→ Run property-based tests with config               │
 │                                                                 │
 │  5. Generate Reports                                            │
@@ -1885,7 +1885,7 @@ workflows:
 ## File Structure (Proposed)
 
 ```
-schemathesis/
+autotest/
 ├── config/                        # NEW: Configuration Module
 │   ├── __init__.py
 │   ├── schema.py                 # Pydantic models for config
@@ -1965,7 +1965,7 @@ schemathesis/
 ### Integration
 - [ ] Config drives workflow behavior
 - [ ] Phase 1 features work with config
-- [ ] No regression in Schemathesis functionality
+- [ ] No regression in autotest functionality
 - [ ] Comprehensive documentation
 - [ ] Example configs and workflows
 

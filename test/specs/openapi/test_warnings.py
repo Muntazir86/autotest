@@ -1,6 +1,6 @@
-import schemathesis
-from schemathesis.config import SchemathesisWarning
-from schemathesis.specs.openapi.warnings import MissingDeserializerWarning, detect_missing_deserializers
+import autotest
+from autotest.config import autotestWarning
+from autotest.specs.openapi.warnings import MissingDeserializerWarning, detect_missing_deserializers
 
 
 def test_missing_deserializer_warning_properties():
@@ -10,7 +10,7 @@ def test_missing_deserializer_warning_properties():
         content_type="application/msgpack",
     )
 
-    assert warning.kind == SchemathesisWarning.MISSING_DESERIALIZER
+    assert warning.kind == AutotestWarning.MISSING_DESERIALIZER
     assert warning.message == "Cannot validate response 200: no deserializer registered for application/msgpack"
 
 
@@ -34,7 +34,7 @@ def test_detect_missing_deserializers_with_custom_media_type(ctx):
         }
     )
 
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     operation = schema["/users"]["GET"]
 
     warnings = detect_missing_deserializers(operation)
@@ -65,7 +65,7 @@ def test_detect_missing_deserializers_with_json(ctx):
         }
     )
 
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     operation = schema["/users"]["GET"]
 
     warnings = detect_missing_deserializers(operation)
@@ -88,7 +88,7 @@ def test_detect_missing_deserializers_no_schema(ctx):
         }
     )
 
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     operation = schema["/users"]["GET"]
 
     warnings = detect_missing_deserializers(operation)
@@ -114,7 +114,7 @@ def test_detect_missing_deserializers_primitive_type(ctx):
         }
     )
 
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     operation = schema["/users"]["GET"]
 
     warnings = detect_missing_deserializers(operation)
@@ -142,11 +142,11 @@ def test_detect_missing_deserializers_with_registered_deserializer(ctx):
         }
     )
 
-    @schemathesis.deserializer("application/msgpack")
+    @autotest.deserializer("application/msgpack")
     def msgpack_deserializer(ctx, response):
         return {}
 
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     operation = schema["/users"]["GET"]
 
     warnings = detect_missing_deserializers(operation)
@@ -177,7 +177,7 @@ def test_detect_missing_deserializers_array_type(ctx):
         }
     )
 
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     operation = schema["/users"]["GET"]
 
     warnings = detect_missing_deserializers(operation)
@@ -211,7 +211,7 @@ def test_detect_missing_deserializers_with_malformed_media_type(ctx):
         }
     )
 
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     operation = schema["/users"]["GET"]
 
     # Should not raise exception and should only warn about the valid media type

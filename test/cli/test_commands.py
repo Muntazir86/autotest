@@ -18,9 +18,9 @@ from _pytest.main import ExitCode
 from flask import Flask, jsonify, redirect, request, url_for
 from urllib3.exceptions import ProtocolError
 
-from schemathesis.core.shell import ShellType
-from schemathesis.schemas import APIOperation
-from schemathesis.specs.openapi import unregister_string_format
+from autotest.core.shell import ShellType
+from autotest.schemas import APIOperation
+from autotest.specs.openapi import unregister_string_format
 from test.apps._graphql._flask import create_app as create_graphql_app
 from test.apps.openapi._flask import create_app as create_openapi_app
 from test.utils import HERE, SIMPLE_PATH, flaky
@@ -32,13 +32,13 @@ def test_commands_help(cli, snapshot_cli):
 
 def test_run_subprocess(testdir):
     # To verify that CLI entry point is installed properly
-    result = testdir.run("schemathesis")
+    result = testdir.run("Autotest")
     assert result.ret == ExitCode.INTERRUPTED
 
 
 @pytest.mark.skipif(platform.system() == "Windows", reason="Requires extra setup on Windows")
 def test_run_as_module(testdir):
-    result = testdir.run("python", "-m", "schemathesis.cli")
+    result = testdir.run("python", "-m", "autotest.cli")
     assert result.ret == ExitCode.INTERRUPTED
 
 
@@ -96,7 +96,7 @@ def test_hooks_invalid(ctx, cli):
     assert result.exit_code == ExitCode.TESTS_FAILED, result.stdout
     # And a helpful message should be displayed in the output
     lines = result.stdout.strip().split("\n")
-    assert lines[0] == "Unable to load Schemathesis extension hooks"
+    assert lines[0] == "Unable to load Autotest extension hooks"
     if sys.version_info >= (3, 11):
         idx = 8
     else:
@@ -121,7 +121,7 @@ def test_auth_and_authorization_header_are_disallowed(cli, schema_url, header, s
 @pytest.mark.parametrize("workers", [1, 2])
 def test_schema_not_available(cli, workers, snapshot_cli):
     # When the given schema is unreachable
-    # Then the whole Schemathesis run should fail
+    # Then the whole autotest run should fail
     # And error message is displayed
     assert cli.run("http://127.0.0.1:1/schema.yaml", f"--workers={workers}") == snapshot_cli
 
@@ -266,7 +266,7 @@ def test_execute_missing_schema(cli, openapi3_base_url, url, message, workers):
 @pytest.mark.parametrize("workers", [1, 2])
 def test_connection_timeout(cli, schema_url, workers, snapshot_cli):
     # When connection timeout is specified in the CLI and the request fails because of it
-    # Then the whole Schemathesis run should fail
+    # Then the whole autotest run should fail
     # And the given operation should be displayed as a failure
     assert cli.run(schema_url, "--request-timeout=0.08", f"--workers={workers}", "--phases=fuzzing") == snapshot_cli
 
@@ -431,7 +431,7 @@ def test_health_check_message(cli, ctx, openapi3_base_url, snapshot_cli):
 def test_status_code_conformance(cli, schema_url, workers, snapshot_cli):
     # When operation returns a status code, that is not listed in "responses"
     # And "status_code_conformance" is specified
-    # Then the whole Schemathesis run should fail
+    # Then the whole autotest run should fail
     # And this operation should be marked as failed in the progress line
     assert cli.run(schema_url, "-c", "status_code_conformance", f"--workers={workers}") == snapshot_cli
 
@@ -484,7 +484,7 @@ def test_multiple_failures_different_check(cli, schema_url, snapshot_cli):
 @pytest.mark.parametrize("workers", [1, 2])
 def test_connection_error(cli, schema_url, workers, snapshot_cli):
     # When the given base_url is unreachable
-    # Then the whole Schemathesis run should fail
+    # Then the whole autotest run should fail
     # And the proper error messages should be displayed for each operation
     assert (
         cli.run(schema_url, "--url=http://127.0.0.1:1/api", f"--workers={workers}", "--mode=positive") == snapshot_cli
@@ -532,7 +532,7 @@ def test_remote_disconnected_error_with_empty_header(mocker, cli, schema_url, sn
         conn_error.__context__ = protocol_error
         raise conn_error
 
-    mocker.patch("schemathesis.generation.case.Case.call", raise_connection_error)
+    mocker.patch("autotest.generation.case.Case.call", raise_connection_error)
     # Then it should not crash with IndexError on empty header value
     assert cli.run(schema_url) == snapshot_cli
 
@@ -551,7 +551,7 @@ def digits_format(ctx):
     import string
     from hypothesis import strategies as st
 
-    schemathesis.openapi.format(
+    autotest.openapi.format(
         "digits",
         st.text(
             min_size=1,
@@ -587,7 +587,7 @@ def test_hooks_valid(cli, schema_url, app, digits_format):
 @pytest.fixture
 def conditional_check(ctx):
     with ctx.check("""
-@schemathesis.check
+@autotest.check
 def conditional_check(ctx, response, case):
     # skip this check
     return True
@@ -618,7 +618,7 @@ def new_check(ctx, request, cli):
     exception = request.param
     with ctx.check(
         f"""
-@schemathesis.check
+@autotest.check
 def new_check(ctx, response, result):
     raise {exception}
 """
@@ -640,7 +640,7 @@ def test_register_check(new_check, cli, schema_url, snapshot_cli):
 @pytest.mark.parametrize("workers", [1, 2])
 @pytest.mark.filterwarnings("ignore:Exception in thread")
 def test_keyboard_interrupt(cli, schema_url, base_url, mocker, swagger_20, workers, snapshot_cli):
-    # When a Schemathesis run in interrupted by keyboard or via SIGINT
+    # When a autotest run in interrupted by keyboard or via SIGINT
     operation = APIOperation(
         "/success",
         "GET",
@@ -661,7 +661,7 @@ def test_keyboard_interrupt(cli, schema_url, base_url, mocker, swagger_20, worke
             raise KeyboardInterrupt
         return original(*args, **kwargs)
 
-    mocker.patch("schemathesis.Case.call", wraps=mocked)
+    mocker.patch("autotest.Case.call", wraps=mocked)
     result = cli.run(schema_url, f"--workers={workers}", "--mode=positive")
     if workers == 1:
         assert result == snapshot_cli
@@ -671,8 +671,8 @@ def test_keyboard_interrupt(cli, schema_url, base_url, mocker, swagger_20, worke
 
 @pytest.mark.filterwarnings("ignore:Exception in thread")
 def test_keyboard_interrupt_threaded(cli, schema_url, mocker, snapshot_cli):
-    # When a Schemathesis run is interrupted by the keyboard or via SIGINT
-    from schemathesis.engine.phases.unit import DefaultScheduler
+    # When a autotest run is interrupted by the keyboard or via SIGINT
+    from autotest.engine.phases.unit import DefaultScheduler
 
     original = DefaultScheduler.next_operation
     counter = 0
@@ -684,12 +684,12 @@ def test_keyboard_interrupt_threaded(cli, schema_url, mocker, snapshot_cli):
             raise KeyboardInterrupt
         return original(*args, **kwargs)
 
-    mocker.patch("schemathesis.engine.phases.unit.DefaultScheduler.next_operation", wraps=mocked)
+    mocker.patch("autotest.engine.phases.unit.DefaultScheduler.next_operation", wraps=mocked)
     assert cli.run(schema_url, "--workers=2", "--generation-deterministic") == snapshot_cli
 
 
 def test_keyboard_interrupt_during_schema_loading(cli, openapi3_schema_url, mocker, snapshot_cli):
-    mocker.patch("schemathesis.core.loaders.make_request", side_effect=KeyboardInterrupt)
+    mocker.patch("autotest.core.loaders.make_request", side_effect=KeyboardInterrupt)
     assert cli.run(openapi3_schema_url) == snapshot_cli
 
 
@@ -726,7 +726,7 @@ async def test_multiple_files_schema(ctx, openapi_2_app, cli, hypothesis_max_exa
         "--generation-deterministic",
         "-c not_a_server_error",
     )
-    # Then Schemathesis should resolve it and run successfully
+    # Then Autotest should resolve it and run successfully
     assert result.exit_code == ExitCode.OK, result.stdout
     # And all relevant requests should contain proper data for resolved references
     payload = await openapi_2_app["incoming_requests"][0].json()
@@ -851,7 +851,7 @@ def test_invalid_yaml(testdir, cli, simple_openapi, snapshot_cli, openapi3_base_
 def with_error(ctx):
     with ctx.check(
         """
-@schemathesis.check
+@autotest.check
 def with_error(ctx, response, case):
     1 / 0
 """
@@ -1056,7 +1056,7 @@ def test_nested_binary_in_yaml(ctx, openapi3_base_url, cli, snapshot_cli):
 @pytest.mark.operations("form")
 def test_urlencoded_form(cli, schema_url):
     # When the API operation accepts application/x-www-form-urlencoded
-    # Then Schemathesis should generate appropriate payload
+    # Then Autotest should generate appropriate payload
     cli.run_and_assert(schema_url, "--mode=positive")
 
 
@@ -1176,7 +1176,7 @@ paths:
 @pytest.mark.parametrize("workers", [1, 2])
 def test_max_response_time_invalid(cli, schema_url, workers, snapshot_cli):
     # When maximum response time check is specified in the CLI and the request takes more time
-    # Then the whole Schemathesis run should fail
+    # Then the whole autotest run should fail
     # And the given operation should be displayed as a failure
     # And the proper error message should be displayed
     assert cli.run(schema_url, "--max-response-time=0.05", f"--workers={workers}") == snapshot_cli
@@ -1450,7 +1450,7 @@ def test_explicit_example_failure_output(ctx, cli, openapi3_base_url, snapshot_c
 
 @pytest.mark.operations("failure")
 def test_curl_with_non_printable_characters(ctx, cli, openapi3_base_url, snapshot_cli, monkeypatch):
-    monkeypatch.setattr("schemathesis.core.shell._DETECTED_SHELL", ShellType.BASH)
+    monkeypatch.setattr("autotest.core.shell._DETECTED_SHELL", ShellType.BASH)
 
     schema_path = ctx.openapi.write_schema(
         {
@@ -1479,7 +1479,7 @@ def test_curl_with_non_printable_characters(ctx, cli, openapi3_base_url, snapsho
 @pytest.mark.operations("failure")
 @pytest.mark.skipif(platform.system() == "Windows", reason="Requires more complex setup")
 def test_curl_with_non_printable_characters_unknown_shell(ctx, cli, openapi3_base_url, snapshot_cli, monkeypatch):
-    monkeypatch.setattr("schemathesis.core.shell._DETECTED_SHELL", ShellType.UNKNOWN)
+    monkeypatch.setattr("autotest.core.shell._DETECTED_SHELL", ShellType.UNKNOWN)
 
     schema_path = ctx.openapi.write_schema(
         {
@@ -1525,7 +1525,7 @@ def test_skipped_on_no_explicit_examples(cli, openapi3_schema_url, snapshot_cli)
 def data_generation_check(ctx):
     with ctx.check(
         """
-@schemathesis.check
+@autotest.check
 def data_generation_check(ctx, response, case):
     if case.meta.generation.mode:
         note("MODE: {}".format(case.meta.generation.mode.value))
@@ -1573,7 +1573,7 @@ def test_multiple_generation_modes(cli, openapi3_schema_url, data_generation_che
     ),
 )
 def test_wait_for_schema(cli, schema_path, app_factory, app_runner):
-    # When Schemathesis is asked to wait for API schema to become available
+    # When Autotest is asked to wait for API schema to become available
     app = app_factory()
     original_run = app.run
 
@@ -1905,7 +1905,7 @@ def test_complex_urlencoded_example(ctx, cli, snapshot_cli, openapi3_base_url):
 def custom_strings(ctx):
     with ctx.check(
         """
-@schemathesis.check
+@autotest.check
 def custom_strings(ctx, response, case):
     if not isinstance(case.body, str):
         return
@@ -1939,7 +1939,7 @@ def test_custom_strings(cli, hypothesis_max_examples, schema_url, custom_strings
 def verify_overrides(ctx):
     with ctx.check(
         """
-@schemathesis.check
+@autotest.check
 def verify_overrides(ctx, response, case):
     if "key" in case.operation.path_parameters:
         assert case.path_parameters["key"] == "foo"
@@ -2028,7 +2028,7 @@ def test_max_redirects(cli, app_runner, snapshot_cli, args, config):
 def no_null_bytes(ctx):
     with ctx.check(
         r"""
-@schemathesis.check
+@autotest.check
 def no_null_bytes(ctx, response, case):
     assert "\x00" not in case.headers.get("X-KEY", {})
 """
@@ -2175,9 +2175,9 @@ def test_reference_in_examples(ctx, cli, openapi3_base_url, snapshot_cli):
 def test_unknown_schema_error(ctx, schema_url, cli, snapshot_cli):
     module = ctx.write_pymodule(
         r"""
-import schemathesis
+import autotest
 
-@schemathesis.metric
+@autotest.metric
 def buggy(ctx):
     raise AssertionError("Something bad happen")
 """
@@ -2199,7 +2199,7 @@ def buggy(ctx):
 def test_custom_cli_option(ctx, cli, schema_url, snapshot_cli):
     module = ctx.write_pymodule(
         r"""
-from schemathesis import cli, engine
+from autotest import cli, engine
 
 
 group = cli.add_group("My custom group")
@@ -2324,7 +2324,7 @@ def test_operation_ordering(ctx, cli, app_runner, ordering_mode, expected):
 
     module = ctx.write_pymodule(
         """
-from schemathesis import cli, engine
+from autotest import cli, engine
 
 @cli.handler()
 class OperationOrderTracker(cli.EventHandler):
@@ -2369,7 +2369,7 @@ def test_rediscover_the_same_failure_in_different_phases_and_store_junit(ctx, cl
     report_dir = tmp_path / "reports"
     with ctx.check(
         r"""
-@schemathesis.check
+@autotest.check
 def always_fails(ctx, response, case):
     if case.operation.label == "GET /users/{user_id}":
         raise AssertionError("Failed!")

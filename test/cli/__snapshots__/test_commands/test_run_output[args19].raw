@@ -1,7 +1,7 @@
 Exit code: 0
 ---
 Stdout:
-Usage: schemathesis run [OPTIONS] LOCATION
+Usage: autotest run [OPTIONS] LOCATION
 
   Generate and run property-based tests against your API.
 
@@ -17,7 +17,7 @@ Options:
   --phases                       A comma-separated list of test phases to run
                                  [possible values: examples, coverage, fuzzing,
                                  stateful]
-  --suppress-health-check        A comma-separated list of Schemathesis health
+  --suppress-health-check        A comma-separated list of autotest health
                                  checks to disable [possible values:
                                  data_too_large, filter_too_much, too_slow,
                                  large_base_example, all]
@@ -97,7 +97,7 @@ Output options:
                                 comma-separated list [possible values: junit,
                                 vcr, har]
   --report-dir DIRECTORY        Directory to store all report files  [default:
-                                schemathesis-report]
+                                autotest-report]
   --report-junit-path FILENAME  Custom path for JUnit XML report
   --report-vcr-path FILENAME    Custom path for VCR cassette
   --report-har-path FILENAME    Custom path for HAR file
@@ -131,7 +131,7 @@ Data generation options:
                                   Whether to use `null` values for optional
                                   arguments in GraphQL queries
   --generation-database TEXT      Storage for examples discovered by
-                                  Schemathesis. Use 'none' to disable,
+                                  autotest. Use 'none' to disable,
                                   ':memory:' for temporary storage, or specify a
                                   file path for persistent storage
   --generation-unique-inputs      Force the generation of unique test cases

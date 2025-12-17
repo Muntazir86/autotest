@@ -59,8 +59,8 @@ post:
       application/json:
         schema:
           type: array
-          # [1] For now, this single-object requirement directs schemathesis
-          # toward useful test cases. This is because schemathesis (rightfully)
+          # [1] For now, this single-object requirement directs autotest
+          # toward useful test cases. This is because autotest (rightfully)
           # generates heterogeneous arrays (some objects in the array have
           # different keys). Postgrest does not currently support this and
           # fails with "All object keys must match".

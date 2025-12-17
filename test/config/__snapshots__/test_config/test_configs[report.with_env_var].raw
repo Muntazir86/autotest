@@ -1,1 +1,1 @@
-SchemathesisConfig(reports=ReportsConfig(directory=Path('foo')))
+autotestConfig(reports=ReportsConfig(directory=Path('foo')))

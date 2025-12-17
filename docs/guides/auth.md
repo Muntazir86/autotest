@@ -8,22 +8,22 @@ For simple cases use CLI options directly.
 
 ```bash
 # Bearer token
-schemathesis run http://localhost:8000/openapi.json \
+autotest run http://localhost:8000/openapi.json \
   --header "Authorization: Bearer your-token"
 
 # Basic authentication
-schemathesis run http://localhost:8000/openapi.json \
+autotest run http://localhost:8000/openapi.json \
   --auth username:password
 
 # API key
-schemathesis run http://localhost:8000/openapi.json \
+autotest run http://localhost:8000/openapi.json \
   --header "X-API-Key: your-api-key"
 ```
 
 For reusable configuration use a config file.
 
 ```toml
-# schemathesis.toml
+# autotest.toml
 headers = { Authorization = "Bearer ${API_TOKEN}" }
 
 # Different auth for specific endpoints
@@ -37,15 +37,15 @@ headers = {
 
 ```bash
 export API_TOKEN="your-secret-token"
-schemathesis run http://localhost:8000/openapi.json
+autotest run http://localhost:8000/openapi.json
 ```
 
 ## OpenAPI-Aware Authentication
 
-Configure authentication that automatically aligns with your OpenAPI schema's security definitions. Schemathesis reads parameter names and locations directly from `securitySchemes`.
+Configure authentication that automatically aligns with your OpenAPI schema's security definitions. Autotest reads parameter names and locations directly from `securitySchemes`.
 
 ```toml
-# schemathesis.toml
+# autotest.toml
 [auth.openapi.ApiKeyAuth]
 api_key = "${API_KEY}"
 
@@ -60,10 +60,10 @@ password = "${PASSWORD}"
 ```bash
 export API_KEY="your-api-key"
 export TOKEN="your-token"
-schemathesis run http://localhost:8000/openapi.json
+autotest run http://localhost:8000/openapi.json
 ```
 
-Each config block name must match a `securityScheme` name from your OpenAPI spec. Schemathesis extracts the parameter location (`header`, `query`, or `cookie`) and name from the schema, so you only provide the value.
+Each config block name must match a `securityScheme` name from your OpenAPI spec. Autotest extracts the parameter location (`header`, `query`, or `cookie`) and name from the schema, so you only provide the value.
 
 **Supported types:**
 
@@ -75,7 +75,7 @@ Each config block name must match a `securityScheme` name from your OpenAPI spec
 
 **Authentication precedence (highest to lowest):**
 
-1. **Programmatic auth** - Explicit `@schemathesis.auth()` decorators
+1. **Programmatic auth** - Explicit `@autotest.auth()` decorators
 2. **CLI flags** - `--auth` and `--header` (always override config)
 3. **OpenAPI-aware config** - `[auth.openapi.*]` (targets specific security schemes)
 4. **Global auth** - Fallback authentication
@@ -90,9 +90,9 @@ Static options can't handle tokens that expire, so create a custom authenticatio
 ```python
 # auth.py
 import requests
-import schemathesis
+import autotest
 
-@schemathesis.auth()
+@autotest.auth()
 class TokenAuth:
     def get(self, case, ctx):
         response = requests.post(
@@ -106,12 +106,12 @@ class TokenAuth:
         case.headers["Authorization"] = f"Bearer {data}"
 ```
 
-Schemathesis caches tokens for 300 seconds by default.
+Autotest caches tokens for 300 seconds by default.
 
 ## Token Refresh Management
 
 ```python
-@schemathesis.auth(refresh_interval=600)  # Refresh every 10 minutes
+@autotest.auth(refresh_interval=600)  # Refresh every 10 minutes
 class RefreshableAuth:
     def __init__(self):
         self.refresh_token = None
@@ -154,7 +154,7 @@ class RefreshableAuth:
 Cache different tokens based on specific criteria like OAuth scopes:
 
 ```python
-@schemathesis.auth(cache_by_key=lambda case, ctx: get_required_scopes(ctx))
+@autotest.auth(cache_by_key=lambda case, ctx: get_required_scopes(ctx))
 class ScopedAuth:
     def get(self, case, ctx):
         scopes = get_required_scopes(ctx)
@@ -195,7 +195,7 @@ This ensures separate tokens for operations requiring different permissions (e.g
 Apply authentication only to specific endpoints:
 
 ```python
-@schemathesis.auth().apply_to(path="/users/").skip_for(method="POST")
+@autotest.auth().apply_to(path="/users/").skip_for(method="POST")
 class UserAuth:
     def get(self, case, ctx):
         response = requests.post(
@@ -206,7 +206,7 @@ class UserAuth:
     
     # Define `set` as before ... 
 
-@schemathesis.auth().apply_to(path="/admin/")
+@autotest.auth().apply_to(path="/admin/")
 class AdminAuth:
     def get(self, case, ctx):
         response = requests.post(
@@ -222,16 +222,16 @@ class AdminAuth:
 
 ```python
 # Multiple paths
-@schemathesis.auth().apply_to(path=["/users/", "/orders/"])
+@autotest.auth().apply_to(path=["/users/", "/orders/"])
 
 # Regex matching
-@schemathesis.auth().apply_to(path_regex="^/admin")
+@autotest.auth().apply_to(path_regex="^/admin")
 
 # Method-specific
-@schemathesis.auth().apply_to(method=["POST", "PUT", "DELETE"])
+@autotest.auth().apply_to(method=["POST", "PUT", "DELETE"])
 
 # Skip public endpoints
-@schemathesis.auth().skip_for(path="/health", method="GET")
+@autotest.auth().skip_for(path="/health", method="GET")
 ```
 
 **Available filters:** `path`, `method`, `name`, `tag`, `operation_id` (add `_regex` for regex matching)
@@ -242,11 +242,11 @@ For specialized authentication protocols not covered by custom auth classes, use
 
 ```python
 # ntlm_auth.py
-import schemathesis
+import autotest
 from requests_ntlm import HttpNtlmAuth
 
 # Use existing requests auth implementation
-schemathesis.auth.set_from_requests(
+Autotest.auth.set_from_requests(
     HttpNtlmAuth("domain\\username", "password")
 )
 ```
@@ -255,8 +255,8 @@ schemathesis.auth.set_from_requests(
 Custom authentication classes use the same setup as other extensions:
 
 ```bash
-export SCHEMATHESIS_HOOKS=auth
-schemathesis run http://localhost:8000/openapi.json
+export Autotest_HOOKS=auth
+autotest run http://localhost:8000/openapi.json
 ```
 
 ## Python Tests
@@ -266,10 +266,10 @@ schemathesis run http://localhost:8000/openapi.json
 Use requests authentication directly with `Case.call_and_validate` or `Case.call`:
 
 ```python
-import schemathesis
+import autotest
 from requests.auth import HTTPDigestAuth
 
-schema = schemathesis.openapi.from_url("http://localhost:8000/openapi.json")
+schema = autotest.openapi.from_url("http://localhost:8000/openapi.json")
 
 @schema.parametrize()
 def test_api(case):
@@ -334,4 +334,4 @@ def test_with_session(case):
 ## What's Next
 
 - **[Configuration Reference](../reference/configuration.md)** - Complete configuration options
-- **[Extending Schemathesis](extending.md)** - Other customization options
+- **[Extending Autotest](extending.md)** - Other customization options

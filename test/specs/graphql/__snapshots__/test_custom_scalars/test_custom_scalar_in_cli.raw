@@ -1,7 +1,7 @@
 Exit code: 1
 ---
 Stdout:
-Schemathesis dev
+autotest dev
 ━━━━━━━━━━━━━━━━
 
 
@@ -27,7 +27,7 @@ Unknown GraphQL Scalar
 Scalar type 'FooBar' is not recognized
 
 Tip: Define a custom strategy for it.
-For guidance, visit: https://schemathesis.readthedocs.io/en/stable/guides/graphql-custom-scalars/
+For guidance, visit: https://autotest.readthedocs.io/en/stable/guides/graphql-custom-scalars/
 
 Need more help?
     Join our Discord server: https://discord.gg/R9ASRAmHnA

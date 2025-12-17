@@ -6,7 +6,7 @@ from fastapi import Cookie, FastAPI, Header
 from hypothesis import HealthCheck, Phase, given, settings
 from pydantic import BaseModel
 
-import schemathesis
+import autotest
 
 
 def test_code_sample(testdir):
@@ -21,11 +21,11 @@ async def fail():
     1 / 0
 
 from hypothesis import settings
-import schemathesis
-from schemathesis import GenerationMode
-from schemathesis.specs.openapi.checks import ignored_auth
+import autotest
+from autotest import GenerationMode
+from autotest.specs.openapi.checks import ignored_auth
 
-schema = schemathesis.openapi.from_asgi("/openapi.json", app)
+schema = autotest.openapi.from_asgi("/openapi.json", app)
 
 @schema.parametrize()
 @settings(max_examples=3)
@@ -46,7 +46,7 @@ def test_cookies(fastapi_app):
     def cookies(token: str = Cookie(None)):
         return {"token": token}
 
-    schema = schemathesis.openapi.from_dict(
+    schema = autotest.openapi.from_dict(
         {
             "openapi": "3.0.2",
             "info": {"title": "Test", "description": "Test", "version": "0.1.0"},
@@ -91,7 +91,7 @@ def test_null_byte(fastapi_app):
         assert "\x00" not in payload["name"]
         return {"success": True}
 
-    schema = schemathesis.openapi.from_asgi("/openapi.json", app=fastapi_app)
+    schema = autotest.openapi.from_asgi("/openapi.json", app=fastapi_app)
     schema.config.generation.update(allow_x00=False)
 
     strategy = schema["/data"]["POST"].as_strategy()
@@ -116,7 +116,7 @@ def test_null_byte_in_headers(fastapi_app):
         assert "\x00" not in x_cookie
         return {"success": True}
 
-    schema = schemathesis.openapi.from_asgi("/openapi.json", app=fastapi_app)
+    schema = autotest.openapi.from_asgi("/openapi.json", app=fastapi_app)
     schema.config.generation.update(allow_x00=False)
 
     strategy = schema["/data"]["POST"].as_strategy()
@@ -150,7 +150,7 @@ def test_base_url():
     def read_root():
         return {"Hello": "World"}
 
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     strategy = schema["/foo"]["GET"].as_strategy()
 
     @given(case=strategy)
@@ -201,7 +201,7 @@ def test_events(setup):
     async def find_secret():
         return {"status": "OK"}
 
-    schema = schemathesis.openapi.from_asgi("/openapi.json", app)
+    schema = autotest.openapi.from_asgi("/openapi.json", app)
 
     @given(case=schema["/health"]["GET"].as_strategy())
     @settings(max_examples=3, deadline=None)

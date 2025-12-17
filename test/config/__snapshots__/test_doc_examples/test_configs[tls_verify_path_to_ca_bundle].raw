@@ -1,1 +1,1 @@
-SchemathesisConfig(projects=ProjectsConfig(default=ProjectConfig(tls_verify='/path/to/ca-bundle.pem')))
+autotestConfig(projects=ProjectsConfig(default=ProjectConfig(tls_verify='/path/to/ca-bundle.pem')))

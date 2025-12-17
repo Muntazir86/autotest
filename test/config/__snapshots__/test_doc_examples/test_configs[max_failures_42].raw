@@ -1,1 +1,1 @@
-SchemathesisConfig(max_failures=42)
+autotestConfig(max_failures=42)

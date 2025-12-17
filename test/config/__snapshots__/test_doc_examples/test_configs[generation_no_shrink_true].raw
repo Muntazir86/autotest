@@ -1,1 +1,1 @@
-SchemathesisConfig(projects=ProjectsConfig(default=ProjectConfig(generation=GenerationConfig(no_shrink=True))))
+autotestConfig(projects=ProjectsConfig(default=ProjectConfig(generation=GenerationConfig(no_shrink=True))))

@@ -121,7 +121,7 @@ PAYLOAD_VALIDATOR = jsonschema.validators.Draft4Validator({"anyOf": [{"type": "n
 def _make_openapi_2_schema(operations: tuple[str, ...]) -> dict:
     template: dict[str, Any] = {
         "swagger": "2.0",
-        "info": {"title": "Example API", "description": "An API to test Schemathesis", "version": "1.0.0"},
+        "info": {"title": "Example API", "description": "An API to test Autotest", "version": "1.0.0"},
         "host": "127.0.0.1:8888",
         "basePath": "/api",
         "schemes": ["http"],
@@ -480,7 +480,7 @@ def _make_openapi_3_schema(operations: tuple[str, ...]) -> dict:
     _base_path = "api"
     template: dict[str, Any] = {
         "openapi": "3.0.2",
-        "info": {"title": "Example API", "description": "An API to test Schemathesis", "version": "1.0.0"},
+        "info": {"title": "Example API", "description": "An API to test Autotest", "version": "1.0.0"},
         "paths": {},
         "servers": [{"url": "https://127.0.0.1:8888/{basePath}", "variables": {"basePath": {"default": _base_path}}}],
         "components": {

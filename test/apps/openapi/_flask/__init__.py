@@ -9,7 +9,7 @@ import yaml
 from flask import Flask, Response, jsonify, request
 from werkzeug.exceptions import BadRequest, GatewayTimeout, InternalServerError
 
-from schemathesis.core import media_types
+from autotest.core import media_types
 
 from ..schema import PAYLOAD_VALIDATOR, OpenAPIVersion, make_openapi_schema
 

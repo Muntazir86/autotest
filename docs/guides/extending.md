@@ -1,10 +1,10 @@
-# Extending Schemathesis
+# Extending Autotest
 
-Customize how Schemathesis generates test data, validates responses, and handles requests through hooks, custom checks, and data generation strategies.
+Customize how Autotest generates test data, validates responses, and handles requests through hooks, custom checks, and data generation strategies.
 
-## When to extend Schemathesis
+## When to extend Autotest
 
-Extend Schemathesis when the default behavior doesn't match your API requirements:
+Extend Autotest when the default behavior doesn't match your API requirements:
 
 - **Test with realistic data** - Use actual user IDs, valid timestamps, or existing database records
 - **Validate business rules** - Check application-specific response patterns
@@ -13,15 +13,15 @@ Extend Schemathesis when the default behavior doesn't match your API requirement
 
 ## Quick Start: Your First Hook
 
-**Problem:** Your API requires existing user IDs, but Schemathesis generates random values that cause 404 errors.
+**Problem:** Your API requires existing user IDs, but Autotest generates random values that cause 404 errors.
 
 Replace random generated data with realistic values that work with your test environment:
 
 ```python
 # hooks.py
-import schemathesis
+import autotest
 
-@schemathesis.hook  
+@autotest.hook  
 def map_query(ctx, query):
     """Replace random user_id with a known test user"""
     if query and "user_id" in query:
@@ -31,8 +31,8 @@ def map_query(ctx, query):
 
 ```bash
 # Run with hooks
-export SCHEMATHESIS_HOOKS=hooks
-schemathesis run http://localhost:8000/openapi.json
+export Autotest_HOOKS=hooks
+autotest run http://localhost:8000/openapi.json
 ```
 
 ## Hook Types and Naming
@@ -68,17 +68,17 @@ filter_* → map_* → flatmap_* → Final test case
 **Problem:** Skip test cases that cause known issues or aren't relevant for your API.
 
 ```python
-@schemathesis.hook
+@autotest.hook
 def filter_query(ctx, query):
     return query and query.get("user_id") != "admin"
 ```
 
 ### Using real database values
 
-**Problem:** Your API validates IDs against a database, but Schemathesis generates random values that don't exist.
+**Problem:** Your API validates IDs against a database, but Autotest generates random values that don't exist.
 
 ```python
-@schemathesis.hook
+@autotest.hook
 def map_path_parameters(ctx, path_parameters):
     if path_parameters and "product_id" in path_parameters:
         path_parameters["product_id"] = "product_1"
@@ -92,7 +92,7 @@ def map_path_parameters(ctx, path_parameters):
 ```python
 from hypothesis import strategies as st
 
-@schemathesis.hook
+@autotest.hook
 def flatmap_body(ctx, body):
     if body and "email" in body and "organization" in body:
         org = body["organization"]
@@ -106,7 +106,7 @@ def flatmap_body(ctx, body):
 Check business rules specific to your application beyond schema validation:
 
 ```python
-@schemathesis.check
+@autotest.check
 def check_user_permissions(ctx, response, case):
     """Verify user can only access their own data"""
     if case.path.startswith("/users/") and response.status_code == 200:
@@ -119,7 +119,7 @@ def check_user_permissions(ctx, response, case):
                 f"Accessed wrong data: expected {user_id}, got {actual}"
             )
 
-@schemathesis.check
+@autotest.check
 def check_audit_trail(ctx, response, case):
     """Ensure all data modifications are logged"""
     if case.method in ("POST", "PUT", "DELETE") and response.status_code < 400:
@@ -136,14 +136,14 @@ from hypothesis import strategies as st
 
 # Generate valid phone numbers
 phone_strategy = st.from_regex(r"\+1-\d{3}-\d{3}-\d{4}")
-schemathesis.openapi.format("phone", phone_strategy)
+autotest.openapi.format("phone", phone_strategy)
 
 # Generate valid credit card numbers (simplified)
 card_strategy = st.from_regex(r"4\d{15}")  # Visa-like format
-schemathesis.openapi.format("credit_card", card_strategy)
+autotest.openapi.format("credit_card", card_strategy)
 ```
 
-Now when your schema uses these formats, Schemathesis generates appropriate data:
+Now when your schema uses these formats, Autotest generates appropriate data:
 
 ```yaml
 # In your OpenAPI schema
@@ -158,9 +158,9 @@ Define your hooks:
 
 ```python
 # hooks.py (for CLI) or conftest.py (for pytest)
-import schemathesis
+import autotest
 
-@schemathesis.hook
+@autotest.hook
 def map_headers(ctx, headers):
     if headers is None:
         headers = {}
@@ -171,12 +171,12 @@ def map_headers(ctx, headers):
 ### For CLI usage
 
 ```bash
-export SCHEMATHESIS_HOOKS=hooks
-schemathesis run http://localhost:8000/openapi.json
+export Autotest_HOOKS=hooks
+autotest run http://localhost:8000/openapi.json
 ```
 
 !!! warning "Common issue"
-    Use `SCHEMATHESIS_HOOKS=hooks` (not `hooks.py`). The file must be in your current directory or Python path.
+    Use `Autotest_HOOKS=hooks` (not `hooks.py`). The file must be in your current directory or Python path.
 
 ### For pytest integration
 
@@ -184,7 +184,7 @@ Put hooks in conftest.py to make them available to all tests:
 
 ```python
 # test_api.py
-schema = schemathesis.openapi.from_url("http://localhost:8000/openapi.json")
+schema = autotest.openapi.from_url("http://localhost:8000/openapi.json")
 
 @schema.parametrize()
 def test_api(case):
@@ -197,14 +197,14 @@ Apply hooks only to certain API endpoints:
 
 ```python
 # Only apply to user endpoints, skip POST requests
-@schemathesis.hook.apply_to(path_regex=r"/users/").skip_for(method="POST")
+@autotest.hook.apply_to(path_regex=r"/users/").skip_for(method="POST")
 def map_headers(ctx, headers):
     headers = headers or {}
     headers["X-User-Context"] = "test-user"
     return headers
 
 # Only apply to a specific operation
-@schemathesis.hook.apply_to(name="GET /orders/{order_id}")
+@autotest.hook.apply_to(name="GET /orders/{order_id}")
 def map_path_parameters(ctx, path_parameters):
     path_parameters = path_parameters or {}
     path_parameters["order_id"] = "order_12345"  # Known test order
@@ -216,7 +216,7 @@ def map_path_parameters(ctx, path_parameters):
 For complex scenarios, modify the entire request:
 
 ```python
-@schemathesis.hook
+@autotest.hook
 def before_call(ctx, case, kwargs):
     """Modify the request just before it's sent"""
     # Add correlation ID for tracing
@@ -230,7 +230,7 @@ def before_call(ctx, case, kwargs):
 **Problem:** You want faster tests by only generating required fields, skipping optional parameters that don't affect core functionality.
 
 ```python
-@schemathesis.hook
+@autotest.hook
 def before_init_operation(ctx, operation):
     """Remove optional properties to focus tests on required fields only"""
     for parameter in operation.iter_parameters():
@@ -270,7 +270,7 @@ GraphQL hooks work with `graphql.DocumentNode` objects instead of JSON data. The
 ### Modifying GraphQL queries
 
 ```python
-@schemathesis.hook
+@autotest.hook
 def map_body(ctx, body):
     """Change field names in the GraphQL query"""
     node = body.definitions[0].selection_set.selections[0]
@@ -286,18 +286,18 @@ def map_body(ctx, body):
 Use `map_query` to provide variables:
 
 ```python
-@schemathesis.hook
+@autotest.hook
 def map_query(ctx, query):
     """Add query parameters to GraphQL requests"""
     return {"q": "42"}
 ```
 
-Note that `query` is always `None` for GraphQL requests since Schemathesis doesn't generate query parameters for GraphQL.
+Note that `query` is always `None` for GraphQL requests since Autotest doesn't generate query parameters for GraphQL.
 
 ### Filtering GraphQL queries
 
 ```python
-@schemathesis.hook
+@autotest.hook
 def filter_body(ctx, body):
     """Skip queries with specific field names"""
     node = body.definitions[0].selection_set.selections[0]
@@ -309,7 +309,7 @@ def filter_body(ctx, body):
 ```python
 from hypothesis import strategies as st
 
-@schemathesis.hook
+@autotest.hook
 def flatmap_body(ctx, body):
     """Generate dependent fields based on query content"""
     node = body.definitions[0].selection_set.selections[0]

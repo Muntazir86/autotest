@@ -1,7 +1,7 @@
 import pytest
 
-from schemathesis.config import ConfigError
-from schemathesis.config._checks import validate_status_codes
+from autotest.config import ConfigError
+from autotest.config._checks import validate_status_codes
 
 
 @pytest.mark.parametrize(

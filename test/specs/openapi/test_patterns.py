@@ -6,7 +6,7 @@ from flask import Flask, jsonify
 from hypothesis import HealthCheck, assume, given, settings
 from hypothesis import strategies as st
 
-from schemathesis.specs.openapi.patterns import update_quantifier
+from autotest.specs.openapi.patterns import update_quantifier
 
 SKIP_BEFORE_PY11 = pytest.mark.skipif(
     sys.version_info < (3, 11), reason="Possessive repeat is only available in Python 3.11+"

@@ -1,11 +1,11 @@
 FROM python:3.14-alpine
 
-LABEL Name=Schemathesis
+LABEL Name=autotest
 
 WORKDIR /app
 
-RUN addgroup --gid 1000 -S schemathesis && \
-    adduser --uid 1000 -D -S schemathesis -G schemathesis -s /sbin/nologin
+RUN addgroup --gid 1000 -S autotest && \
+    adduser --uid 1000 -D -S autotest -G autotest -s /sbin/nologin
 
 COPY --chown=1000:1000 pyproject.toml README.md src ./
 
@@ -19,8 +19,8 @@ RUN apk add --no-cache --virtual=.build-deps build-base libffi-dev curl openssl-
 # Needed for the `.hypothesis` directory
 RUN chown -R 1000:1000 /app
 
-USER schemathesis
+USER autotest
 
-ENV SCHEMATHESIS_DOCKER_IMAGE=3.14-alpine
+ENV autotest_DOCKER_IMAGE=3.14-alpine
 
-ENTRYPOINT ["schemathesis"]
+ENTRYPOINT ["autotest"]

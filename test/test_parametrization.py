@@ -1,9 +1,9 @@
 import pytest
 from hypothesis import HealthCheck, Phase, assume, given, settings
 
-import schemathesis
-from schemathesis.generation.modes import GenerationMode
-from schemathesis.schemas import PayloadAlternatives
+import autotest
+from autotest.generation.modes import GenerationMode
+from autotest.schemas import PayloadAlternatives
 
 from .utils import assert_requests_call, integer
 
@@ -494,9 +494,9 @@ def test_invalid_schema(testdir):
     # When the given schema is not valid
     testdir.makepyfile(
         """
-import schemathesis
+import autotest
 
-schema = schemathesis.openapi.from_dict({"swagger": "2.0", "paths": 1})
+schema = autotest.openapi.from_dict({"swagger": "2.0", "paths": 1})
 
 @schema.parametrize()
 def test_(request, case):
@@ -612,7 +612,7 @@ def test_empty_content():
         "info": {"title": "Test", "description": "Test", "version": "0.1.0"},
         "paths": {"/body": {"post": {"requestBody": {"content": {}}, "responses": {"200": {"description": "OK"}}}}},
     }
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     # Then the body processing should be no-op
     operation = schema["/body"]["POST"]
     assert operation.body == PayloadAlternatives([])
@@ -636,7 +636,7 @@ def test_loose_multipart_definition():
             }
         },
     }
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     # Then non-object data should be excluded during generation
 
     @given(case=schema["/body"]["POST"].as_strategy())
@@ -673,7 +673,7 @@ def test_multipart_behind_a_reference():
             }
         },
     }
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     # Then it should be correctly resolved
 
     @given(case=schema["/body"]["POST"].as_strategy())
@@ -693,7 +693,7 @@ def test_multipart_behind_a_reference():
 @pytest.mark.operations("multipart")
 def test_optional_form_parameters(schema_url):
     # When form parameters are optional
-    schema = schemathesis.openapi.from_url(schema_url)
+    schema = autotest.openapi.from_url(schema_url)
     strategy = schema["/multipart"]["POST"].as_strategy()
 
     @given(case=strategy)
@@ -733,7 +733,7 @@ def test_ref_field():
             }
         },
     }
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
 
     @given(case=schema["/body"]["POST"].as_strategy())
     @settings(max_examples=5)
@@ -745,7 +745,7 @@ def test_ref_field():
 
 
 def test_exceptions_on_collect(testdir):
-    # When collected item raises an exception during `hasattr` in `is_schemathesis_test`
+    # When collected item raises an exception during `hasattr` in `is_Autotest_test`
     testdir.make_test(
         """
 @schema.parametrize()
@@ -853,7 +853,7 @@ def verify_settings_after_collection(request):
             )
             break
     else:
-        pytest.fail("Could not find the schemathesis test item")
+        pytest.fail("Could not find the Autotest test item")
 """,
     )
     result = testdir.runpytest("-v", "-s")

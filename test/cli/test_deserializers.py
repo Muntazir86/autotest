@@ -41,7 +41,7 @@ def test_custom_deserializer_successful(ctx, app_runner, cli, snapshot_cli):
     port = app_runner.run_flask_app(app)
 
     hooks_module = ctx.write_pymodule("""
-@schemathesis.deserializer("application/vnd.custom")
+@autotest.deserializer("application/vnd.custom")
 def deserialize_custom(ctx, response):
     text = response.content.decode("utf-8")
     parts = text.split("=", 1)
@@ -95,7 +95,7 @@ def test_custom_deserializer_with_exception(ctx, app_runner, cli, snapshot_cli):
     port = app_runner.run_flask_app(app)
 
     hooks_module = ctx.write_pymodule("""
-@schemathesis.deserializer("application/vnd.custom")
+@autotest.deserializer("application/vnd.custom")
 def deserialize_custom(ctx, response):
     text = response.content.decode("utf-8")
     if "=" not in text:
@@ -183,7 +183,7 @@ def test_custom_deserializer_schema_mismatch(ctx, app_runner, cli, snapshot_cli)
     port = app_runner.run_flask_app(app)
 
     hooks_module = ctx.write_pymodule("""
-@schemathesis.deserializer("application/vnd.custom")
+@autotest.deserializer("application/vnd.custom")
 def deserialize_custom(ctx, response):
     text = response.content.decode("utf-8")
     result = {}
@@ -239,11 +239,11 @@ def test_multiple_deserializers_for_same_type(ctx, app_runner, cli, snapshot_cli
     port = app_runner.run_flask_app(app)
 
     hooks_module = ctx.write_pymodule("""
-@schemathesis.deserializer("application/vnd.custom")
+@autotest.deserializer("application/vnd.custom")
 def deserialize_first(ctx, response):
     return {"parsed_by": "first"}
 
-@schemathesis.deserializer("application/vnd.custom")
+@autotest.deserializer("application/vnd.custom")
 def deserialize_second(ctx, response):
     return {"parsed_by": "second"}
 """)
@@ -309,7 +309,7 @@ def test_deserializer_with_wildcard_media_type(ctx, app_runner, cli, snapshot_cl
 
     # Register deserializer with wildcard - should match both endpoints
     hooks_module = ctx.write_pymodule("""
-@schemathesis.deserializer("application/vnd.*+custom")
+@autotest.deserializer("application/vnd.*+custom")
 def deserialize_custom(ctx, response):
     return {"id": response.content.decode("utf-8")}
 """)

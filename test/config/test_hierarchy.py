@@ -2,9 +2,9 @@ import hypothesis
 import pytest
 from hypothesis.database import DirectoryBasedExampleDatabase, InMemoryExampleDatabase
 
-from schemathesis.config import SchemathesisConfig
-from schemathesis.core import HYPOTHESIS_IN_MEMORY_DATABASE_IDENTIFIER
-from schemathesis.schemas import APIOperation, OperationDefinition
+from autotest.config import autotestConfig
+from autotest.core import HYPOTHESIS_IN_MEMORY_DATABASE_IDENTIFIER
+from autotest.schemas import APIOperation, OperationDefinition
 
 LABEL = "PUT /users/{user_id}"
 
@@ -31,7 +31,7 @@ def operation(openapi_30):
     ],
 )
 def test_auth_for(operation, matcher, expected):
-    config = SchemathesisConfig.from_dict(
+    config = AutotestConfig.from_dict(
         {
             "auth": {
                 "basic": {"username": "user", "password": "global"},
@@ -61,7 +61,7 @@ def test_auth_for(operation, matcher, expected):
     ],
 )
 def test_headers_for_override_and_fallback(operation, matcher, expected):
-    config = SchemathesisConfig.from_dict(
+    config = AutotestConfig.from_dict(
         {
             "headers": {"X-Test": "global"},
             "operations": [
@@ -83,7 +83,7 @@ def test_headers_for_override_and_fallback(operation, matcher, expected):
 
 def test_headers_for_none_when_unset(operation):
     # No headers defined globally or per-operation -> empty dict
-    config = SchemathesisConfig.from_dict({})
+    config = AutotestConfig.from_dict({})
     project = config.projects.get_default()
 
     assert project.headers_for() == {}
@@ -99,7 +99,7 @@ def test_headers_for_none_when_unset(operation):
     ],
 )
 def test_hypothesis_database_and_reuse_phase(operation, db_value, expected_type, reuse_removed):
-    cfg = SchemathesisConfig.from_dict(
+    cfg = AutotestConfig.from_dict(
         {
             "generation": {
                 "max-examples": 250,
@@ -127,7 +127,7 @@ def test_hypothesis_database_and_reuse_phase(operation, db_value, expected_type,
 
 
 def test_hypothesis_max_examples_and_no_shrink_override(operation):
-    cfg = SchemathesisConfig.from_dict(
+    cfg = AutotestConfig.from_dict(
         {
             "generation": {
                 "max-examples": 330,

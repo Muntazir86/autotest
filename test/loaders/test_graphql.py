@@ -7,9 +7,9 @@ import graphql
 import pytest
 from hypothesis import given, settings
 
-from schemathesis.core.errors import LoaderError
-from schemathesis.graphql import loaders
-from schemathesis.transport.prepare import normalize_base_url
+from autotest.core.errors import LoaderError
+from autotest.graphql import loaders
+from autotest.transport.prepare import normalize_base_url
 
 RAW_SCHEMA = """
 type Book {

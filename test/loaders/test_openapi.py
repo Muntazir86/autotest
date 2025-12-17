@@ -8,14 +8,14 @@ import pytest
 import yaml
 from flask import Flask, Response
 
-import schemathesis
-from schemathesis.core.errors import LoaderError
+import autotest
+from autotest.core.errors import LoaderError
 from test.utils import make_schema
 
 
 def test_openapi_asgi_loader(fastapi_app, run_test):
     # When an ASGI app is loaded via `from_asgi`
-    schema = schemathesis.openapi.from_asgi("/openapi.json", fastapi_app)
+    schema = autotest.openapi.from_asgi("/openapi.json", fastapi_app)
     strategy = schema["/users"]["GET"].as_strategy()
     # Then it should successfully make calls
     run_test(strategy)
@@ -23,7 +23,7 @@ def test_openapi_asgi_loader(fastapi_app, run_test):
 
 def test_openapi_wsgi_loader(flask_app, run_test):
     # When a WSGI app is loaded via `from_wsgi`
-    schema = schemathesis.openapi.from_wsgi("/schema.yaml", flask_app)
+    schema = autotest.openapi.from_wsgi("/schema.yaml", flask_app)
     strategy = schema["/success"]["GET"].as_strategy()
     # Then it should successfully make calls
     run_test(strategy)
@@ -37,7 +37,7 @@ def test_openapi_wsgi_loader(flask_app, run_test):
 )
 def test_unsupported_openapi_version(version, expected):
     with pytest.raises(LoaderError, match=expected):
-        schemathesis.openapi.from_dict({"openapi": version})
+        autotest.openapi.from_dict({"openapi": version})
 
 
 def test_number_deserializing(testdir):
@@ -66,19 +66,19 @@ def test_number_deserializing(testdir):
 
     schema_path = testdir.makefile(".yaml", schema=json.dumps(schema))
     # Then yaml loader should parse them without schema validation errors
-    parsed = schemathesis.openapi.from_path(str(schema_path))
+    parsed = autotest.openapi.from_path(str(schema_path))
     # and the value should be a number
     value = parsed.raw_schema["paths"]["/teapot"]["get"]["parameters"][0]["schema"]["multipleOf"]
     assert isinstance(value, float)
 
 
 def test_unsupported_type():
-    # When Schemathesis can't detect the Open API spec version
+    # When Autotest can't detect the Open API spec version
     with pytest.raises(
         LoaderError, match="Unable to determine the Open API version as it's not specified in the document."
     ):
         # Then it raises an error
-        schemathesis.openapi.from_dict({})
+        autotest.openapi.from_dict({})
 
 
 if platform.python_implementation() == "PyPy":
@@ -108,7 +108,7 @@ def test_parsing_errors_uri(schema_url, content_type, payload, expected, app_run
     port = app_runner.run_flask_app(app)
 
     with pytest.raises(LoaderError) as exc:
-        schemathesis.openapi.from_url(f"http://127.0.0.1:{port}/{schema_url}")
+        autotest.openapi.from_url(f"http://127.0.0.1:{port}/{schema_url}")
     assert exc.value.extras == expected
 
 
@@ -124,7 +124,7 @@ def test_unknown_content_type_retry_yaml(app_runner):
 
     port = app_runner.run_flask_app(app)
 
-    schemathesis.openapi.from_url(f"http://127.0.0.1:{port}/schema")
+    autotest.openapi.from_url(f"http://127.0.0.1:{port}/schema")
 
 
 @pytest.mark.parametrize(
@@ -139,7 +139,7 @@ def test_parsing_errors_path(testdir, schema_path, payload, expected):
     schema_file = testdir.makefile(f".{ext}", **{name: payload})
 
     with pytest.raises(LoaderError) as exc:
-        schemathesis.openapi.from_path(str(schema_file))
+        autotest.openapi.from_path(str(schema_file))
 
     assert exc.value.extras == expected
 
@@ -150,7 +150,7 @@ def test_parsing_errors_path(testdir, schema_path, payload, expected):
 )
 def test_from_file(data) -> None:
     for input_data in (data, io.StringIO(data)):
-        assert schemathesis.openapi.from_file(input_data).raw_schema == {"openapi": "3.0.0"}
+        assert autotest.openapi.from_file(input_data).raw_schema == {"openapi": "3.0.0"}
 
 
 @pytest.mark.parametrize(
@@ -165,4 +165,4 @@ def test_from_file(data) -> None:
 def test_from_file_invalid_input(data: str) -> None:
     for input_data in (data, io.StringIO(data)):
         with pytest.raises(LoaderError):
-            schemathesis.openapi.from_file(input_data)
+            autotest.openapi.from_file(input_data)

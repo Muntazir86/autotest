@@ -1,14 +1,14 @@
 import pytest
 import yaml
 
-import schemathesis
-from schemathesis.checks import CheckContext
-from schemathesis.config._checks import ChecksConfig
-from schemathesis.core.failures import Failure
-from schemathesis.core.parameters import ParameterLocation
-from schemathesis.core.transport import Response
-from schemathesis.generation import GenerationMode
-from schemathesis.generation.meta import (
+import autotest
+from autotest.checks import CheckContext
+from autotest.config._checks import ChecksConfig
+from autotest.core.failures import Failure
+from autotest.core.parameters import ParameterLocation
+from autotest.core.transport import Response
+from autotest.generation import GenerationMode
+from autotest.generation.meta import (
     CaseMetadata,
     ComponentInfo,
     CoverageScenario,
@@ -17,7 +17,7 @@ from schemathesis.generation.meta import (
     PhaseInfo,
     TestPhase,
 )
-from schemathesis.specs.openapi.checks import (
+from autotest.specs.openapi.checks import (
     ResourcePath,
     _body_negation_becomes_valid_after_serialization,
     _is_prefix_operation,
@@ -183,7 +183,7 @@ def sample_schema(ctx):
     ],
 )
 def test_has_only_additional_properties_in_non_body_parameters(sample_schema, kwargs, expected):
-    schema = schemathesis.openapi.from_dict(sample_schema)
+    schema = autotest.openapi.from_dict(sample_schema)
     operation = schema["/test"]["POST"]
     case = operation.Case(**kwargs)
     assert has_only_additional_properties_in_non_body_parameters(case) is expected
@@ -192,7 +192,7 @@ def test_has_only_additional_properties_in_non_body_parameters(sample_schema, kw
 def test_negative_data_rejection_on_additional_properties(response_factory, sample_schema):
     # See GH-2312
     response = response_factory.requests()
-    schema = schemathesis.openapi.from_dict(sample_schema)
+    schema = autotest.openapi.from_dict(sample_schema)
     operation = schema["/test"]["POST"]
     case = operation.Case(
         _meta=build_metadata(
@@ -247,7 +247,7 @@ def test_body_negation_becomes_valid_after_serialization(ctx, media_type, body_m
             }
         }
     )
-    schema = schemathesis.openapi.from_dict(text_plain_schema)
+    schema = autotest.openapi.from_dict(text_plain_schema)
     operation = schema["/endpoint"]["PUT"]
     case = operation.Case(
         _meta=build_metadata(
@@ -279,7 +279,7 @@ def test_response_schema_conformance_with_unspecified_method(response_factory, s
             },
         }
     }
-    schema = schemathesis.openapi.from_dict(sample_schema)
+    schema = autotest.openapi.from_dict(sample_schema)
     operation = schema["/test"]["POST"]
     case = operation.Case(
         _meta=CaseMetadata(
@@ -343,7 +343,7 @@ def test_positive_data_acceptance(
     is_positive,
     should_raise,
 ):
-    schema = schemathesis.openapi.from_dict(sample_schema)
+    schema = autotest.openapi.from_dict(sample_schema)
     operation = schema["/test"]["POST"]
     response = response_factory.requests(status_code=status_code)
     case = operation.Case(
@@ -545,7 +545,7 @@ def test_negative_data_rejection_single_element_array_serialization(ctx, respons
         }
     )
 
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     operation = schema["/job_info/scroll"]["GET"]
 
     # Simulate negative testing where a single-element array [67] is generated

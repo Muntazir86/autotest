@@ -1,14 +1,14 @@
 # Custom Response Deserializers
 
-Schemathesis validates API responses against JSON Schema definitions. JSON and YAML responses work automatically. For other formats like MessagePack or domain-specific encodings, register a custom deserializer.
+Autotest validates API responses against JSON Schema definitions. JSON and YAML responses work automatically. For other formats like MessagePack or domain-specific encodings, register a custom deserializer.
 
 ## Quick Start
 
 ```python
-import schemathesis
+import autotest
 
-@schemathesis.deserializer("application/vnd.custom")
-def decode_custom(ctx: schemathesis.DeserializationContext, response):
+@autotest.deserializer("application/vnd.custom")
+def decode_custom(ctx: Autotest.DeserializationContext, response):
     try:
         text = response.content.decode(response.encoding or "utf-8")
         key, value = text.split("=", 1)
@@ -19,7 +19,7 @@ def decode_custom(ctx: schemathesis.DeserializationContext, response):
 
 - Register one or more media types in the decorator
 - Return the deserialized Python object for schema validation
-- Raise appropriate exceptions if decoding fails; Schemathesis surfaces them in reports
+- Raise appropriate exceptions if decoding fails; Autotest surfaces them in reports
 
 ## Context & Introspection
 
@@ -33,8 +33,8 @@ Example using context:
 ```python
 import msgpack
 
-@schemathesis.deserializer("application/vnd.api+msgpack")
-def deserialize_msgpack(ctx: schemathesis.DeserializationContext, response):
+@autotest.deserializer("application/vnd.api+msgpack")
+def deserialize_msgpack(ctx: Autotest.DeserializationContext, response):
     try:
         data = msgpack.unpackb(response.content, raw=False)
 

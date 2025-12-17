@@ -1,4 +1,4 @@
-🚨Please review the [Contributing Guidelines](https://github.com/schemathesis/schemathesis/blob/master/CONTRIBUTING.md).
+🚨Please review the [Contributing Guidelines](https://github.com/autotest/autotest/blob/master/CONTRIBUTING.md).
 
 ### Description
 

@@ -1,7 +1,7 @@
 Exit code: 0
 ---
 Stdout:
-Schemathesis dev
+autotest dev
 ━━━━━━━━━━━━━━━━
 
 
@@ -34,7 +34,7 @@ Failed to extract data from response:
 
         NotImplementedError: Cannot deserialize response with Content-Type: 'text/plain'
 
-Register a deserializer with @schemathesis.deserializer() to handle this media type
+Register a deserializer with @autotest.deserializer() to handle this media type
 
         [201] curl -X POST -H 'Content-Type: application/json' -d '{"name": "fixed-name"}' http://127.0.0.1/users
         [200] curl -X GET http://127.0.0.1/users/192

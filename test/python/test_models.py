@@ -6,18 +6,18 @@ import pytest
 import requests
 from hypothesis import HealthCheck, given, settings
 
-import schemathesis
-from schemathesis.checks import not_a_server_error
-from schemathesis.core import SCHEMATHESIS_TEST_CASE_HEADER
-from schemathesis.core.errors import IncorrectUsage
-from schemathesis.core.failures import Failure, FailureGroup
-from schemathesis.core.parameters import ParameterLocation
-from schemathesis.core.transforms import merge_at
-from schemathesis.core.transport import USER_AGENT, Response
-from schemathesis.generation import GenerationMode
-from schemathesis.schemas import APIOperation
-from schemathesis.specs.openapi.checks import content_type_conformance, response_schema_conformance
-from schemathesis.transport.prepare import get_default_headers
+import autotest
+from autotest.checks import not_a_server_error
+from autotest.core import autotest_TEST_CASE_HEADER
+from autotest.core.errors import IncorrectUsage
+from autotest.core.failures import Failure, FailureGroup
+from autotest.core.parameters import ParameterLocation
+from autotest.core.transforms import merge_at
+from autotest.core.transport import USER_AGENT, Response
+from autotest.generation import GenerationMode
+from autotest.schemas import APIOperation
+from autotest.specs.openapi.checks import content_type_conformance, response_schema_conformance
+from autotest.transport.prepare import get_default_headers
 
 
 @pytest.fixture
@@ -52,7 +52,7 @@ def schema_with_payload(ctx):
             }
         },
     )
-    return schemathesis.openapi.from_dict(schema)
+    return autotest.openapi.from_dict(schema)
 
 
 def test_make_case_explicit_media_type(schema_with_payload):
@@ -91,7 +91,7 @@ def test_make_case_missing_media_type(ctx):
             },
         }
     )
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
     # And the `media_type` argument is not passed to `make_case`
     # Then there should be a usage error
     with pytest.raises(IncorrectUsage):
@@ -140,7 +140,7 @@ def test_as_transport_kwargs(override, server, base_url, swagger_20, converter):
         operation.base_url = base_url
         data = case.as_transport_kwargs()
     assert data == {
-        "headers": {**get_default_headers(), "User-Agent": USER_AGENT, SCHEMATHESIS_TEST_CASE_HEADER: ANY},
+        "headers": {**get_default_headers(), "User-Agent": USER_AGENT, AUTOTEST_TEST_CASE_HEADER: ANY},
         "method": "GET",
         "params": {},
         "cookies": {"TOKEN": "secret"},
@@ -199,7 +199,7 @@ def test_as_transport_kwargs_override_user_agent(server, openapi2_base_url, swag
     original_headers = headers.copy()
     case = operation.Case(headers=headers)
     data = case.as_transport_kwargs(headers={"X-Key": "foo"})
-    expected[SCHEMATHESIS_TEST_CASE_HEADER] = ANY
+    expected[AUTOTEST_TEST_CASE_HEADER] = ANY
     assert data == {
         "headers": {**get_default_headers(), **expected},
         "method": "GET",
@@ -228,7 +228,7 @@ def test_as_transport_kwargs_override_content_type(ctx, header):
             },
         }
     )
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
     case = schema["/data"]["post"].Case(body="<html></html>", media_type="text/plain")
     # When the `Content-Type` header is explicitly passed
     data = case.as_transport_kwargs(headers={header: "text/html"})
@@ -242,7 +242,7 @@ def test_as_transport_kwargs_override_content_type(ctx, header):
             **get_default_headers(),
             header: "text/html",
             "User-Agent": USER_AGENT,
-            SCHEMATHESIS_TEST_CASE_HEADER: ANY,
+            AUTOTEST_TEST_CASE_HEADER: ANY,
         },
         "url": "/data",
     }
@@ -282,7 +282,7 @@ def custom_check(ctx, response, case):
 )
 @pytest.mark.operations("success")
 def test_call_and_validate(openapi3_schema_url, kwargs):
-    api_schema = schemathesis.openapi.from_url(openapi3_schema_url)
+    api_schema = autotest.openapi.from_url(openapi3_schema_url)
 
     @given(case=api_schema["/success"]["GET"].as_strategy())
     @settings(max_examples=1, deadline=None)
@@ -294,7 +294,7 @@ def test_call_and_validate(openapi3_schema_url, kwargs):
 
 @pytest.mark.operations("custom_format")
 def test_metadata_has_only_relevant_components(openapi3_schema_url):
-    api_schema = schemathesis.openapi.from_url(openapi3_schema_url)
+    api_schema = autotest.openapi.from_url(openapi3_schema_url)
 
     operation = api_schema["/custom_format"]["GET"]
 
@@ -313,7 +313,7 @@ def test_metadata_has_only_relevant_components(openapi3_schema_url):
 
 @pytest.mark.operations("success")
 def test_call_and_validate_for_asgi(fastapi_app):
-    api_schema = schemathesis.openapi.from_dict(fastapi_app.openapi())
+    api_schema = autotest.openapi.from_dict(fastapi_app.openapi())
 
     @given(case=api_schema["/users"]["GET"].as_strategy())
     @settings(max_examples=1, deadline=None, suppress_health_check=list(HealthCheck))
@@ -329,8 +329,8 @@ def test_validate_response(testdir):
         r"""
 import pytest
 from requests import Response, Request
-from schemathesis.openapi.checks import UndefinedStatusCode
-from schemathesis.core.failures import FailureGroup
+from autotest.openapi.checks import UndefinedStatusCode
+from autotest.core.failures import FailureGroup
 
 @schema.parametrize()
 def test_(case):
@@ -351,7 +351,7 @@ def test_validate_response_no_errors(testdir):
     testdir.make_test(
         r"""
 import requests
-from schemathesis.core.transport import Response
+from autotest.core.transport import Response
 from unittest.mock import Mock
 
 class Headers(dict):
@@ -420,7 +420,7 @@ def test_validate_response_schema_path(
         },
         components={"schemas": {"Foo": {"type": "object"}}},
     )
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
     response = getattr(response_factory, factory_type)(content=json.dumps(payload).encode("utf-8"))
     with pytest.raises(Failure) as exc:
         schema["/test"]["POST"].validate_response(response)
@@ -485,7 +485,7 @@ def test_generation_mode_is_available(ctx, mode):
         }
     )
 
-    api_schema = schemathesis.openapi.from_dict(schema)
+    api_schema = autotest.openapi.from_dict(schema)
 
     @given(case=api_schema["/data"]["POST"].as_strategy(generation_mode=mode))
     @settings(max_examples=1)
@@ -516,7 +516,7 @@ def test_case_insensitive_headers(ctx):
         }
     )
     # When headers are generated
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
 
     @given(case=schema["/data"]["POST"].as_strategy())
     @settings(max_examples=1)
@@ -554,7 +554,7 @@ def test_iter_parameters(ctx):
             },
         }
     )
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
     params = list(schema["/data"]["POST"].iter_parameters())
     assert len(params) == 2
     assert params[0].name == "X-id"
@@ -575,7 +575,7 @@ def test_checks_errors_deduplication(ctx, response_factory, factory_type):
             },
         }
     )
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
     case = schema["/data"]["GET"].Case()
     response = getattr(response_factory, factory_type)(content=b"42", content_type=None)
     # When there are two checks that raise the same failure
@@ -707,7 +707,7 @@ def test_get_parameter(ctx, name, location, exists):
         },
         security=[{"ApiKeyAuth": []}],
     )
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
 
     parameter = schema["/data/"]["GET"].get_parameter(name, location)
     assert (parameter is not None) is exists

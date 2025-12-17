@@ -12,7 +12,7 @@ def run_memray(schema_path: str, args: list[str]) -> dict[str, Any]:
 
         stats_output = memray_output + ".json"
         cmd = (
-            ["memray", "run", "--force", "-o", memray_output, "-m", "schemathesis.cli", "run"]
+            ["memray", "run", "--force", "-o", memray_output, "-m", "autotest.cli", "run"]
             + args
             + ["-u http://127.0.0.1:8000", "--seed=1", schema_path]
         )
@@ -21,7 +21,7 @@ def run_memray(schema_path: str, args: list[str]) -> dict[str, Any]:
             cmd,
             stdout=subprocess.PIPE,
             text=True,
-            env={**os.environ, "SCHEMATHESIS_HOOKS": "benches.memory.hooks"},
+            env={**os.environ, "autotest_HOOKS": "benches.memory.hooks"},
         )
 
         subprocess.run(

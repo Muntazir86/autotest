@@ -1,7 +1,7 @@
 import pytest
 
-from schemathesis.config import OutputConfig, TruncationConfig
-from schemathesis.core.output import prepare_response_payload, truncate_json
+from autotest.config import OutputConfig, TruncationConfig
+from autotest.core.output import prepare_response_payload, truncate_json
 
 SIMPLE_DICT = {
     "name": "John",

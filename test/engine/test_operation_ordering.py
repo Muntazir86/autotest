@@ -3,10 +3,10 @@ from queue import Queue
 
 import pytest
 
-import schemathesis
-from schemathesis.engine.phases.unit._layered_scheduler import LayeredScheduler
-from schemathesis.engine.phases.unit._ordering import compute_operation_layers
-from schemathesis.specs.openapi.stateful.dependencies.layers import compute_dependency_layers
+import autotest
+from autotest.engine.phases.unit._layered_scheduler import LayeredScheduler
+from autotest.engine.phases.unit._ordering import compute_operation_layers
+from autotest.specs.openapi.stateful.dependencies.layers import compute_dependency_layers
 
 
 def test_restful_heuristic_ordering(ctx):
@@ -32,7 +32,7 @@ def test_restful_heuristic_ordering(ctx):
             },
         }
     )
-    loaded = schemathesis.openapi.from_dict(schema_dict)
+    loaded = autotest.openapi.from_dict(schema_dict)
 
     operations = list(loaded.get_all_operations())
     ops = [op.ok() for op in operations]
@@ -63,7 +63,7 @@ def test_layered_scheduler_single_layer(ctx):
             "/status": {"get": {"responses": {"200": {"description": "OK"}}}},
         }
     )
-    loaded = schemathesis.openapi.from_dict(schema_dict)
+    loaded = autotest.openapi.from_dict(schema_dict)
 
     operations = list(loaded.get_all_operations())
     ops = [op.ok() for op in operations]
@@ -94,7 +94,7 @@ def test_layered_scheduler_multiple_layers(ctx):
             },
         }
     )
-    loaded = schemathesis.openapi.from_dict(schema_dict)
+    loaded = autotest.openapi.from_dict(schema_dict)
 
     operations = list(loaded.get_all_operations())
     ops = [op.ok() for op in operations]
@@ -147,7 +147,7 @@ def test_layered_scheduler_multi_worker_coordination(ctx):
             "/products": {"post": {"responses": {"201": {"description": "Created"}}}},
         }
     )
-    loaded = schemathesis.openapi.from_dict(schema_dict)
+    loaded = autotest.openapi.from_dict(schema_dict)
 
     operations = list(loaded.get_all_operations())
     ops = [op.ok() for op in operations]
@@ -238,7 +238,7 @@ def test_dependency_layers_with_links(ctx):
             },
         }
     )
-    loaded = schemathesis.openapi.from_dict(schema)
+    loaded = autotest.openapi.from_dict(schema)
 
     # Dependency graph should show POST -> GET relationship
     graph = loaded.analysis.dependency_graph
@@ -483,7 +483,7 @@ def _merge_operations(*ops):
 )
 def test_cycle_detection_inferred_dependencies(ctx, operations, expected_layers):
     schema = ctx.openapi.build_schema(operations)
-    loaded = schemathesis.openapi.from_dict(schema)
+    loaded = autotest.openapi.from_dict(schema)
 
     graph = loaded.analysis.dependency_graph
     layers = compute_dependency_layers(graph)

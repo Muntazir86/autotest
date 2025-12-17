@@ -2,11 +2,11 @@ from __future__ import annotations
 
 import pytest
 
-import schemathesis
-from schemathesis.auths import AuthContext, AuthStorage, CachingAuthProvider
-from schemathesis.core.errors import IncorrectUsage
-from schemathesis.engine import from_schema
-from schemathesis.generation.case import Case
+import autotest
+from autotest.auths import AuthContext, AuthStorage, CachingAuthProvider
+from autotest.core.errors import IncorrectUsage
+from autotest.engine import from_schema
+from autotest.generation.case import Case
 
 TOKEN = "EXAMPLE-TOKEN"
 
@@ -177,7 +177,7 @@ MULTI_SCOPE_SCHEMA = {
 
 def test_auth_cache_with_scopes(openapi3_base_url):
     # See GH-1775
-    schema = schemathesis.openapi.from_dict(MULTI_SCOPE_SCHEMA)
+    schema = autotest.openapi.from_dict(MULTI_SCOPE_SCHEMA)
     schema.config.update(base_url=openapi3_base_url)
 
     counts = {}

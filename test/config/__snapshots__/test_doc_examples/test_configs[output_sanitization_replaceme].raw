@@ -1,1 +1,1 @@
-SchemathesisConfig(output=OutputConfig(sanitization=SanitizationConfig(replacement='***REDACTED***')))
+autotestConfig(output=OutputConfig(sanitization=SanitizationConfig(replacement='***REDACTED***')))

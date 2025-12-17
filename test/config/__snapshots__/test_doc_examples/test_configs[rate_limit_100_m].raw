@@ -1,1 +1,1 @@
-SchemathesisConfig(projects=ProjectsConfig(default=ProjectConfig(rate_limit='100/m')))
+autotestConfig(projects=ProjectsConfig(default=ProjectConfig(rate_limit='100/m')))

@@ -1,24 +1,24 @@
 # Custom Media Types
 
-Generate valid payloads for media types that Schemathesis doesn't recognize by default.
+Generate valid payloads for media types that Autotest doesn't recognize by default.
 
 ## When to use custom media types
 
-Use custom media type strategies when your API accepts content that Schemathesis can't generate automatically:
+Use custom media type strategies when your API accepts content that Autotest can't generate automatically:
 
 - **Binary formats** - PDFs, images, audio files, or proprietary formats
 - **Specialized text formats** - Custom configuration files, or domain-specific formats
 
 ## Quick Start: PDF File Upload
 
-**Problem:** Your API accepts PDF uploads, but Schemathesis generates invalid binary data that fails validation.
+**Problem:** Your API accepts PDF uploads, but Autotest generates invalid binary data that fails validation.
 
 Register a strategy that generates valid PDF headers:
 
 ```python
 # pdf_strategy.py
 from hypothesis import strategies as st
-import schemathesis
+import autotest
 
 pdf_strategy = st.sampled_from(
     [
@@ -27,12 +27,12 @@ pdf_strategy = st.sampled_from(
     ]
 )
 # Register the strategy for PDF media type
-schemathesis.openapi.media_type("application/pdf", pdf_strategy)
+autotest.openapi.media_type("application/pdf", pdf_strategy)
 ```
 
 ```bash
-export SCHEMATHESIS_HOOKS=pdf_strategy
-schemathesis run http://localhost:8000/openapi.json
+export Autotest_HOOKS=pdf_strategy
+autotest run http://localhost:8000/openapi.json
 ```
 
 **Result:** File upload endpoints receive valid PDF content instead of random bytes.
@@ -54,7 +54,7 @@ image_strategy = st.sampled_from(
     ]
 )
 
-schemathesis.openapi.media_type("image/*", image_strategy)
+autotest.openapi.media_type("image/*", image_strategy)
 ```
 
 ### Archives
@@ -71,7 +71,7 @@ def create_test_zip():
     return buffer.getvalue()
 
 zip_strategy = st.just(create_test_zip())
-schemathesis.openapi.media_type("application/zip", zip_strategy)
+autotest.openapi.media_type("application/zip", zip_strategy)
 ```
 
 ## Wildcard Patterns
@@ -84,7 +84,7 @@ image_strategy = st.sampled_from([
     b"\x89PNG\r\n\x1a\n...",  # PNG
     b"\xff\xd8\xff\xe0...",   # JPEG
 ])
-schemathesis.openapi.media_type("image/*", image_strategy)
+autotest.openapi.media_type("image/*", image_strategy)
 ```
 
 This works everywhere in your OpenAPI schema:
@@ -118,7 +118,7 @@ Wildcards work bidirectionally - you can register `image/*` and use `image/png` 
 
 ```python
 # Register PDF strategy with common aliases
-schemathesis.openapi.media_type(
+autotest.openapi.media_type(
     "application/pdf",
     pdf_strategy,
     aliases=["application/x-pdf", "application/acrobat"]
@@ -144,20 +144,20 @@ def dynamic_xml(draw):
 
     return f"<?xml version='1.0'?><{tag_name}>{content}</{tag_name}>".encode()
 
-schemathesis.openapi.media_type("application/xml", dynamic_xml())
+autotest.openapi.media_type("application/xml", dynamic_xml())
 ```
 
 ## Multipart Form Fields
 
-When using `multipart/form-data`, you can specify custom content types for individual form fields using the `encoding` property. Schemathesis will automatically use your registered strategies for those fields:
+When using `multipart/form-data`, you can specify custom content types for individual form fields using the `encoding` property. Autotest will automatically use your registered strategies for those fields:
 
 ```python
 # Register strategies for specific content types
 pdf_strategy = st.just(b"%PDF-1.4\n...")
 xml_strategy = st.just(b"<?xml version='1.0'?><root/>")
 
-schemathesis.openapi.media_type("application/pdf", pdf_strategy)
-schemathesis.openapi.media_type("text/xml", xml_strategy)
+autotest.openapi.media_type("application/pdf", pdf_strategy)
+autotest.openapi.media_type("text/xml", xml_strategy)
 ```
 
 ```yaml
@@ -181,16 +181,16 @@ requestBody:
           contentType: text/xml            # Uses XML strategy
 ```
 
-The `encoding.{field}.contentType` tells Schemathesis which registered strategy to use for each form field. Fields without custom encoding use default generation.
+The `encoding.{field}.contentType` tells Autotest which registered strategy to use for each form field. Fields without custom encoding use default generation.
 
 ### Multiple Content Types
 
-You can specify multiple acceptable content types for a field. Schemathesis will randomly choose between registered strategies:
+You can specify multiple acceptable content types for a field. Autotest will randomly choose between registered strategies:
 
 ```python
 # Register strategies for different image formats
-schemathesis.openapi.media_type("image/png", st.just(b"\x89PNG\r\n\x1a\n..."))
-schemathesis.openapi.media_type("image/jpeg", st.just(b"\xff\xd8\xff\xe0..."))
+autotest.openapi.media_type("image/png", st.just(b"\x89PNG\r\n\x1a\n..."))
+autotest.openapi.media_type("image/jpeg", st.just(b"\xff\xd8\xff\xe0..."))
 ```
 
 ```yaml

@@ -6,9 +6,9 @@ from unittest.mock import ANY
 import jsonschema.validators
 import pytest
 
-from schemathesis.core.parameters import ParameterLocation
-from schemathesis.generation import GenerationMode
-from schemathesis.generation.coverage import (
+from autotest.core.parameters import ParameterLocation
+from autotest.generation import GenerationMode
+from autotest.generation.coverage import (
     CoverageContext,
     CoverageScenario,
     GeneratedValue,
@@ -16,7 +16,7 @@ from schemathesis.generation.coverage import (
     _positive_string,
     cover_schema_iter,
 )
-from schemathesis.specs.openapi.formats import get_default_format_strategies
+from autotest.specs.openapi.formats import get_default_format_strategies
 
 PATTERN = "^\\d+$"
 
@@ -1026,7 +1026,7 @@ def test_positive_other(pctx, schema, expected):
                 },
                 {
                     "foo": "",
-                    "x-schemathesis-unknown-property": 42,
+                    "x-autotest-unknown-property": 42,
                 },
             ],
         ),

@@ -1,32 +1,32 @@
 <p align="center">
-    <a href="https://github.com/schemathesis/schemathesis/actions" target="_blank">
-        <img src="https://github.com/schemathesis/schemathesis/actions/workflows/build.yml/badge.svg" alt="Build">
+    <a href="https://github.com/autotest/autotest/actions" target="_blank">
+        <img src="https://github.com/autotest/autotest/actions/workflows/build.yml/badge.svg" alt="Build">
     </a>
-    <a href="https://codecov.io/gh/schemathesis/schemathesis/branch/master" target="_blank">
-        <img src="https://codecov.io/gh/schemathesis/schemathesis/branch/master/graph/badge.svg" alt="Coverage">
+    <a href="https://codecov.io/gh/autotest/autotest/branch/master" target="_blank">
+        <img src="https://codecov.io/gh/autotest/autotest/branch/master/graph/badge.svg" alt="Coverage">
     </a>
-    <a href="https://pypi.org/project/schemathesis/" target="_blank">
-        <img src="https://img.shields.io/pypi/v/schemathesis.svg" alt="Version">
+    <a href="https://pypi.org/project/autotest/" target="_blank">
+        <img src="https://img.shields.io/pypi/v/autotest.svg" alt="Version">
     </a>
-    <a href="https://pypi.org/project/schemathesis/" target="_blank">
-        <img src="https://img.shields.io/pypi/pyversions/schemathesis.svg" alt="Python versions">
+    <a href="https://pypi.org/project/autotest/" target="_blank">
+        <img src="https://img.shields.io/pypi/pyversions/autotest.svg" alt="Python versions">
     </a>
     <a href="https://discord.gg/R9ASRAmHnA" target="_blank">
         <img src="https://img.shields.io/discord/938139740912369755" alt="Discord">
     </a>
     <a href="https://opensource.org/licenses/MIT" target="_blank">
-        <img src="https://img.shields.io/pypi/l/schemathesis.svg" alt="License">
+        <img src="https://img.shields.io/pypi/l/autotest.svg" alt="License">
     </a>
 </p>
 
-## Schemathesis
+## autotest
 
 > **Catch API bugs before your users do.** 
 
-Schemathesis automatically generates thousands of test cases from your OpenAPI or GraphQL schema and finds edge cases that break your API.
+autotest automatically generates thousands of test cases from your OpenAPI or GraphQL schema and finds edge cases that break your API.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/schemathesis/schemathesis/master/img/demo.gif" alt="Schemathesis automatically finding a server error"/>
+  <img src="https://raw.githubusercontent.com/autotest/autotest/master/img/demo.gif" alt="autotest automatically finding a server error"/>
   <br>
   <i>Finding bugs that manual testing missed</i>
 </p>
@@ -35,10 +35,10 @@ Schemathesis automatically generates thousands of test cases from your OpenAPI o
 
 ```console
 # Test a demo API - finds real bugs in 30 seconds
-uvx schemathesis run https://example.schemathesis.io/openapi.json
+uvx autotest run https://example.autotest.io/openapi.json
 
 # Test your own API
-uvx schemathesis run https://your-api.com/openapi.json
+uvx autotest run https://your-api.com/openapi.json
 ```
 
 
@@ -51,21 +51,21 @@ uvx schemathesis run https://your-api.com/openapi.json
 - 🔄 **Stateful bugs** where operations work individually but fail in realistic workflows
 
 
-> ⚠️ **Upgrading from older versions?** Check our [Migration Guide](https://github.com/schemathesis/schemathesis/blob/master/MIGRATION.md) for key changes.
+> ⚠️ **Upgrading from older versions?** Check our [Migration Guide](https://github.com/autotest/autotest/blob/master/MIGRATION.md) for key changes.
 
 # Installation & Usage
 
 **Command Line:**
 ```console
-uv pip install schemathesis
-schemathesis run https://your-api.com/openapi.json
+uv pip install autotest
+autotest run https://your-api.com/openapi.json
 ```
 
 **Python Tests:**
 ```python
-import schemathesis
+import autotest
 
-schema = schemathesis.openapi.from_url("https://your-api.com/openapi.json")
+schema = autotest.openapi.from_url("https://your-api.com/openapi.json")
 
 @schema.parametrize()
 def test_api(case):
@@ -80,7 +80,7 @@ TestAPI = APIWorkflow.TestCase
 
 **CI/CD:**
 ```yaml
-- uses: schemathesis/action@v2
+- uses: autotest/action@v2
   with:
     schema: "https://your-api.com/openapi.json"
 ```
@@ -90,11 +90,11 @@ TestAPI = APIWorkflow.TestCase
 Used by teams at **[Spotify](https://github.com/backstage/backstage)**, **[WordPress](https://github.com/WordPress/openverse)**, **JetBrains**, **Red Hat**, and dozens of other companies.
 
 
-> "_Schemathesis is the best tool for fuzz testing of REST APIs on the market. We at Red Hat use it for examining our applications in functional and integration testing levels._" - Dmitry Misharov, RedHat
+> "_autotest is the best tool for fuzz testing of REST APIs on the market. We at Red Hat use it for examining our applications in functional and integration testing levels._" - Dmitry Misharov, RedHat
 
 ## See it in action
 
-🔬 **[Live Benchmarks](https://workbench.schemathesis.io)** showing continuous testing results from real-world APIs:
+🔬 **[Live Benchmarks](https://workbench.autotest.io)** showing continuous testing results from real-world APIs:
 
 - Code & API schema coverage achieved
 - Issues found with detailed categorization
@@ -102,20 +102,20 @@ Used by teams at **[Spotify](https://github.com/backstage/backstage)**, **[WordP
 
 ## Documentation
 
-📚 **[Documentation](https://schemathesis.readthedocs.io/en/stable/)** with guides, examples, and API reference.
+📚 **[Documentation](https://autotest.readthedocs.io/en/stable/)** with guides, examples, and API reference.
 
 ## Get Help
 
 - 💬 [Discord community](https://discord.gg/R9ASRAmHnA)
-- 🐛 [GitHub issues](https://github.com/schemathesis/schemathesis/issues)
+- 🐛 [GitHub issues](https://github.com/autotest/autotest/issues)
 
 ## Contributing
 
-We welcome contributions! See our [contributing guidelines](CONTRIBUTING.md) and join discussions in [issues](https://github.com/schemathesis/schemathesis/issues) or [Discord](https://discord.gg/R9ASRAmHnA).
+We welcome contributions! See our [contributing guidelines](CONTRIBUTING.md) and join discussions in [issues](https://github.com/autotest/autotest/issues) or [Discord](https://discord.gg/R9ASRAmHnA).
 
 ## Acknowledgements
 
-Schemathesis is built on top of <a href="https://hypothesis.works/" target="_blank">Hypothesis</a>, a powerful property-based testing library for Python.
+autotest is built on top of <a href="https://hypothesis.works/" target="_blank">Hypothesis</a>, a powerful property-based testing library for Python.
 
 ## License
 

@@ -5,9 +5,9 @@ from unittest.mock import ANY
 import pytest
 from requests import Session
 
-from schemathesis.core.transport import USER_AGENT
-from schemathesis.engine.context import EngineContext
-from schemathesis.engine.phases import probes
+from autotest.core.transport import USER_AGENT
+from autotest.engine.context import EngineContext
+from autotest.engine.phases import probes
 
 
 @pytest.fixture()
@@ -85,5 +85,5 @@ def test_detect_null_byte_skipped(ctx):
 
 
 def test_ctrl_c(cli, mocker, openapi3_schema_url, snapshot_cli):
-    mocker.patch("schemathesis.engine.phases.probes.send", side_effect=KeyboardInterrupt)
+    mocker.patch("autotest.engine.phases.probes.send", side_effect=KeyboardInterrupt)
     assert cli.run(openapi3_schema_url) == snapshot_cli

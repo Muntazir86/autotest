@@ -1,1 +1,1 @@
-SchemathesisConfig(projects=ProjectsConfig(default=ProjectConfig(phases=PhasesConfig(stateful=StatefulPhaseConfig(enabled=False, generation=GenerationConfig(max_examples=10))))))
+autotestConfig(projects=ProjectsConfig(default=ProjectConfig(phases=PhasesConfig(stateful=StatefulPhaseConfig(enabled=False, generation=GenerationConfig(max_examples=10))))))

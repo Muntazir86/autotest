@@ -9,21 +9,21 @@ from fastapi.security import APIKeyHeader, HTTPAuthorizationCredentials
 from hypothesis import Phase, given, settings
 from starlette_testclient import TestClient
 
-import schemathesis
-from schemathesis.checks import CheckContext
-from schemathesis.config import ChecksConfig
-from schemathesis.core.failures import FailureGroup
-from schemathesis.core.transport import Response
-from schemathesis.engine import Status
-from schemathesis.engine.events import ScenarioFinished
-from schemathesis.engine.phases import PhaseName
-from schemathesis.specs.openapi.checks import AuthKind, IgnoredAuth, _contains_auth, ignored_auth, remove_auth
-from schemathesis.transport.requests import RequestsTransport
+import autotest
+from autotest.checks import CheckContext
+from autotest.config import ChecksConfig
+from autotest.core.failures import FailureGroup
+from autotest.core.transport import Response
+from autotest.engine import Status
+from autotest.engine.events import ScenarioFinished
+from autotest.engine.phases import PhaseName
+from autotest.specs.openapi.checks import AuthKind, IgnoredAuth, _contains_auth, ignored_auth, remove_auth
+from autotest.transport.requests import RequestsTransport
 from test.utils import EventStream
 
 
 def run(schema_url, **config):
-    schema = schemathesis.openapi.from_url(schema_url)
+    schema = autotest.openapi.from_url(schema_url)
     stream = EventStream(
         schema,
         phases=[PhaseName.FUZZING],
@@ -92,7 +92,7 @@ def test_keep_tls_verification(schema_url, mocker):
         assert not call.kwargs["verify"]
     send.reset_mock()
 
-    schema = schemathesis.openapi.from_url(schema_url)
+    schema = autotest.openapi.from_url(schema_url)
 
     operation = schema["/ignored_auth"]["get"]
 
@@ -116,7 +116,7 @@ def test_file_loaded_schema_requires_explicit_base_url(openapi3_schema, openapi3
     # See GH-3318
     schema_path = tmp_path / "schema.json"
     schema_path.write_text(json.dumps(openapi3_schema.raw_schema))
-    schema = schemathesis.openapi.from_path(schema_path)
+    schema = autotest.openapi.from_path(schema_path)
     case = schema["/ignored_auth"]["get"].Case(headers={"Authorization": "Basic dGVzdDp0ZXN0"})
     with pytest.raises(FailureGroup) as exc_info:
         case.call_and_validate(base_url=openapi3_base_url, checks=[ignored_auth])
@@ -237,7 +237,7 @@ def test_contains_auth(ctx, request_kwargs, parameters, expected, response_facto
 )
 @pytest.mark.operations("success")
 def test_remove_auth_from_case(schema_url, key, parameters):
-    schema = schemathesis.openapi.from_url(schema_url)
+    schema = autotest.openapi.from_url(schema_url)
     case = schema["/success"]["GET"].Case(**{key: {"A": "V"}})
     case = remove_auth(case, parameters)
     assert not getattr(case, key)
@@ -254,7 +254,7 @@ def test_proper_session(ignores_auth):
 
         return {"message": "Hello world"}
 
-    schema = schemathesis.openapi.from_asgi("/openapi.json", app)
+    schema = autotest.openapi.from_asgi("/openapi.json", app)
 
     @given(case=schema["/"]["GET"].as_strategy())
     @settings(max_examples=3, phases=[Phase.generate])
@@ -292,7 +292,7 @@ def test_accepts_any_auth_if_explicit_is_present(ignores_auth, expected):
             )
         return {"message": "Hello world"}
 
-    schema = schemathesis.openapi.from_asgi("/openapi.json", app)
+    schema = autotest.openapi.from_asgi("/openapi.json", app)
 
     @given(case=schema["/"]["GET"].as_strategy())
     @settings(max_examples=3, phases=[Phase.generate])
@@ -400,7 +400,7 @@ def test_custom_auth():
             )
         return {"message": "Hello world"}
 
-    schema = schemathesis.openapi.from_asgi("/openapi.json", app)
+    schema = autotest.openapi.from_asgi("/openapi.json", app)
 
     @schema.auth()
     class Auth:
@@ -463,7 +463,7 @@ def test_explicit_auth_tuple_in_call_and_validate():
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
         return {"message": "OK"}
 
-    schema = schemathesis.openapi.from_asgi("/openapi.json", app)
+    schema = autotest.openapi.from_asgi("/openapi.json", app)
     case = schema["/"]["GET"].Case()
     client = TestClient(app)
     # Valid auth passed as tuple - should NOT raise IgnoredAuth
@@ -485,11 +485,11 @@ def test_auth_via_setitem(testdir, location):
         f"""
 {app}
 from hypothesis import settings
-import schemathesis
-from schemathesis import GenerationMode
-from schemathesis.specs.openapi.checks import ignored_auth
+import autotest
+from autotest import GenerationMode
+from autotest.specs.openapi.checks import ignored_auth
 
-schema = schemathesis.openapi.from_asgi("/openapi.json", app)
+schema = autotest.openapi.from_asgi("/openapi.json", app)
 schema.config.generation.update(modes=[GenerationMode.POSITIVE])
 
 @schema.parametrize()
@@ -515,7 +515,7 @@ def test_explicit(case):
         key = "{container}"
     case.call_and_validate(checks=[ignored_auth], **{{key: {{"api_key": "42"}}}})
 
-schema2 = schemathesis.openapi.from_asgi("/openapi.json", app)
+schema2 = autotest.openapi.from_asgi("/openapi.json", app)
 schema2.config.generation.update(modes=[GenerationMode.POSITIVE])
 schema2.config.update(parameters={{"api_key": "42"}})
 

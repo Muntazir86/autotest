@@ -2,7 +2,7 @@ from unittest.mock import patch
 
 import requests
 
-from schemathesis.core.transport import Response
+from autotest.core.transport import Response
 
 RESPONSE = Response(
     status_code=200,
@@ -12,4 +12,4 @@ RESPONSE = Response(
     elapsed=0.1,
     verify=False,
 )
-patch("schemathesis.Case.call", return_value=RESPONSE).start()
+patch("autotest.Case.call", return_value=RESPONSE).start()

@@ -1,11 +1,11 @@
 import pytest
 from flask import Flask, jsonify, request
 
-import schemathesis
-from schemathesis.engine.observations import LocationHeaderEntry
-from schemathesis.generation.stateful.state_machine import StepOutput
-from schemathesis.specs.openapi import expressions
-from schemathesis.specs.openapi.stateful.inference import LinkInferencer
+import autotest
+from autotest.engine.observations import LocationHeaderEntry
+from autotest.generation.stateful.state_machine import StepOutput
+from autotest.specs.openapi import expressions
+from autotest.specs.openapi.stateful.inference import LinkInferencer
 
 
 def assert_links_work(response_factory, location, results, schema):
@@ -44,7 +44,7 @@ def link_by_ref(ref: str, **parameters):
 def _link_by(key: str, value: str, **parameters):
     return {
         key: value,
-        "x-schemathesis": {"is_inferred": True},
+        "x-autotest": {"is_inferred": True},
         "parameters": {key: f"$response.header.Location#regex:{regex}" for key, regex in parameters.items()},
     }
 
@@ -237,7 +237,7 @@ def _link_by(key: str, value: str, **parameters):
     ],
 )
 def test_build_location_link(paths, location, expected, response_factory):
-    schema = schemathesis.openapi.from_dict(
+    schema = autotest.openapi.from_dict(
         {"openapi": "3.1.0", "info": {"title": "Test API", "version": "0.0.1"}, "paths": paths}
     )
     inferencer = LinkInferencer.from_schema(schema)
@@ -248,7 +248,7 @@ def test_build_location_link(paths, location, expected, response_factory):
 
 
 def test_build_location_link_empty_path():
-    schema = schemathesis.openapi.from_dict(
+    schema = autotest.openapi.from_dict(
         {"openapi": "3.1.0", "paths": {"/users/{userId}": {"get": {"operationId": "getUserById"}}}}
     )
     inferencer = LinkInferencer.from_schema(schema)
@@ -388,7 +388,7 @@ def test_build_location_link_empty_path():
     ],
 )
 def test_build_links_with_base_url(base_url, paths, location, expected, response_factory):
-    schema = schemathesis.openapi.from_dict({"openapi": "3.1.0", "paths": paths})
+    schema = autotest.openapi.from_dict({"openapi": "3.1.0", "paths": paths})
     schema.config.base_url = base_url
 
     inferencer = LinkInferencer.from_schema(schema)
@@ -451,7 +451,7 @@ def test_build_links_with_base_url(base_url, paths, location, expected, response
     ],
 )
 def test_build_links_all_methods(paths, location, expected, response_factory):
-    schema = schemathesis.openapi.from_dict({"openapi": "3.1.0", "paths": paths})
+    schema = autotest.openapi.from_dict({"openapi": "3.1.0", "paths": paths})
     inferencer = LinkInferencer.from_schema(schema)
     results = build_links(inferencer, location)
     assert results == expected
@@ -462,7 +462,7 @@ def test_build_links_all_methods(paths, location, expected, response_factory):
 
 def test_build_links_no_paths_in_schema():
     # OpenAPI 3.1.0 allows schemas without paths
-    schema = schemathesis.openapi.from_dict({"openapi": "3.1.0", "info": {"title": "Test", "version": "1.0"}})
+    schema = autotest.openapi.from_dict({"openapi": "3.1.0", "info": {"title": "Test", "version": "1.0"}})
     inferencer = LinkInferencer.from_schema(schema)
     assert build_links(inferencer, "/users/123") == []
 
@@ -487,7 +487,7 @@ def test_build_links_path_item_with_ref():
         },
     }
 
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
 
     inferencer = LinkInferencer.from_schema(schema)
     assert build_links(inferencer, "/users/123") == [
@@ -507,7 +507,7 @@ def test_build_links_path_item_broken_ref():
         },
     }
 
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     inferencer = LinkInferencer.from_schema(schema)
 
     # Broken ref should not cause crashes, should just skip that path
@@ -533,7 +533,7 @@ def test_build_links_mixed_ref_and_inline_paths():
         },
     }
 
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
 
     inferencer = LinkInferencer.from_schema(schema)
     assert build_links(inferencer, "/users/123") == [
@@ -545,7 +545,7 @@ def test_build_links_mixed_ref_and_inline_paths():
 
 
 def test_build_links_no_base_url_configured():
-    schema = schemathesis.openapi.from_dict(
+    schema = autotest.openapi.from_dict(
         {
             "openapi": "3.1.0",
             "paths": {"/users/{userId}": {"get": {"operationId": "getUserById"}, "put": {"operationId": "updateUser"}}},
@@ -799,7 +799,7 @@ def test_location_points_to_nonexistent_endpoint(cli, app_runner, snapshot_cli, 
 
 
 def test_inject_links_location_normalization_returns_none():
-    schema = schemathesis.openapi.from_dict(
+    schema = autotest.openapi.from_dict(
         {
             "openapi": "3.1.0",
             "paths": {
@@ -826,7 +826,7 @@ def test_inject_links_location_normalization_returns_none():
 
 
 def test_inject_links_no_matches():
-    schema = schemathesis.openapi.from_dict(
+    schema = autotest.openapi.from_dict(
         {
             "openapi": "3.1.0",
             "paths": {
@@ -853,7 +853,7 @@ def test_inject_links_no_matches():
 
 
 def test_inject_links_creates_response_definition():
-    schema = schemathesis.openapi.from_dict(
+    schema = autotest.openapi.from_dict(
         {
             "openapi": "3.1.0",
             "paths": {

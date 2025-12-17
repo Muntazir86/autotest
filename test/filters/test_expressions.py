@@ -1,6 +1,6 @@
 import pytest
 
-from schemathesis.filters import parse_expression
+from autotest.filters import parse_expression
 
 
 @pytest.mark.parametrize(

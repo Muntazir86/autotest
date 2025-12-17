@@ -1,10 +1,10 @@
-import schemathesis
-from schemathesis.specs.openapi.adapter.formdata import prepare_multipart_v3
+import autotest
+from autotest.specs.openapi.adapter.formdata import prepare_multipart_v3
 
 
 def test_content_type_for_undefined_single_property():
     # When encoding specifies contentType for a field NOT in schema properties
-    schema = schemathesis.openapi.from_dict(
+    schema = autotest.openapi.from_dict(
         {
             "openapi": "3.0.0",
             "info": {"title": "Test", "version": "1.0"},
@@ -42,7 +42,7 @@ def test_content_type_for_undefined_single_property():
 
 def test_content_type_for_undefined_array_property():
     # When encoding specifies contentType for an array field NOT in schema properties
-    schema = schemathesis.openapi.from_dict(
+    schema = autotest.openapi.from_dict(
         {
             "openapi": "3.0.0",
             "info": {"title": "Test", "version": "1.0"},

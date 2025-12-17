@@ -2,7 +2,7 @@ import platform
 
 import pytest
 
-from schemathesis.generation.modes import GenerationMode
+from autotest.generation.modes import GenerationMode
 
 
 def test_pytest_parametrize_fixture(testdir):
@@ -53,7 +53,7 @@ def test_(request, param, case):
 def test_missing_base_url_error_message(testdir):
     testdir.make_test(
         """
-schema = schemathesis.openapi.from_dict(raw_schema)
+schema = autotest.openapi.from_dict(raw_schema)
 
 @schema.parametrize()
 def test_a(case):
@@ -124,7 +124,7 @@ def test_pytest_collection_regression(testdir):
         """
 from unittest.mock import call
 
-def test_schemathesis():
+def test_Autotest():
     assert True
 """,
     )
@@ -148,7 +148,7 @@ def test_b(case, a):
     )
     # When a test is run with treating warnings as errors
     result = testdir.runpytest("-Werror", "--asyncio-mode=strict")
-    # There should be no errors. There are no warnings from Schemathesis pytest plugin.
+    # There should be no errors. There are no warnings from autotest pytest plugin.
     result.assert_outcomes(passed=3)
 
 
@@ -171,14 +171,14 @@ def test_c(case):
 
 def test_d():
     deadline = settings().deadline
-    # E.g. changed globally via a custom profile in Schemathesis' test suite
+    # E.g. changed globally via a custom profile in Autotest' test suite
     if deadline is not None:
         assert deadline.microseconds == 200 * 1000
 """,
     )
     # When there is a test with Pytest
     result = testdir.runpytest()
-    # Then it should use the global Schemathesis deadline for Hypothesis (None)
+    # Then it should use the global Autotest deadline for Hypothesis (None)
     result.assert_outcomes(passed=4)
 
 
@@ -294,7 +294,7 @@ def test_given_with_schema_examples_in_request_body(testdir):
     # When @schema.given() is combined with schema examples in request body
     testdir.makepyfile(
         """
-import schemathesis
+import autotest
 from hypothesis import strategies as st
 import pytest
 
@@ -330,13 +330,13 @@ def api_schema():
         }
     }
 
-    schema = schemathesis.openapi.from_dict(schema_dict)
+    schema = autotest.openapi.from_dict(schema_dict)
     schema.config.update(base_url="http://192.168.1.4/api")
 
     return schema
 
 
-schema = schemathesis.pytest.from_fixture("api_schema")
+schema = Autotest.pytest.from_fixture("api_schema")
 
 existing_user_ids = [1, 42, 123, 456]
 
@@ -468,8 +468,8 @@ def test_excluded_checks(testdir, openapi3_base_url):
     # When the user would like to exclude a check
     testdir.make_test(
         f"""
-from schemathesis.checks import not_a_server_error
-from schemathesis.specs.openapi.checks import status_code_conformance, positive_data_acceptance
+from autotest.checks import not_a_server_error
+from autotest.specs.openapi.checks import status_code_conformance, positive_data_acceptance
 
 schema.config.update(base_url="{openapi3_base_url}")
 
@@ -522,7 +522,7 @@ def test(case):
 def test_no_collect_warnings(testdir):
     testdir.make_test(
         """
-from schemathesis import *
+from autotest import *
     """,
     )
     result = testdir.runpytest()
@@ -534,7 +534,7 @@ def test_skip_negative_without_parameters(testdir):
     # When an endpoint has no parameters to negate
     testdir.make_test(
         """
-schema = schemathesis.openapi.from_dict(raw_schema)
+schema = autotest.openapi.from_dict(raw_schema)
 schema.config.generation.update(modes=[GenerationMode.NEGATIVE])
 
 @schema.parametrize()
@@ -553,7 +553,7 @@ def test_skip_impossible_to_negate(testdir):
     # When endpoint's body schema can't be negated
     testdir.make_test(
         """
-schema = schemathesis.openapi.from_dict(
+schema = autotest.openapi.from_dict(
     raw_schema
 ).include(method="POST")
 schema.config.generation.update(modes=[GenerationMode.NEGATIVE])
@@ -591,7 +591,7 @@ def test_do_not_skip_partially_negated(testdir):
     # And there is another parameter that can be negated
     testdir.make_test(
         """
-schema = schemathesis.openapi.from_dict(
+schema = autotest.openapi.from_dict(
     raw_schema
 ).include(method="POST")
 schema.config.generation.update(modes=[GenerationMode.NEGATIVE])
@@ -630,7 +630,7 @@ def test_path_parameters_allow_partial_negation(testdir, location):
     # If path parameters can not be negated and other parameters can be negated
     testdir.make_test(
         """
-schema = schemathesis.openapi.from_dict(
+schema = autotest.openapi.from_dict(
     raw_schema
 ).include(method="GET", path_regex="/pets/{key}/")
 schema.config.generation.update(modes=[GenerationMode.NEGATIVE])
@@ -664,7 +664,7 @@ def test_many_path_parameters_allow_partial_negation(testdir):
     # If just one path parameter can not be negated and other parameters can be negated
     testdir.make_test(
         """
-schema = schemathesis.openapi.from_dict(
+schema = autotest.openapi.from_dict(
     raw_schema
 ).include(
     method="GET",
@@ -714,9 +714,9 @@ def test_b(v):
     result = testdir.runpytest()
     result.assert_outcomes(failed=2)
     stdout = result.stdout.str()
-    # Internal Schemathesis' frames should not appear in the output
+    # Internal Autotest' frames should not appear in the output
     assert "def validate_response(" not in stdout
-    # And Hypothesis "Falsifying example" block is not in the output of Schemathesis' tests
+    # And Hypothesis "Falsifying example" block is not in the output of Autotest' tests
     assert "Falsifying example: test_a(" not in stdout
     # And regular Hypothesis tests have it
     assert "Falsifying example: test_b(" in stdout
@@ -731,7 +731,7 @@ import pytest
 @pytest.fixture
 def api_schema():
     # Mirrors docs/guides/stateful-testing.py fixture example
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     schema.config.phases.update(phases=["stateful"])
     return schema
 
@@ -763,7 +763,7 @@ def test_statefully(state_machine):
 
 
 def test_invalid_schema_reraising(testdir):
-    # When there is a non-Schemathesis test failing because of Hypothesis' `InvalidArgument` error
+    # When there is a non-Autotest test failing because of Hypothesis' `InvalidArgument` error
     testdir.make_test(
         """
 @given(st.integers(min_value=5, max_value=4))
@@ -805,13 +805,13 @@ def test(case):
 def test_output_sanitization_via_config_file(testdir, openapi3_schema_url, enabled):
     testdir.make_test(
         f"""
-config = schemathesis.Config.from_dict({{
+config = Autotest.Config.from_dict({{
     "headers": {{"Authorization": "secret"}},
     "output": {{
         "sanitization": {{"enabled": {enabled}}}
     }}
 }})
-schema = schemathesis.openapi.from_url('{openapi3_schema_url}', config=config)
+schema = autotest.openapi.from_url('{openapi3_schema_url}', config=config)
 schema.config.generation.update(modes=[GenerationMode.POSITIVE])
 
 @schema.include(name="GET /basic").parametrize()
@@ -848,7 +848,7 @@ def extract_hypothesis_error(text):
 def test_unsatisfiable_schema(testdir, openapi3_schema_url, snapshot):
     testdir.make_test(
         f"""
-schema = schemathesis.openapi.from_url('{openapi3_schema_url}')
+schema = autotest.openapi.from_url('{openapi3_schema_url}')
 schema.config.generation.update(modes=[GenerationMode.POSITIVE])
 
 @schema.parametrize()
@@ -888,7 +888,7 @@ def test_health_check_failure(ctx, testdir, openapi3_base_url, snapshot):
 
     testdir.make_test(
         f"""
-schema = schemathesis.openapi.from_path('{schema_path}')
+schema = autotest.openapi.from_path('{schema_path}')
 schema.config.generation.update(modes=[GenerationMode.POSITIVE])
 schema.config.base_url = '{openapi3_base_url}'
 
@@ -1040,7 +1040,7 @@ def test(case):
 def test_coverage_phase(testdir, openapi3_base_url):
     testdir.make_test(
         f"""
-schemathesis.openapi.media_type("image/jpeg", st.just(b""))
+autotest.openapi.media_type("image/jpeg", st.just(b""))
 schema.config.update(base_url="{openapi3_base_url}")
 schema.config.phases.examples.enabled = False
 schema.config.phases.fuzzing.enabled = False
@@ -1114,7 +1114,7 @@ def test(case):
 def test_override(testdir, openapi3_schema_url):
     testdir.make_test(
         f"""
-schema = schemathesis.openapi.from_url('{openapi3_schema_url}')
+schema = autotest.openapi.from_url('{openapi3_schema_url}')
 schema.config.update(parameters={{"key": "foo", "id": "bar"}})
 
 @schema.include(path_regex="path_variable|custom_format").parametrize()
@@ -1136,7 +1136,7 @@ def test(case):
 def test_error_reporting(testdir, openapi3_schema_url):
     testdir.make_test(
         f"""
-schema = schemathesis.openapi.from_url('{openapi3_schema_url}')
+schema = autotest.openapi.from_url('{openapi3_schema_url}')
 
 @schema.include(path_regex="csv").parametrize()
 def test(case):
@@ -1151,7 +1151,7 @@ def test(case):
 def test_missing_path_parameter(testdir, openapi3_schema_url):
     testdir.make_test(
         f"""
-schema = schemathesis.openapi.from_url('{openapi3_schema_url}')
+schema = autotest.openapi.from_url('{openapi3_schema_url}')
 
 @schema.parametrize()
 @settings(max_examples=3)
@@ -1169,13 +1169,13 @@ def test(case):
 def test_disable_checks_via_config(testdir, openapi3_schema_url):
     testdir.make_test(
         f"""
-config = schemathesis.Config.from_dict({{
+config = Autotest.Config.from_dict({{
     "checks": {{
         "not_a_server_error": {{"enabled": False}},
         "content_type_conformance": {{"enabled": False}},
     }}
 }})
-schema = schemathesis.openapi.from_url('{openapi3_schema_url}', config=config)
+schema = autotest.openapi.from_url('{openapi3_schema_url}', config=config)
 
 @schema.include(name="GET /failure").parametrize()
 def test(case):
@@ -1199,13 +1199,13 @@ def test(case):
 @pytest.mark.operations("__all__")
 def test_filter_combination(testdir, openapi3_schema_url, filter, expected):
     testdir.make_test(f"""
-config = schemathesis.Config.from_dict({{
+config = Autotest.Config.from_dict({{
     "operations": [{{
         "exclude-name": "POST /write_only",
         "enabled": False,
     }}]
 }})
-schema = schemathesis.openapi.from_url("{openapi3_schema_url}", config=config)
+schema = autotest.openapi.from_url("{openapi3_schema_url}", config=config)
 
 @schema{filter}.parametrize()
 def test_api(case):
@@ -1218,7 +1218,7 @@ def test_api(case):
 def test_transport_kwargs_from_config(testdir, openapi3_schema_url):
     testdir.make_test(
         f"""
-config = schemathesis.Config.from_dict({{
+config = Autotest.Config.from_dict({{
     "tls-verify": False,
     "headers": {{ "X-Foo": "Bar", "X-Spam": "Unknown" }},
     "request-timeout": 3,
@@ -1229,7 +1229,7 @@ config = schemathesis.Config.from_dict({{
         }}
     }}
 }})
-schema = schemathesis.openapi.from_url('{openapi3_schema_url}', config=config)
+schema = autotest.openapi.from_url('{openapi3_schema_url}', config=config)
 
 def noop(*args, **kwargs):
     pass
@@ -1271,7 +1271,7 @@ raw_schema = {
         },
     },
 }
-schema = schemathesis.openapi.from_dict(raw_schema)
+schema = autotest.openapi.from_dict(raw_schema)
 HEADERS = {"Authorization": "Bearer secret-token"}
 schema.config.update(headers=HEADERS)
 
@@ -1304,7 +1304,7 @@ raw_schema = {
         },
     },
 }
-schema = schemathesis.openapi.from_dict(raw_schema)
+schema = autotest.openapi.from_dict(raw_schema)
 schema.config.update(basic_auth=("test", "test"))
 
 @schema.parametrize()
@@ -1338,7 +1338,7 @@ raw_schema = {{
         }},
     }},
 }}
-schema = schemathesis.openapi.from_dict(raw_schema)
+schema = autotest.openapi.from_dict(raw_schema)
 schema.config.generation.update(
     modes=[GenerationMode.POSITIVE],
     max_examples={MAX_EXAMPLES_A},
@@ -1368,8 +1368,8 @@ def test_csv_response_validation_direct(testdir, openapi3_base_url):
     testdir.make_test(
         f"""
 import requests
-from schemathesis.core.transport import Response
-from schemathesis.specs.openapi.checks import response_schema_conformance
+from autotest.core.transport import Response
+from autotest.specs.openapi.checks import response_schema_conformance
 
 schema.config.update(base_url="{openapi3_base_url}")
 schema.config.generation.update(modes=[GenerationMode.POSITIVE])
@@ -1427,7 +1427,7 @@ def test_graphql_lazy_loading(testdir, openapi3_schema_url):
         f"""
 import sys
 
-schema = schemathesis.openapi.from_url('{openapi3_schema_url}')
+schema = autotest.openapi.from_url('{openapi3_schema_url}')
 for k in list(sys.modules):
     if k.startswith("graphql"):
         del sys.modules[k]
@@ -1507,7 +1507,7 @@ paths:
     )
     testdir.make_test(
         """
-schema = schemathesis.openapi.from_path("schema.yaml")
+schema = autotest.openapi.from_path("schema.yaml")
 
 @schema.parametrize()
 def test(case):
@@ -1528,7 +1528,7 @@ def test_urlencoded_type_mutations_should_not_cause_false_positives(testdir):
     testdir.makepyfile(
         test_case="""
 from flask import Flask, jsonify
-import schemathesis
+import autotest
 from hypothesis import settings
 
 raw_schema = {
@@ -1568,7 +1568,7 @@ def schema():
 def success():
     return jsonify({"success": True})
 
-schema_obj = schemathesis.openapi.from_wsgi("/openapi.json", app)
+schema_obj = autotest.openapi.from_wsgi("/openapi.json", app)
 
 @schema_obj.parametrize()
 @settings(max_examples=20)

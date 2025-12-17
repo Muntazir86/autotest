@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "schemathesis"
+name = "autotest"
 version = "4.7.5"
 description = "Property-based testing framework for Open API and GraphQL based apps"
 keywords = ["pytest", "hypothesis", "openapi", "graphql", "testing"]
@@ -12,7 +12,7 @@ maintainers = [{ name = "Dmitry Dygalo", email = "dmitry@dygalo.dev" }]
 requires-python = ">=3.10"
 license = "MIT"
 readme = "README.md"
-include = ["src/schemathesis/py.typed"]
+include = ["src/autotest/py.typed"]
 classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Environment :: Console",
@@ -74,21 +74,21 @@ tests = [
 cov = ["coverage-enable-subprocess", "coverage[toml]>=5.3"]
 bench = ["pytest-codspeed==4.2.0"]
 docs = ["mkdocs-material", "mkdocstrings[python]"]
-dev = ["schemathesis[tests,cov,bench,docs]"]
+dev = ["autotest[tests,cov,bench,docs]"]
 
 [project.urls]
 Documentation = "https://schemathesis.readthedocs.io/en/stable/"
-Changelog = "https://github.com/schemathesis/schemathesis/blob/master/CHANGELOG.md"
-"Bug Tracker" = "https://github.com/schemathesis/schemathesis"
+Changelog = "https://github.com/Muntazir86/autotest/blob/master/CHANGELOG.md"
+"Bug Tracker" = "https://github.com/Muntazir86/autotest"
 Funding = "https://github.com/sponsors/Stranger6667"
-"Source Code" = "https://github.com/schemathesis/schemathesis"
+"Source Code" = "https://github.com/Muntazir86/autotest"
 
 [project.scripts]
-schemathesis = "schemathesis.cli:schemathesis"
-st = "schemathesis.cli:schemathesis"
+autotest = "autotest.cli:autotest"
+at = "autotest.cli:autotest"
 
 [project.entry-points.pytest11]
-schemathesis = "schemathesis.pytest.plugin"
+autotest = "autotest.pytest.plugin"
 
 [tool.pytest.ini_options]
 addopts = ["-ra", "--strict-markers", "--strict-config"]
@@ -99,7 +99,7 @@ norecursedirs = ".hypothesis .idea .git src docs .pytest_cache .mypy_cache .tox"
 [tool.coverage.run]
 parallel = true
 branch = true
-source_pkgs = ["schemathesis"]
+source_pkgs = ["autotest"]
 
 [tool.coverage.paths]
 source = ["src", ".tox/*/site-packages"]
@@ -148,7 +148,7 @@ ignore = [
 ]
 
 [tool.ruff.lint.isort]
-known-first-party = ["schemathesis"]
+known-first-party = ["autotest"]
 known-third-party = [
   "_pytest",
   "aiohttp",

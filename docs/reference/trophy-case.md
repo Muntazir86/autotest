@@ -1,6 +1,6 @@
-# Schemathesis Trophy Case
+# Autotest Trophy Case
 
-Real-world defects uncovered by Schemathesis’ property-based testing engine.
+Real-world defects uncovered by Autotest’ property-based testing engine.
 
 ## Bug Categories
 
@@ -15,7 +15,7 @@ Real-world defects uncovered by Schemathesis’ property-based testing engine.
 
 <div align="center" markdown>
 
-[Submit a Trophy :fontawesome-solid-trophy:](https://github.com/schemathesis/schemathesis/issues/new?template=trophy-submission.yml){ .md-button .md-button--primary }
+[Submit a Trophy :fontawesome-solid-trophy:](https://github.com/Autotest/Autotest/issues/new?template=trophy-submission.yml){ .md-button .md-button--primary }
 
 </div>
 

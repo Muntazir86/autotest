@@ -1,5 +1,5 @@
 #!/bin/bash
-# This is a helper for shrinkray to minify API schemas where Schemathesis does not behave correctly
+# This is a helper for shrinkray to minify API schemas where autotest does not behave correctly
 
 if [ $# -lt 2 ]; then
   echo "Usage: $0 <command> <needle>"

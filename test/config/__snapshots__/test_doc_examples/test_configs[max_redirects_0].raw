@@ -1,1 +1,1 @@
-SchemathesisConfig(projects=ProjectsConfig(default=ProjectConfig(max_redirects=0)))
+autotestConfig(projects=ProjectsConfig(default=ProjectConfig(max_redirects=0)))

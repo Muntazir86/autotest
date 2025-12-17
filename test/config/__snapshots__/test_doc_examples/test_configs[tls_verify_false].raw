@@ -1,1 +1,1 @@
-SchemathesisConfig(projects=ProjectsConfig(default=ProjectConfig(tls_verify=False)))
+autotestConfig(projects=ProjectsConfig(default=ProjectConfig(tls_verify=False)))

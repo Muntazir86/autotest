@@ -1,1 +1,1 @@
-SchemathesisConfig(projects=ProjectsConfig(default=ProjectConfig(headers={'X-API-Key': 'secret-key', 'Accept-Language': 'en-US'})))
+autotestConfig(projects=ProjectsConfig(default=ProjectConfig(headers={'X-API-Key': 'secret-key', 'Accept-Language': 'en-US'})))

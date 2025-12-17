@@ -1,10 +1,10 @@
 # Understanding Data Generation
 
-This document explains how Schemathesis generates test data for your API, from raw schemas to complete HTTP requests. Understanding this process helps you write better extensions, troubleshoot unexpected behavior, and optimize your testing process.
+This document explains how Autotest generates test data for your API, from raw schemas to complete HTTP requests. Understanding this process helps you write better extensions, troubleshoot unexpected behavior, and optimize your testing process.
 
 ## The Generation Hierarchy
 
-Schemathesis data generation is built on the following hierarchy:
+Autotest data generation is built on the following hierarchy:
 
 ```
 Hypothesis                    → Core data generation primitives
@@ -12,20 +12,20 @@ Hypothesis                    → Core data generation primitives
 hypothesis-jsonschema        → Schema-aware generation for OpenAPI
 hypothesis-graphql           → Schema-aware generation for GraphQL  
     ↓
-Schemathesis                 → Complete API testing workflow
+Autotest                 → Complete API testing workflow
 ```
 
 **How it works:**
 
 1. **Hypothesis** provides the foundation—strategies for generating strings, integers, objects, etc.
 2. **hypothesis-jsonschema** and **hypothesis-graphql** translate your API schemas into Hypothesis strategies
-3. **Schemathesis** orchestrates the entire process: parsing schemas, generating all request components, sending requests, and validating responses
+3. **Autotest** orchestrates the entire process: parsing schemas, generating all request components, sending requests, and validating responses
 
-This layered approach means Schemathesis inherits Hypothesis's features (like automatic shrinking) while adding API-specific behavior.
+This layered approach means Autotest inherits Hypothesis's features (like automatic shrinking) while adding API-specific behavior.
 
 ## Testing Phases
 
-Schemathesis generates test cases through multiple phases, each targeting different aspects of API testing.
+Autotest generates test cases through multiple phases, each targeting different aspects of API testing.
 
 ### Examples Phase
 
@@ -80,7 +80,7 @@ Runs when OpenAPI schemas define links between operations. Creates sequences whe
 
 ## Generation Modes
 
-Schemathesis can generate two fundamentally different types of test data:
+Autotest can generate two fundamentally different types of test data:
 
 ### Positive Testing
 
@@ -101,11 +101,11 @@ Generates data that **should be rejected** by your API — deliberately invalid 
 ```
 
 !!! tip "How it works"
-    Schemathesis mutates your schema to produce invalid data.
+    Autotest mutates your schema to produce invalid data.
 
 ```bash
 # Enable negative testing
-schemathesis run --mode=negative https://api.example.com/openapi.json
+autotest run --mode=negative https://api.example.com/openapi.json
 ```
 
 ## Serialization Process
@@ -114,7 +114,7 @@ The final step transforms generated objects into actual HTTP requests based on y
 
 **Media type support:**
 
-Schemathesis supports many common media types out of the box, including JSON, XML (with OpenAPI XML annotations), form data, plain text, and others. For unsupported media types, you can add custom serializers.
+Autotest supports many common media types out of the box, including JSON, XML (with OpenAPI XML annotations), form data, plain text, and others. For unsupported media types, you can add custom serializers.
 
 **Example:**
 ```python
@@ -125,11 +125,11 @@ Schemathesis supports many common media types out of the box, including JSON, XM
 # For application/xml -> <data><user_id>123</user_id><name>test</name></data>
 ```
 
-If Schemathesis can't serialize data for a media type, those test cases are skipped. This keeps your test runs focused on actually testable scenarios.
+If Autotest can't serialize data for a media type, those test cases are skipped. This keeps your test runs focused on actually testable scenarios.
 
 ## Shrinking and Failure Handling
 
-When Schemathesis finds a failing test case, it automatically **shrinks** it to the minimal example that reproduces the failure.
+When Autotest finds a failing test case, it automatically **shrinks** it to the minimal example that reproduces the failure.
 
 **Before shrinking**
 
@@ -147,7 +147,7 @@ When Schemathesis finds a failing test case, it automatically **shrinks** it to 
 !!! important
     Shrinking is enabled by default. Disable with `--no-shrink` for faster test runs.
 
-## How Many Test Cases Does Schemathesis Generate?
+## How Many Test Cases Does Autotest Generate?
 
 **Short answer:** Up to `--max-examples` per operation (default: 100), but often fewer.
 

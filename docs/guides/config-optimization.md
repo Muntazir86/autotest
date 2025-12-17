@@ -1,6 +1,6 @@
-# Optimizing Schemathesis for Maximum Bug Detection
+# Optimizing Autotest for Maximum Bug Detection
 
-This guide shows how to configure Schemathesis for maximum bug detection and API coverage.
+This guide shows how to configure Autotest for maximum bug detection and API coverage.
 
 ## When to Use This Configuration
 
@@ -16,7 +16,7 @@ For fast development feedback, stick with defaults.
 ## Recommended Configuration
 
 ```bash
-schemathesis run <schema_url> \
+autotest run <schema_url> \
   --max-examples 1000 \
   --continue-on-failure
 ```

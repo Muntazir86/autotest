@@ -3,9 +3,9 @@
 This script demonstrates how to use the new features programmatically.
 """
 
-import schemathesis
-from schemathesis.extraction import enable_id_extraction, get_extraction_summary, disable_id_extraction
-from schemathesis.reporting import enable_html_report, generate_report, disable_html_report
+import autotest
+from autotest.extraction import enable_id_extraction, get_extraction_summary, disable_id_extraction
+from autotest.reporting import enable_html_report, generate_report, disable_html_report
 
 
 def demo_html_report():
@@ -26,7 +26,7 @@ def demo_html_report():
     )
 
     # Load schema and run tests
-    schema = schemathesis.openapi.from_url("https://httpbin.org/spec.json")
+    schema = autotest.openapi.from_url("https://httpbin.org/spec.json")
 
     print("Running tests...")
     for operation in schema.get_all_operations():
@@ -107,7 +107,7 @@ def demo_combined():
 
 
 if __name__ == "__main__":
-    print("Schemathesis Enhanced Features Demo")
+    print("autotest Enhanced Features Demo")
     print("====================================\n")
 
     # Run demos

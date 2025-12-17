@@ -8,7 +8,7 @@ def test_before_call(ctx, cli, schema_url):
     # When the `before_call` hook is registered
     module = ctx.write_pymodule(
         """
-@schemathesis.hook
+@autotest.hook
 def before_call(context, case, **kwargs):
     1 / 0
         """
@@ -24,7 +24,7 @@ def before_call(context, case, **kwargs):
 def test_before_call_no_kwargs_unpacking(ctx, cli, schema_url):
     module = ctx.write_pymodule(
         """
-@schemathesis.hook
+@autotest.hook
 def before_call(context, case, kwargs):
     kwargs["allow_redirects"] = False
         """
@@ -42,7 +42,7 @@ def test_after_call(ctx, cli, schema_url, snapshot_cli):
         """
 import requests
 
-@schemathesis.hook
+@autotest.hook
 def after_call(context, case, response):
     data = b'{"wrong": 42}'
     response.content = data

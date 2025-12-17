@@ -1,1 +1,1 @@
-SchemathesisConfig(output=OutputConfig(sanitization=SanitizationConfig(enabled=False)))
+autotestConfig(output=OutputConfig(sanitization=SanitizationConfig(enabled=False)))

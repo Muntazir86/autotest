@@ -8,11 +8,11 @@ from hypothesis import HealthCheck, given, settings
 from jsonschema.validators import Draft4Validator
 from werkzeug.exceptions import InternalServerError
 
-import schemathesis
-from schemathesis.core.errors import InvalidSchema
-from schemathesis.core.result import Ok
-from schemathesis.generation.modes import GenerationMode
-from schemathesis.specs.openapi.stateful import dependencies
+import autotest
+from autotest.core.errors import InvalidSchema
+from autotest.core.result import Ok
+from autotest.generation.modes import GenerationMode
+from autotest.specs.openapi.stateful import dependencies
 
 from .utils import as_param, get_schema_path, integer
 
@@ -92,7 +92,7 @@ def build_schema_with_recursion(schema, definition):
 def test_drop_recursive_references_from_the_last_resolution_level(ctx, definition):
     raw_schema = ctx.openapi.build_schema({})
     build_schema_with_recursion(raw_schema, definition)
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
 
     validator = Draft4Validator({**USER_REFERENCE, "components": raw_schema["components"]})
 
@@ -138,7 +138,7 @@ def test_drop_recursive_references_from_the_last_resolution_level(ctx, definitio
 def test_non_removable_recursive_references(ctx, definition):
     schema = ctx.openapi.build_schema({})
     build_schema_with_recursion(schema, definition)
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
 
     with pytest.raises(InvalidSchema):
         schema["/users"]["POST"]
@@ -199,7 +199,7 @@ def test_nested_recursive_references(ctx):
             }
         },
     )
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
 
     @given(case=schema["/folders"]["POST"].as_strategy())
     @settings(max_examples=1)
@@ -536,7 +536,7 @@ def test_(request, case):
 
 
 def test_complex_dereference(complex_schema):
-    schema = schemathesis.openapi.from_path(complex_schema)
+    schema = autotest.openapi.from_path(complex_schema)
     body_definition = {
         "schema": {
             "$ref": "#/x-bundled/schema1",
@@ -634,7 +634,7 @@ def test_unique_objects_after_inlining(ctx):
             }
         },
     )
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
     # Then inlined objects should be unique
     assert_unique_objects(schema["/test"]["post"].body[0].definition)
 
@@ -671,7 +671,7 @@ def test_unresolvable_reference_during_generation(ctx, testdir):
     )
     main = testdir.mkdir("root") / "main.json"
     main.write_text(json.dumps(schema), "utf8")
-    schema = schemathesis.openapi.from_path(str(main))
+    schema = autotest.openapi.from_path(str(main))
 
     with pytest.raises(InvalidSchema, match="Unresolvable reference in the schema"):
         schema["/test"]["GET"].as_strategy()
@@ -696,7 +696,7 @@ def test_uncommon_type_in_generation(ctx, testdir, key, expected):
     )
     main = testdir.mkdir("root") / "main.json"
     main.write_text(json.dumps(schema), "utf8")
-    schema = schemathesis.openapi.from_path(str(main))
+    schema = autotest.openapi.from_path(str(main))
 
     with pytest.raises(Exception, match=expected):
 
@@ -968,7 +968,7 @@ def test_iter_when_ref_resolves_to_none_in_body(ctx):
         },
     )
 
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
 
     # Should not fail
     for _ in schema.get_all_operations():
@@ -1000,7 +1000,7 @@ def test_resolve_large_schema():
             }
         },
     }
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
 
     # Should not fail
     for _ in schema.get_all_operations():
@@ -1095,7 +1095,7 @@ def test_bundling_cache_with_shared_references(ctx):
         },
     )
 
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
     operation = next(schema.get_all_operations()).ok()
 
     @given(case=operation.as_strategy())
@@ -1131,7 +1131,7 @@ def test_bundling_cache_returns_independent_copies(ctx):
         },
     )
 
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
     ops = list(schema.get_all_operations())
 
     op1 = ops[0].ok()
@@ -1184,7 +1184,7 @@ def test_nested_external_refs_with_relative_paths(ctx):
         parent="media",
     )
 
-    schema = schemathesis.openapi.from_path(str(schema_path))
+    schema = autotest.openapi.from_path(str(schema_path))
 
     # Should successfully iterate operations without reference resolution errors
     operations = list(schema.get_all_operations())
@@ -1235,7 +1235,7 @@ def test_nested_external_refs_in_request_body(ctx):
         parent="requests",
     )
 
-    schema = schemathesis.openapi.from_path(str(schema_path))
+    schema = autotest.openapi.from_path(str(schema_path))
 
     operations = list(schema.get_all_operations())
     assert len(operations) == 1
@@ -1281,7 +1281,7 @@ def test_nested_external_refs_in_response_for_stateful(ctx):
         parent="responses",
     )
 
-    schema = schemathesis.openapi.from_path(str(schema_path))
+    schema = autotest.openapi.from_path(str(schema_path))
 
     graph = dependencies.analyze(schema)
 
@@ -1328,7 +1328,7 @@ def test_nested_external_refs_in_array_items_for_stateful(ctx):
         parent="responses",
     )
 
-    schema = schemathesis.openapi.from_path(str(schema_path))
+    schema = autotest.openapi.from_path(str(schema_path))
 
     graph = dependencies.analyze(schema)
 
@@ -1374,7 +1374,7 @@ def test_prefix_items_with_ref(ctx):
         },
     )
 
-    schema = schemathesis.openapi.from_dict(schema)
+    schema = autotest.openapi.from_dict(schema)
 
     @given(case=schema["/v1/customers/"]["PATCH"].as_strategy())
     @settings(max_examples=50)

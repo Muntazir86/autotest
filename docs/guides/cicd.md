@@ -1,24 +1,24 @@
 # CI/CD Integration Guide
 
-Run Schemathesis in CI to verify your API against its schema on every change.
+Run Autotest in CI to verify your API against its schema on every change.
 
 ## Schema Access
 
 === "Live Schema"
     ```bash
-    schemathesis run http://api-host:port/openapi.json --wait-for-schema 30
+    autotest run http://api-host:port/openapi.json --wait-for-schema 30
     ```
     Test against the schema served by your running API. The `--wait-for-schema 30` waits up to 30 seconds for the API to become available.
 
 === "Static Schema"
     ```bash
-    schemathesis run ./openapi.json --url http://api-host:port
+    autotest run ./openapi.json --url http://api-host:port
     ```
     Test using a schema file from your repository.
 
 ## GitHub Actions
 
-The [Schemathesis GitHub Action](https://github.com/schemathesis/action) provides the simplest integration path.
+The [Autotest GitHub Action](https://github.com/Autotest/action) provides the simplest integration path.
 
 **Basic workflow:**
 
@@ -35,7 +35,7 @@ jobs:
       - name: Start services
         run: docker compose up -d
         
-      - uses: schemathesis/action@v2
+      - uses: Autotest/action@v2
         with:
           schema: 'http://localhost:8080/openapi.json'
           args: >-
@@ -46,8 +46,8 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: schemathesis-results
-          path: schemathesis-report/
+          name: Autotest-results
+          path: Autotest-report/
           
       - name: Cleanup
         if: always()
@@ -66,7 +66,7 @@ stages:
 api-tests:
   stage: test
   image: 
-    name: schemathesis/schemathesis:stable
+    name: Autotest/Autotest:stable
     entrypoint: [""]
   services:
     - name: your-api:latest
@@ -75,21 +75,21 @@ api-tests:
     API_TOKEN: "your-secret-token"
   script:
     - >
-      schemathesis run http://api:8080/openapi.json 
+      autotest run http://api:8080/openapi.json 
       --header "Authorization: Bearer $API_TOKEN"
       --wait-for-schema 60
       --report junit
   artifacts:
     when: always
     reports:
-      junit: schemathesis-report/junit.xml
+      junit: Autotest-report/junit.xml
     paths:
-      - schemathesis-report/
+      - Autotest-report/
 ```
 
 ## Using Configuration Files
 
-Create `schemathesis.toml` to avoid repeating options and maintain consistent settings:
+Create `autotest.toml` to avoid repeating options and maintain consistent settings:
 
 ```toml
 # Authentication
@@ -106,7 +106,7 @@ enabled = true
 Then run with just:
 
 ```bash
-schemathesis run http://localhost:8080/openapi.json
+autotest run http://localhost:8080/openapi.json
 ```
 
 See the [CLI reference](../reference/cli.md#exit-codes) for the complete list of exit codes.

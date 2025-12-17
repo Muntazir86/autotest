@@ -6,10 +6,10 @@ import pytest
 from flask import Flask, jsonify, request
 from syrupy.extensions.json import JSONSnapshotExtension
 
-import schemathesis
-from schemathesis.core.errors import InvalidSchema
-from schemathesis.specs.openapi.stateful import dependencies
-from schemathesis.specs.openapi.stateful.dependencies import analyze, naming
+import autotest
+from autotest.core.errors import InvalidSchema
+from autotest.specs.openapi.stateful import dependencies
+from autotest.specs.openapi.stateful.dependencies import analyze, naming
 from test.utils import flaky
 
 KNOWN_INCORRECT_FIELD_MAPPINGS = {
@@ -1512,7 +1512,7 @@ def test_dependency_graph(request, ctx, paths, components, snapshot_json):
     if components is not None:
         kwargs["components"] = components
     raw_schema = ctx.openapi.build_schema(paths, **kwargs)
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
 
     graph = analyze(schema)
 
@@ -1577,7 +1577,7 @@ def test_dependency_graph(request, ctx, paths, components, snapshot_json):
 def test_recursion(ctx, paths, kwargs, version, snapshot_json):
     raw_schema = ctx.openapi.build_schema(paths, **kwargs, version=version)
 
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
 
     graph = analyze(schema)
     assert graph.serialize() == snapshot_json
@@ -2397,7 +2397,7 @@ def test_stateful_discovers_requestbody_dependency_bug_producer_missing_field(cl
 
 
 @pytest.mark.snapshot(replace_reproduce_with=True)
-def test_schemathesis_stateful_finds_checksum_match_bug(cli, app_runner, snapshot_cli):
+def test_Autotest_stateful_finds_checksum_match_bug(cli, app_runner, snapshot_cli):
     openapi = {
         "openapi": "3.0.0",
         "info": {"title": "Minimal Blog", "version": "1.0.0"},
@@ -2946,7 +2946,7 @@ def link(target_operation, parameters=None, request_body=None, use_ref=False):
 )
 def test_inject_links_deduplication(ctx, schema, expected):
     raw_schema = ctx.openapi.build_schema(schema)
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     assert dependencies.inject_links(schema) == expected
 
 
@@ -2975,7 +2975,7 @@ def test_inject_links_invalid_link_missing_operation_ref_and_id(ctx):
     }
 
     raw_schema = ctx.openapi.build_schema(schema_dict)
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
 
     with pytest.raises(InvalidSchema, match="Link definition is missing both.*operationRef.*operationId"):
         dependencies.inject_links(schema)
@@ -3014,7 +3014,7 @@ def test_inject_links_with_reference_to_components(ctx):
             }
         },
     )
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
 
     assert dependencies.inject_links(schema) == 1
 
@@ -3065,11 +3065,11 @@ def test_iter_links_with_nested_refs(ctx):
             }
         },
     )
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
 
     # Verify that recursive $refs are fully resolved when iterating links
     for result in schema.get_all_operations():
-        if isinstance(result, schemathesis.core.result.Ok):
+        if isinstance(result, Autotest.core.result.Ok):
             operation = result.ok()
             for _, response in operation.responses.items():
                 for name, link in response.iter_links():
@@ -3106,11 +3106,11 @@ def test_iter_links_with_circular_refs(ctx):
             }
         },
     )
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
 
     # Should not hang or crash - circular refs are gracefully handled
     for result in schema.get_all_operations():
-        if isinstance(result, schemathesis.core.result.Ok):
+        if isinstance(result, Autotest.core.result.Ok):
             operation = result.ok()
             for _, response in operation.responses.items():
                 for _, link in response.iter_links():
@@ -3121,7 +3121,7 @@ def test_iter_links_with_circular_refs(ctx):
 @pytest.mark.snapshot(replace_reproduce_with=True)
 @flaky(max_runs=5, min_passes=1)
 def test_stateful_discovers_bug_with_custom_deserializer(cli, app_runner, snapshot_cli, ctx):
-    @schemathesis.deserializer("application/vnd.custom")
+    @autotest.deserializer("application/vnd.custom")
     def deserialize_custom(ctx, response):
         text = response.content.decode(response.encoding or "utf-8")
         result = {}

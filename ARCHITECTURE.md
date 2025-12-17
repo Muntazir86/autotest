@@ -1,10 +1,10 @@
 # Architecture
 
-This document provides a high-level overview of Schemathesis for developers working on the codebase.
+This document provides a high-level overview of autotest for developers working on the codebase.
 
 ## Key Concepts
 
-**Test Phases** - Schemathesis executes tests in phases:
+**Test Phases** - autotest executes tests in phases:
 
 - **Examples**: Uses examples from the schema
 - **Coverage**: Systematically generates cases for schema constraints
@@ -31,7 +31,7 @@ Checks run independently on all generated cases regardless of mode.
 ## Directory Structure
 
 ```
-src/schemathesis/
+src/autotest/
 ├── core/           # Core utilities
 ├── specs/          # OpenAPI and GraphQL implementations
 ├── generation/     # Test case generation

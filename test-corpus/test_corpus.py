@@ -8,15 +8,15 @@ import pytest
 import requests
 from jsonschema.exceptions import SchemaError
 
-import schemathesis
-from schemathesis.checks import CHECKS
-from schemathesis.cli.commands.run.context import ExecutionContext
-from schemathesis.cli.commands.run.handlers.cassettes import CassetteWriter
-from schemathesis.cli.commands.run.handlers.junitxml import JunitXMLHandler
-from schemathesis.config import HealthCheck
-from schemathesis.config._report import ReportFormat
-from schemathesis.core.compat import RefResolutionError
-from schemathesis.core.errors import (
+import autotest
+from autotest.checks import CHECKS
+from autotest.cli.commands.run.context import ExecutionContext
+from autotest.cli.commands.run.handlers.cassettes import CassetteWriter
+from autotest.cli.commands.run.handlers.junitxml import JunitXMLHandler
+from autotest.config import HealthCheck
+from autotest.config._report import ReportFormat
+from autotest.core.compat import RefResolutionError
+from autotest.core.errors import (
     IncorrectUsage,
     InvalidSchema,
     InvalidStateMachine,
@@ -25,14 +25,14 @@ from schemathesis.core.errors import (
     OperationNotFound,
     format_exception,
 )
-from schemathesis.core.failures import Failure
-from schemathesis.core.jsonschema import BundleError
-from schemathesis.core.result import Ok
-from schemathesis.core.transport import Response
-from schemathesis.engine import Status, events, from_schema
-from schemathesis.generation import GenerationMode
-from schemathesis.generation.hypothesis.builder import _iter_coverage_cases
-from schemathesis.specs.openapi.stateful import dependencies
+from autotest.core.failures import Failure
+from autotest.core.jsonschema import BundleError
+from autotest.core.result import Ok
+from autotest.core.transport import Response
+from autotest.engine import Status, events, from_schema
+from autotest.generation import GenerationMode
+from autotest.generation.hypothesis.builder import _iter_coverage_cases
+from autotest.specs.openapi.stateful import dependencies
 
 CURRENT_DIR = pathlib.Path(__file__).parent.absolute()
 sys.path.append(str(CURRENT_DIR.parent))
@@ -54,7 +54,7 @@ RESPONSE = Response(
     elapsed=0.1,
     verify=False,
 )
-patch("schemathesis.Case.call", return_value=RESPONSE).start()
+patch("autotest.Case.call", return_value=RESPONSE).start()
 
 
 def pytest_generate_tests(metafunc):
@@ -352,7 +352,7 @@ KNOWN_ISSUES = {
 }
 
 
-@schemathesis.check
+@autotest.check
 def combined_check(ctx, response, case):
     case.as_curl_command()
     for check in CHECKS.get_all():
@@ -436,7 +436,7 @@ def _load_schema(corpus, filename):
     raw_content = CORPUS_FILES[corpus].extractfile(filename).read()
     raw_schema = json_loads(raw_content)
     try:
-        schema = schemathesis.openapi.from_dict(raw_schema)
+        schema = autotest.openapi.from_dict(raw_schema)
         schema.config.update(base_url="http://127.0.0.1:8080/")
         schema.config.generation.update(database="none", max_examples=1)
         schema.config.output.sanitization.update(enabled=False)

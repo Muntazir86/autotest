@@ -8,9 +8,9 @@ assignees: Stranger6667
 
 ### Checklist
 
-- [ ] I checked the [FAQ section](https://schemathesis.readthedocs.io/en/stable/faq/) of the documentation
-- [ ] I looked for similar issues in the [issue tracker](https://github.com/schemathesis/schemathesis/issues)
-- [ ] I am using the latest version of Schemathesis
+- [ ] I checked the [FAQ section](https://autotest.readthedocs.io/en/stable/faq/) of the documentation
+- [ ] I looked for similar issues in the [issue tracker](https://github.com/autotest/autotest/issues)
+- [ ] I am using the latest version of autotest
 
 ### Describe the bug
 
@@ -38,7 +38,7 @@ Clearly describe your expected outcome.
 ```
 - OS: [e.g. Linux or Windows]
 - Python version: [e.g. 3.13]
-- Schemathesis version: [e.g. 4.0.0]
+- autotest version: [e.g. 4.0.0]
 - Spec version: [e.g. Open API 3.1.0]
 ```
 

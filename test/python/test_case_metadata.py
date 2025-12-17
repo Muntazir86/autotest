@@ -3,11 +3,11 @@ from hypothesis import Phase, given, settings
 from hypothesis import strategies as st
 from requests.structures import CaseInsensitiveDict
 
-import schemathesis
-from schemathesis.core.parameters import ParameterLocation
-from schemathesis.generation import GenerationMode
-from schemathesis.generation.case import Case
-from schemathesis.generation.meta import (
+import autotest
+from autotest.core.parameters import ParameterLocation
+from autotest.generation import GenerationMode
+from autotest.generation.case import Case
+from autotest.generation.meta import (
     CaseMetadata,
     ComponentInfo,
     ExamplesPhaseData,
@@ -78,7 +78,7 @@ def simple_schema():
 
 @pytest.fixture
 def simple_operation(simple_schema):
-    schema = schemathesis.openapi.from_dict(simple_schema)
+    schema = autotest.openapi.from_dict(simple_schema)
     return schema["/items"]["POST"]
 
 
@@ -179,7 +179,7 @@ def test_nested_dict_modification_detected():
             }
         },
     }
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     operation = schema["/items"]["POST"]
 
     meta = make_positive_meta(ParameterLocation.BODY)
@@ -238,7 +238,7 @@ def test_hook_adds_required_field_metadata_updates():
         },
     }
 
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     operation = schema["/locations"]["POST"]
 
     meta = make_negative_meta(ParameterLocation.BODY, "address_id", "Required property removed")
@@ -289,7 +289,7 @@ def test_before_call_hook_with_negative_cases():
         },
     }
 
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     operation = schema["/items"]["POST"]
 
     @schema.hook
@@ -339,7 +339,7 @@ def test_map_case_hook_with_metadata():
         },
     }
 
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     operation = schema["/users/{user_id}"]["GET"]
 
     @schema.hook
@@ -380,7 +380,7 @@ def test_query_parameter_modification_revalidates():
         },
     }
 
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     operation = schema["/users"]["GET"]
 
     meta = make_negative_meta(ParameterLocation.QUERY, "include_deleted", "Invalid type")
@@ -420,7 +420,7 @@ def test_header_case_insensitive_dict_hash():
         },
     }
 
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     operation = schema["/users"]["GET"]
 
     meta = make_positive_meta(ParameterLocation.HEADER)
@@ -461,7 +461,7 @@ def test_path_parameter_modification_revalidates():
         },
     }
 
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     operation = schema["/users/{user_id}"]["GET"]
 
     meta = make_negative_meta(ParameterLocation.PATH, "user_id", "Invalid pattern")
@@ -516,7 +516,7 @@ def test_multiple_components_modified_all_revalidate():
         },
     }
 
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     operation = schema["/users/{user_id}"]["POST"]
 
     meta = CaseMetadata(
@@ -596,7 +596,7 @@ type Query {
 }
 """
 
-    schema = schemathesis.graphql.from_file(graphql_schema)
+    schema = autotest.graphql.from_file(graphql_schema)
     operation = schema["Query"]["user"]
 
     strategy = operation.as_strategy()
@@ -643,7 +643,7 @@ def test_case_without_metadata_no_crash():
         },
     }
 
-    schema = schemathesis.openapi.from_dict(raw_schema)
+    schema = autotest.openapi.from_dict(raw_schema)
     operation = schema["/items"]["POST"]
 
     # Create case without metadata (as users would do)

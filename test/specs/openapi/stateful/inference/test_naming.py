@@ -1,6 +1,6 @@
 import pytest
 
-from schemathesis.specs.openapi.stateful.dependencies import naming
+from autotest.specs.openapi.stateful.dependencies import naming
 
 
 @pytest.mark.parametrize(
