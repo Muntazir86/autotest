@@ -1,1 +1,1 @@
-autotestConfig(projects=ProjectsConfig(default=ProjectConfig(request_timeout=0.5)))
+AutotestConfig(projects=ProjectsConfig(default=ProjectConfig(request_timeout=0.5)))

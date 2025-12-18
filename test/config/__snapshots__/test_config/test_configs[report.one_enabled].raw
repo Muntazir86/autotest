@@ -1,1 +1,1 @@
-autotestConfig(reports=ReportsConfig(har=ReportConfig(enabled=True)))
+AutotestConfig(reports=ReportsConfig(har=ReportConfig(enabled=True)))

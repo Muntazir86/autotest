@@ -1,1 +1,1 @@
-autotestConfig(projects=ProjectsConfig(default=ProjectConfig(request_cert='/path/to/client-cert.pem')))
+AutotestConfig(projects=ProjectsConfig(default=ProjectConfig(request_cert='/path/to/client-cert.pem')))

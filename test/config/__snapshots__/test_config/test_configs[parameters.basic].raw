@@ -1,1 +1,1 @@
-autotestConfig(projects=ProjectsConfig(default=ProjectConfig(parameters={'api_version': 'v2'})))
+AutotestConfig(projects=ProjectsConfig(default=ProjectConfig(parameters={'api_version': 'v2'})))

@@ -1,1 +1,1 @@
-autotestConfig(projects=ProjectsConfig(default=ProjectConfig(phases=PhasesConfig(coverage=CoveragePhaseConfig(generate_duplicate_query_parameters=True)))))
+AutotestConfig(projects=ProjectsConfig(default=ProjectConfig(phases=PhasesConfig(coverage=CoveragePhaseConfig(generate_duplicate_query_parameters=True)))))

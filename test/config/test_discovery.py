@@ -1,4 +1,4 @@
-from autotest.config import autotestConfig
+from autotest.config import AutotestConfig
 
 TOML_CONTENT = """
 color = true

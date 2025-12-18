@@ -1,1 +1,1 @@
-autotestConfig(projects=ProjectsConfig(default=ProjectConfig(generation=GenerationConfig(deterministic=True))))
+AutotestConfig(projects=ProjectsConfig(default=ProjectConfig(generation=GenerationConfig(deterministic=True))))

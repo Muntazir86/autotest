@@ -1,1 +1,1 @@
-autotestConfig(projects=ProjectsConfig(default=ProjectConfig(workers=4)))
+AutotestConfig(projects=ProjectsConfig(default=ProjectConfig(workers=4)))

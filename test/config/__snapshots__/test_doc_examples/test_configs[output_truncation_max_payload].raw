@@ -1,1 +1,1 @@
-autotestConfig(output=OutputConfig(truncation=TruncationConfig(max_payload_size=1024)))
+AutotestConfig(output=OutputConfig(truncation=TruncationConfig(max_payload_size=1024)))

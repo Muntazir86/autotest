@@ -1,1 +1,1 @@
-autotestConfig(reports=ReportsConfig(directory=Path('test-results')))
+AutotestConfig(reports=ReportsConfig(directory=Path('test-results')))

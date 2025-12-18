@@ -1199,5 +1199,5 @@ def test_coerce_header_value(value, schema, expected):
 
 def test_module_access():
     # It is done via `__getattr__`
-    _ = Autotest.checks.negative_data_rejection
-    assert "negative_data_rejection" in dir(Autotest.checks)
+    _ = autotest.checks.negative_data_rejection
+    assert "negative_data_rejection" in dir(autotest.checks)

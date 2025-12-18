@@ -1,1 +1,1 @@
-autotestConfig(reports=ReportsConfig(junit=ReportConfig(enabled=True, path=Path('test-reports/autotest-results.xml'))))
+AutotestConfig(reports=ReportsConfig(junit=ReportConfig(enabled=True, path=Path('test-reports/Autotest-results.xml'))))

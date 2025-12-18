@@ -1,1 +1,1 @@
-autotestConfig(projects=ProjectsConfig(default=ProjectConfig(proxy='http://localhost:8080')))
+AutotestConfig(projects=ProjectsConfig(default=ProjectConfig(proxy='http://localhost:8080')))

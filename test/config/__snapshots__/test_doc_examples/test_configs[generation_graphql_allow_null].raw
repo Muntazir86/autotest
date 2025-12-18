@@ -1,1 +1,1 @@
-autotestConfig(projects=ProjectsConfig(default=ProjectConfig(generation=GenerationConfig(graphql_allow_null=False))))
+AutotestConfig(projects=ProjectsConfig(default=ProjectConfig(generation=GenerationConfig(graphql_allow_null=False))))

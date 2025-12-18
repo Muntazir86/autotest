@@ -1,1 +1,1 @@
-autotestConfig(projects=ProjectsConfig(default=ProjectConfig(base_url='https://test.api.example.com')))
+AutotestConfig(projects=ProjectsConfig(default=ProjectConfig(base_url='https://test.api.example.com')))

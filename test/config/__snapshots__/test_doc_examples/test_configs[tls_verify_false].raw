@@ -1,1 +1,1 @@
-autotestConfig(projects=ProjectsConfig(default=ProjectConfig(tls_verify=False)))
+AutotestConfig(projects=ProjectsConfig(default=ProjectConfig(tls_verify=False)))

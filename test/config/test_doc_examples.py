@@ -6,7 +6,7 @@ import yaml
 
 import autotest.config._projects
 from autotest.checks import CHECKS
-from autotest.config import autotestConfig
+from autotest.config import AutotestConfig
 from autotest.config._validator import CONFIG_SCHEMA
 from autotest.core.errors import HookError
 from autotest.core.transforms import resolve_pointer

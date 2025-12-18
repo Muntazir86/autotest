@@ -1,1 +1,1 @@
-autotestConfig(projects=ProjectsConfig(default=ProjectConfig(generation=GenerationConfig(with_security_parameters=False))))
+AutotestConfig(projects=ProjectsConfig(default=ProjectConfig(generation=GenerationConfig(with_security_parameters=False))))

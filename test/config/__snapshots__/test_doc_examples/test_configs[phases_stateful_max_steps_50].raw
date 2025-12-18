@@ -1,1 +1,1 @@
-autotestConfig(projects=ProjectsConfig(default=ProjectConfig(phases=PhasesConfig(stateful=StatefulPhaseConfig(max_steps=50)))))
+AutotestConfig(projects=ProjectsConfig(default=ProjectConfig(phases=PhasesConfig(stateful=StatefulPhaseConfig(max_steps=50)))))

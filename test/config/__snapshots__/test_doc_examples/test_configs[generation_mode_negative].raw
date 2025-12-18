@@ -1,1 +1,1 @@
-autotestConfig(projects=ProjectsConfig(default=ProjectConfig(generation=GenerationConfig(modes=[<GenerationMode.NEGATIVE: 'negative'>]))))
+AutotestConfig(projects=ProjectsConfig(default=ProjectConfig(generation=GenerationConfig(modes=[<GenerationMode.NEGATIVE: 'negative'>]))))

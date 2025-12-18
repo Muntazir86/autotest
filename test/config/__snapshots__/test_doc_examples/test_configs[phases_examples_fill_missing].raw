@@ -1,1 +1,1 @@
-autotestConfig(projects=ProjectsConfig(default=ProjectConfig(phases=PhasesConfig(examples=ExamplesPhaseConfig(fill_missing=True)))))
+AutotestConfig(projects=ProjectsConfig(default=ProjectConfig(phases=PhasesConfig(examples=ExamplesPhaseConfig(fill_missing=True)))))

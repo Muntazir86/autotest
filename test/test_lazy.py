@@ -793,6 +793,7 @@ def test_checks_available_with_from_fixture(tmp_path):
     test_file.write_text("""
 import pytest
 import autotest
+Autotest = autotest  # Alias for backward compatibility
 from hypothesis import settings, Phase
 
 @pytest.fixture
@@ -813,7 +814,7 @@ lazy_schema = Autotest.pytest.from_fixture("api_schema")
 @lazy_schema.parametrize()
 @settings(max_examples=1, phases=[Phase.generate])
 def test_checks_are_loaded(case):
-    _ = Autotest.checks.status_code_conformance
+    _ = autotest.checks.status_code_conformance
 """)
 
     result = subprocess.run(

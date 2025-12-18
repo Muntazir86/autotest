@@ -293,7 +293,7 @@ class HTMLReportGenerator:
                             <h4>Request</h4>
                             <div class="detail-item"><strong>URL:</strong> {request['url']}</div>
                             <div class="detail-item"><strong>Headers:</strong></div>
-                            <pre class="headers-pre">{self._format_json(request.get('headers', {{}}))}</pre>
+                            <pre class="headers-pre">{self._format_json(request.get('headers') or {})}</pre>
                             <div class="detail-item"><strong>Body:</strong></div>
                             <pre class="body-pre">{req_body}</pre>
                         </div>
@@ -301,7 +301,7 @@ class HTMLReportGenerator:
                             <h4>Response ({response['response_time_ms']:.2f}ms)</h4>
                             <div class="detail-item"><strong>Status:</strong> {response['status_code']} {response['status_text']}</div>
                             <div class="detail-item"><strong>Headers:</strong></div>
-                            <pre class="headers-pre">{self._format_json(response.get('headers', {{}}))}</pre>
+                            <pre class="headers-pre">{self._format_json(response.get('headers') or {})}</pre>
                             <div class="detail-item"><strong>Body:</strong></div>
                             <pre class="body-pre">{resp_body}</pre>
                         </div>

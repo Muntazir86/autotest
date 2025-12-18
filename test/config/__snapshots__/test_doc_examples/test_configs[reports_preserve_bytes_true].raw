@@ -1,1 +1,1 @@
-autotestConfig(reports=ReportsConfig(preserve_bytes=True))
+AutotestConfig(reports=ReportsConfig(preserve_bytes=True))

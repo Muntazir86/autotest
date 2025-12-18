@@ -6,7 +6,7 @@ import pytest
 from hypothesis import given, settings
 
 import autotest
-from autotest.core import autotest_TEST_CASE_HEADER
+from autotest.core import AUTOTEST_TEST_CASE_HEADER
 from autotest.generation.modes import GenerationMode
 from autotest.specs.openapi.serialization import (
     comma_delimited_object,

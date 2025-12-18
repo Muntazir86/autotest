@@ -1,1 +1,1 @@
-autotestConfig(projects=ProjectsConfig(default=ProjectConfig(generation=GenerationConfig(maximize=[<function response_time>]))))
+AutotestConfig(projects=ProjectsConfig(default=ProjectConfig(generation=GenerationConfig(maximize=[<function response_time>]))))

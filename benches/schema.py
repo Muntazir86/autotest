@@ -10,7 +10,7 @@ import requests
 
 import autotest
 from autotest.cli.commands.run.handlers.cassettes import Finalize, Initialize, Process, har_writer, vcr_writer
-from autotest.config import autotestConfig
+from autotest.config import AutotestConfig
 from autotest.core.parameters import ParameterLocation
 from autotest.core.transforms import deepclone
 from autotest.core.transport import Response

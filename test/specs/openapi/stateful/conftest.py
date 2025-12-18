@@ -10,7 +10,7 @@ import pytest
 from flask import Flask, abort, jsonify, request
 
 import autotest
-from autotest.config import autotestConfig
+from autotest.config import AutotestConfig
 from autotest.engine.context import EngineContext
 from autotest.engine.phases import Phase, PhaseName, stateful
 from autotest.generation.modes import GenerationMode

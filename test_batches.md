@@ -169,3 +169,38 @@ pytest test/cli/ -v --maxfail=10
 ```powershell
 pytest test/cli/ -v -n auto
 ```
+
+# Test Suites
+
+## Command	Description
+pytest test/auth/ -v	Authentication tests
+pytest test/config/ -v	Configuration tests
+pytest test/core/ -v	Core functionality tests
+pytest test/coverage/ -v	Coverage-related tests
+pytest test/engine/ -v	Engine tests
+pytest test/hooks/ -v	Hooks tests
+pytest test/filters/ -v	Filter tests
+pytest test/loaders/ -v	Loader tests
+pytest test/openapi/ -v	OpenAPI tests
+pytest test/pytest/ -v	Pytest integration tests
+pytest test/python/ -v	Python-specific tests
+pytest test/contrib/ -v	Contrib module tests
+pytest test/_pytest/ -v	Pytest markers tests
+
+## Individual Test Files (Root of test/)
+
+## Command	Description
+pytest test/test_app.py -v	App tests
+pytest test/test_asgi.py -v	ASGI transport tests
+pytest test/test_async.py -v	Async tests
+pytest test/test_wsgi.py -v	WSGI transport tests
+pytest test/test_hypothesis.py -v	Hypothesis tests
+pytest test/test_parameters.py -v	Parameter tests
+pytest test/test_parametrization.py -v	Parametrization tests
+pytest test/test_schemas.py -v	Schema tests
+pytest test/test_serialization.py -v	Serialization tests
+pytest test/test_stateful.py -v	Stateful testing tests
+pytest test/test_dereferencing.py -v	Dereferencing tests
+pytest test/test_filters.py -v	Filter tests
+pytest test/test_lazy.py -v	Lazy loading tests
+pytest test/test_petstore.py -v	Petstore example tests

@@ -1,1 +1,1 @@
-autotestConfig(output=OutputConfig(sanitization=SanitizationConfig(replacement='***REDACTED***')))
+AutotestConfig(output=OutputConfig(sanitization=SanitizationConfig(replacement='***REDACTED***')))

@@ -6,7 +6,7 @@ from hypothesis_openapi import openapis
 import autotest
 import autotest.engine
 from autotest.config import HealthCheck as AutotestHealthCheck
-from autotest.config import autotestConfig
+from autotest.config import AutotestConfig
 from autotest.core.errors import InvalidSchema
 from autotest.engine import events
 

@@ -1,1 +1,1 @@
-autotestConfig(output=OutputConfig(sanitization=SanitizationConfig(enabled=False)))
+AutotestConfig(output=OutputConfig(sanitization=SanitizationConfig(enabled=False)))

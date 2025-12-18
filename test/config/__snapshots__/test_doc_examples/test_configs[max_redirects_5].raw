@@ -1,1 +1,1 @@
-autotestConfig(projects=ProjectsConfig(default=ProjectConfig(max_redirects=5)))
+AutotestConfig(projects=ProjectsConfig(default=ProjectConfig(max_redirects=5)))

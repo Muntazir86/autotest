@@ -79,7 +79,7 @@ class Context:
         raise ValueError(f"Unknown format: {format}")
 
     def write_pymodule(self, content: str, *, filename: str = "module"):
-        content = f"import autotest\nnote=print\n{dedent(content)}"
+        content = f"import autotest\nAutotest = autotest  # Alias for backward compatibility\nnote=print\n{dedent(content)}"
         module = self._testdir.makepyfile(**{filename: content})
         pkgroot = module.dirpath()
         module._ensuresyspath(True, pkgroot)

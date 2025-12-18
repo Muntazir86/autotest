@@ -8,7 +8,7 @@ from hypothesis import HealthCheck, given, settings
 
 import autotest
 from autotest.checks import not_a_server_error
-from autotest.core import autotest_TEST_CASE_HEADER
+from autotest.core import AUTOTEST_TEST_CASE_HEADER
 from autotest.core.errors import IncorrectUsage
 from autotest.core.failures import Failure, FailureGroup
 from autotest.core.parameters import ParameterLocation

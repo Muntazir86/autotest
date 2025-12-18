@@ -200,7 +200,7 @@ def test_matcher_repr():
     ],
 )
 def test_exclude_custom(args, kwargs, expected):
-    lazy_schema = Autotest.pytest.from_fixture("name")
+    lazy_schema = autotest.pytest.from_fixture("name")
     schemas = [SCHEMA, lazy_schema]
     for schema in schemas:
         assert (

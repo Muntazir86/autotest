@@ -1,1 +1,1 @@
-autotestConfig(output=OutputConfig(truncation=TruncationConfig(max_lines=20)))
+AutotestConfig(output=OutputConfig(truncation=TruncationConfig(max_lines=20)))

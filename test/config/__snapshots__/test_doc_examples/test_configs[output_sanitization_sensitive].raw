@@ -1,1 +1,1 @@
-autotestConfig(output=OutputConfig(sanitization=SanitizationConfig(sensitive_markers=('secret', 'auth', 'key'))))
+AutotestConfig(output=OutputConfig(sanitization=SanitizationConfig(sensitive_markers=('secret', 'auth', 'key'))))

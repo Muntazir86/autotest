@@ -341,6 +341,7 @@ basic = {{ username = "testuser", password = "testpass" }}
         """
 import pytest
 import autotest
+Autotest = autotest  # Alias for backward compatibility
 from hypothesis import settings, Phase
 
 @pytest.fixture
@@ -389,6 +390,7 @@ X-Client-ID = "test-client"
         """
 import pytest
 import autotest
+Autotest = autotest  # Alias for backward compatibility
 from hypothesis import settings, Phase
 
 @pytest.fixture
@@ -437,6 +439,7 @@ parameters = {{ id = 42, status = "active" }}
         """
 import pytest
 import autotest
+Autotest = autotest  # Alias for backward compatibility
 from hypothesis import settings, Phase
 
 @pytest.fixture

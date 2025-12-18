@@ -1,6 +1,6 @@
 import pytest
 
-from autotest.config import autotestConfig
+from autotest.config import AutotestConfig
 from autotest.core.errors import HookError
 
 

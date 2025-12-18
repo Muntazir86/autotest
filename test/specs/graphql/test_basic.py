@@ -8,7 +8,7 @@ from hypothesis import HealthCheck, Phase, find, given, settings
 import autotest
 from autotest.checks import CheckContext, not_a_server_error
 from autotest.config import ChecksConfig
-from autotest.core import autotest_TEST_CASE_HEADER
+from autotest.core import AUTOTEST_TEST_CASE_HEADER
 from autotest.core.errors import LoaderError
 from autotest.core.failures import Failure, FailureGroup
 from autotest.core.transport import USER_AGENT

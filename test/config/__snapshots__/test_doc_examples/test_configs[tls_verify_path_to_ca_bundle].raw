@@ -1,1 +1,1 @@
-autotestConfig(projects=ProjectsConfig(default=ProjectConfig(tls_verify='/path/to/ca-bundle.pem')))
+AutotestConfig(projects=ProjectsConfig(default=ProjectConfig(tls_verify='/path/to/ca-bundle.pem')))

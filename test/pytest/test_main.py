@@ -171,14 +171,14 @@ def test_c(case):
 
 def test_d():
     deadline = settings().deadline
-    # E.g. changed globally via a custom profile in Autotest' test suite
+    # E.g. changed globally via a custom profile in autotest' test suite
     if deadline is not None:
         assert deadline.microseconds == 200 * 1000
 """,
     )
     # When there is a test with Pytest
     result = testdir.runpytest()
-    # Then it should use the global Autotest deadline for Hypothesis (None)
+    # Then it should use the global autotest deadline for Hypothesis (None)
     result.assert_outcomes(passed=4)
 
 
@@ -336,7 +336,7 @@ def api_schema():
     return schema
 
 
-schema = Autotest.pytest.from_fixture("api_schema")
+schema = autotest.pytest.from_fixture("api_schema")
 
 existing_user_ids = [1, 42, 123, 456]
 
@@ -714,9 +714,9 @@ def test_b(v):
     result = testdir.runpytest()
     result.assert_outcomes(failed=2)
     stdout = result.stdout.str()
-    # Internal Autotest' frames should not appear in the output
+    # Internal autotest' frames should not appear in the output
     assert "def validate_response(" not in stdout
-    # And Hypothesis "Falsifying example" block is not in the output of Autotest' tests
+    # And Hypothesis "Falsifying example" block is not in the output of autotest' tests
     assert "Falsifying example: test_a(" not in stdout
     # And regular Hypothesis tests have it
     assert "Falsifying example: test_b(" in stdout
@@ -763,7 +763,7 @@ def test_statefully(state_machine):
 
 
 def test_invalid_schema_reraising(testdir):
-    # When there is a non-Autotest test failing because of Hypothesis' `InvalidArgument` error
+    # When there is a non-autotest test failing because of Hypothesis' `InvalidArgument` error
     testdir.make_test(
         """
 @given(st.integers(min_value=5, max_value=4))
@@ -805,7 +805,7 @@ def test(case):
 def test_output_sanitization_via_config_file(testdir, openapi3_schema_url, enabled):
     testdir.make_test(
         f"""
-config = Autotest.Config.from_dict({{
+config = autotest.Config.from_dict({{
     "headers": {{"Authorization": "secret"}},
     "output": {{
         "sanitization": {{"enabled": {enabled}}}
@@ -1169,7 +1169,7 @@ def test(case):
 def test_disable_checks_via_config(testdir, openapi3_schema_url):
     testdir.make_test(
         f"""
-config = Autotest.Config.from_dict({{
+config = autotest.Config.from_dict({{
     "checks": {{
         "not_a_server_error": {{"enabled": False}},
         "content_type_conformance": {{"enabled": False}},
@@ -1199,7 +1199,7 @@ def test(case):
 @pytest.mark.operations("__all__")
 def test_filter_combination(testdir, openapi3_schema_url, filter, expected):
     testdir.make_test(f"""
-config = Autotest.Config.from_dict({{
+config = autotest.Config.from_dict({{
     "operations": [{{
         "exclude-name": "POST /write_only",
         "enabled": False,
@@ -1218,7 +1218,7 @@ def test_api(case):
 def test_transport_kwargs_from_config(testdir, openapi3_schema_url):
     testdir.make_test(
         f"""
-config = Autotest.Config.from_dict({{
+config = autotest.Config.from_dict({{
     "tls-verify": False,
     "headers": {{ "X-Foo": "Bar", "X-Spam": "Unknown" }},
     "request-timeout": 3,

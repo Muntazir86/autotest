@@ -1,1 +1,1 @@
-autotestConfig(projects=ProjectsConfig(default=ProjectConfig(warnings=WarningsConfig(display=[]))))
+AutotestConfig(projects=ProjectsConfig(default=ProjectConfig(warnings=WarningsConfig(display=[]))))

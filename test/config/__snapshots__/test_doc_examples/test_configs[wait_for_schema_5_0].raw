@@ -1,1 +1,1 @@
-autotestConfig(wait_for_schema=5.0)
+AutotestConfig(wait_for_schema=5.0)

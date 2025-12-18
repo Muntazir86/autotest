@@ -2,7 +2,7 @@ import hypothesis
 import pytest
 from hypothesis.database import DirectoryBasedExampleDatabase, InMemoryExampleDatabase
 
-from autotest.config import autotestConfig
+from autotest.config import AutotestConfig
 from autotest.core import HYPOTHESIS_IN_MEMORY_DATABASE_IDENTIFIER
 from autotest.schemas import APIOperation, OperationDefinition
 

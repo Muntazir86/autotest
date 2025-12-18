@@ -1,5 +1,5 @@
 import autotest
-from autotest.config import autotestWarning
+from autotest.config import AutotestWarning
 from autotest.specs.openapi.warnings import MissingDeserializerWarning, detect_missing_deserializers
 
 

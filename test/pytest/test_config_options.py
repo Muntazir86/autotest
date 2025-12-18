@@ -14,7 +14,7 @@ def test_config_seed_is_used(testdir, is_lazy, mocker):
 def api_schema():
     return autotest.openapi.from_dict(raw_schema, config=AutotestConfig(seed={seed}))
 
-schema = Autotest.pytest.from_fixture("api_schema")
+schema = autotest.pytest.from_fixture("api_schema")
 """
     else:
         schema_setup = f"schema = autotest.openapi.from_dict(raw_schema, config=AutotestConfig(seed={seed}))"
@@ -46,7 +46,7 @@ def test_explicit_seed_not_overridden(testdir, is_lazy, mocker):
 def api_schema():
     return autotest.openapi.from_dict(raw_schema, config=AutotestConfig(seed=999))
 
-schema = Autotest.pytest.from_fixture("api_schema")
+schema = autotest.pytest.from_fixture("api_schema")
 """
     else:
         schema_setup = "schema = autotest.openapi.from_dict(raw_schema, config=AutotestConfig(seed=999))"
@@ -82,7 +82,7 @@ def api_schema():
     config.projects.default.update(proxy="{proxy_url}", base_url="{openapi3_base_url}")
     return autotest.openapi.from_dict(raw_schema, config=config)
 
-schema = Autotest.pytest.from_fixture("api_schema")
+schema = autotest.pytest.from_fixture("api_schema")
 """
     else:
         schema_setup = f"""
@@ -117,7 +117,7 @@ def api_schema():
     config.projects.default.update(request_timeout={timeout}, base_url="{openapi3_base_url}")
     return autotest.openapi.from_dict(raw_schema, config=config)
 
-schema = Autotest.pytest.from_fixture("api_schema")
+schema = autotest.pytest.from_fixture("api_schema")
 """
     else:
         schema_setup = f"""
@@ -153,7 +153,7 @@ def test_wait_for_schema_is_used(mocker):
     mock_load_from_url.return_value = mock_response
 
     wait_for_schema_value = 42.5
-    config = Autotest.config.AutotestConfig(wait_for_schema=wait_for_schema_value)
+    config = autotest.config.AutotestConfig(wait_for_schema=wait_for_schema_value)
 
     # Call from_url without explicit wait_for_schema - should use config
     autotest.openapi.from_url("http://example.com/openapi.json", config=config)
@@ -178,7 +178,7 @@ def api_schema():
     schema.config.phases.stateful.enabled = False
     return schema
 
-schema = Autotest.pytest.from_fixture("api_schema")
+schema = autotest.pytest.from_fixture("api_schema")
 """
     else:
         schema_setup = f"""

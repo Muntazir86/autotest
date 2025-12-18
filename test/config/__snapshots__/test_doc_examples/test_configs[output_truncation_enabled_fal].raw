@@ -1,1 +1,1 @@
-autotestConfig(output=OutputConfig(truncation=TruncationConfig(enabled=False)))
+AutotestConfig(output=OutputConfig(truncation=TruncationConfig(enabled=False)))

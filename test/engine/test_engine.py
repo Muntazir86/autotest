@@ -12,8 +12,8 @@ from py import sys
 
 import autotest
 from autotest.checks import not_a_server_error
-from autotest.config import autotestWarning
-from autotest.core import autotest_TEST_CASE_HEADER
+from autotest.config import AutotestWarning
+from autotest.core import AUTOTEST_TEST_CASE_HEADER
 from autotest.core.transport import USER_AGENT
 from autotest.engine import Status, events, from_schema
 from autotest.engine.phases import PhaseName
@@ -458,7 +458,7 @@ def filter_path_parameters():
             lambda x: x["key"] not in ("..", ".", "", "/") and not (isinstance(x["key"], str) and "/" in x["key"])
         )
 
-    Autotest.hook(before_generate_path_parameters)
+    autotest.hook(before_generate_path_parameters)
     return
 
 

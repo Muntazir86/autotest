@@ -1043,6 +1043,7 @@ def testdir(testdir):
             f"""
         import pytest
         import autotest
+        Autotest = autotest  # Alias for backward compatibility
         from autotest.core import NOT_SET
         from autotest.config import *
         from autotest.generation import GenerationMode
