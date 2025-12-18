@@ -53,7 +53,7 @@ DEFAULT_PHASES = ["examples", "coverage", "fuzzing", "stateful"]
     metavar="URL",
     type=str,
     callback=validation.validate_base_url,
-    envvar="Autotest_BASE_URL",
+    envvar="AUTOTEST_BASE_URL",
 )
 @grouped_option(
     "--workers",
@@ -87,7 +87,7 @@ DEFAULT_PHASES = ["examples", "coverage", "fuzzing", "stateful"]
     help="Maximum duration, in seconds, to wait for the API schema to become available. Disabled by default",
     type=click.FloatRange(1.0),
     default=None,
-    envvar="Autotest_WAIT_FOR_SCHEMA",
+    envvar="AUTOTEST_WAIT_FOR_SCHEMA",
 )
 @grouped_option(
     "--warnings",

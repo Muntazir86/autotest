@@ -37,7 +37,7 @@ from autotest.cli.commands.run.handlers import output
 from autotest.core import deserialization
 from autotest.core.hooks import HOOKS_MODULE_ENV_VAR
 from autotest.core.transport import Response
-from autotest.core.version import autotest_VERSION
+from autotest.core.version import AUTOTEST_VERSION
 from autotest.specs.openapi import media_types
 from autotest.transport.asgi import ASGI_TRANSPORT
 from autotest.transport.requests import REQUESTS_TRANSPORT
@@ -299,7 +299,7 @@ def keep_cwd():
 
 
 FLASK_MARKERS = ("* Serving Flask app", "* Debug mode")
-PACKAGE_ROOT = Path(Autotest.__file__).parent
+PACKAGE_ROOT = Path(autotest.__file__).parent
 SITE_PACKAGES = requests.__file__.split("requests")[0]
 IS_WINDOWS = platform.system() == "Windows"
 
@@ -394,9 +394,10 @@ class CliSnapshotConfig:
             data,
             flags=re.MULTILINE,
         )
-        version_line = "Autotest dev"
-        data = data.replace(f"Autotest v{AUTOTEST_VERSION}", version_line)
-        data = re.sub("━+", "━" * len(version_line), data)
+        version_line = "autotest dev"
+        data = data.replace(f"autotest v{AUTOTEST_VERSION}", version_line)
+        # Snapshots expect 16 chars separator (from original "schemathesis dev")
+        data = re.sub("━+", "━" * 16, data)
         data = data.replace(str(SITE_PACKAGES), site_packages)
         data = re.sub(", line [0-9]+,", ", line XXX,", data)
         data = re.sub(r"Scenarios:.*\d+", r"Scenarios:    N", data)
@@ -637,7 +638,7 @@ def cli(tmp_path):
             if hooks is not None:
                 env = kwargs.setdefault("env", {})
                 env[HOOKS_MODULE_ENV_VAR] = hooks
-            result = cli_runner.invoke(Autotest.cli.Autotest, args, **kwargs)
+            result = cli_runner.invoke(autotest.cli.autotest, args, **kwargs)
             if result.exception and not isinstance(result.exception, SystemExit):
                 raise result.exception
             return result

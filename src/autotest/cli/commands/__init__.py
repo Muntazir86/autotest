@@ -98,7 +98,7 @@ def autotest(ctx: click.Context, config_file: str | None) -> None:
         click.echo(f"\n{detail}\n\n{exc}")
         ctx.exit(1)
     except HookError as exc:
-        click.secho("Unable to load Autotest extension hooks", fg="red", bold=True)
+        click.secho("Unable to load autotest extension hooks", fg="red", bold=True)
         formatted_module_name = click.style(f"'{exc.module_path}'", bold=True)
         cause = exc.__cause__
         assert isinstance(cause, Exception)

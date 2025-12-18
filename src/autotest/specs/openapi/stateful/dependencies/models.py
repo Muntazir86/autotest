@@ -10,7 +10,7 @@ from typing import Any, TypeAlias
 from autotest.core.parameters import ParameterLocation
 from autotest.core.transforms import encode_pointer
 from autotest.resources.descriptors import Cardinality
-from autotest.specs.openapi.stateful.links import autotest_LINK_EXTENSION
+from autotest.specs.openapi.stateful.links import AUTOTEST_LINK_EXTENSION
 
 
 @dataclass

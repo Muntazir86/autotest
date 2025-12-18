@@ -96,7 +96,7 @@ def test_hooks_invalid(ctx, cli):
     assert result.exit_code == ExitCode.TESTS_FAILED, result.stdout
     # And a helpful message should be displayed in the output
     lines = result.stdout.strip().split("\n")
-    assert lines[0] == "Unable to load Autotest extension hooks"
+    assert lines[0] == "Unable to load autotest extension hooks"
     if sys.version_info >= (3, 11):
         idx = 8
     else:

@@ -37,7 +37,7 @@ class JunitXMLHandler(EventHandler):
             test_case.add_error_info(output=event.info.format())
         elif isinstance(event, events.EngineFinished):
             test_suites = [
-                TestSuite("Autotest", test_cases=list(self.test_cases.values()), hostname=platform.node())
+                TestSuite("autotest", test_cases=list(self.test_cases.values()), hostname=platform.node())
             ]
             with open_text_output(self.output) as fd:
                 to_xml_report_file(file_descriptor=fd, test_suites=test_suites, prettyprint=True, encoding="utf-8")

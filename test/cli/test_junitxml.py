@@ -52,7 +52,7 @@ def test_junitxml_file(cli, schema_url, hypothesis_max_examples, tmp_path, path,
     # Inspect the nested element `testsuite`
     testsuite = root[0]
     assert testsuite.tag == "testsuite"
-    assert testsuite.attrib["name"] == "Autotest"
+    assert testsuite.attrib["name"] == "autotest"
     assert testsuite.attrib["errors"] == "1"
     assert testsuite.attrib["failures"] == "2"
     assert testsuite.attrib["tests"] == "4"

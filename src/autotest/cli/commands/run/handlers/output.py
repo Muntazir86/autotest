@@ -137,7 +137,7 @@ def _display_extras(extras: list[str]) -> None:
 
 def display_header(version: str) -> None:
     prefix = "v" if version != "dev" else ""
-    header = f"Autotest {prefix}{version}"
+    header = f"autotest {prefix}{version}"
     click.echo(_style(header, bold=True))
     click.echo(_style(HEADER_SEPARATOR * len(header), bold=True))
     click.echo()

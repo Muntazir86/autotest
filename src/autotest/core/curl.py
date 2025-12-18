@@ -5,7 +5,7 @@ from functools import lru_cache
 from shlex import quote
 from typing import TYPE_CHECKING, Any
 
-from autotest.core import autotest_TEST_CASE_HEADER
+from autotest.core import AUTOTEST_TEST_CASE_HEADER
 from autotest.core.shell import escape_for_shell, has_non_printable
 
 if TYPE_CHECKING:

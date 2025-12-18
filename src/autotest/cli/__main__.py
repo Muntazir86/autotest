@@ -1,4 +1,4 @@
 if __name__ == "__main__":
     import autotest.cli
 
-    Autotest.cli.Autotest()
+    autotest.cli.autotest()

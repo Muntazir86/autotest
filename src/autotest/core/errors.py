@@ -24,8 +24,8 @@ if TYPE_CHECKING:
 
 
 SCHEMA_ERROR_SUGGESTION = "Ensure that the definition complies with the OpenAPI specification"
-SERIALIZERS_DOCUMENTATION_URL = "https://Autotest.readthedocs.io/en/stable/guides/custom-serializers/"
-STATEFUL_TESTING_GUIDE_URL = "https://Autotest.readthedocs.io/en/stable/guides/stateful-testing/"
+SERIALIZERS_DOCUMENTATION_URL = "https://autotest.readthedocs.io/en/stable/guides/custom-serializers/"
+STATEFUL_TESTING_GUIDE_URL = "https://autotest.readthedocs.io/en/stable/guides/stateful-testing/"
 SERIALIZERS_SUGGESTION_MESSAGE = f"Check your schema or add custom serializers: {SERIALIZERS_DOCUMENTATION_URL}"
 SERIALIZATION_NOT_POSSIBLE_MESSAGE = f"No supported serializers for media types: {{}}\n{SERIALIZERS_SUGGESTION_MESSAGE}"
 SERIALIZATION_FOR_TYPE_IS_NOT_POSSIBLE_MESSAGE = (

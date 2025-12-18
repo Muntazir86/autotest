@@ -113,7 +113,7 @@ class Finalize:
 def get_command_representation() -> str:
     """Get how Autotest was run."""
     # It is supposed to be executed from autotest CLI, not via Click's `command.invoke`
-    if not sys.argv[0].endswith(("Autotest", "st")):
+    if not sys.argv[0].endswith(("autotest", "st")):
         return "<unknown entrypoint>"
     args = " ".join(sys.argv[1:])
     return f"st {args}"

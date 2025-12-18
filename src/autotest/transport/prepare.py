@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any, cast
 from urllib.parse import quote, unquote, urljoin, urlsplit, urlunsplit
 
 from autotest.config import SanitizationConfig
-from autotest.core import autotest_TEST_CASE_HEADER, NotSet
+from autotest.core import AUTOTEST_TEST_CASE_HEADER, NotSet
 from autotest.core.errors import InvalidSchema
 from autotest.core.output.sanitization import sanitize_url, sanitize_value
 from autotest.core.parameters import ParameterLocation

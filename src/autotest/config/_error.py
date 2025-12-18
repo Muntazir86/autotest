@@ -3,7 +3,7 @@ from __future__ import annotations
 import difflib
 from typing import TYPE_CHECKING
 
-from autotest.core.errors import autotestError
+from autotest.core.errors import AutotestError
 
 if TYPE_CHECKING:
     from jsonschema import ValidationError

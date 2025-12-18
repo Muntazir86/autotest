@@ -23,7 +23,7 @@ from werkzeug.routing import Map, MapAdapter, Rule
 
 from autotest.core.adapter import ResponsesContainer
 from autotest.core.transforms import encode_pointer
-from autotest.specs.openapi.stateful.links import autotest_LINK_EXTENSION
+from autotest.specs.openapi.stateful.links import AUTOTEST_LINK_EXTENSION
 
 if TYPE_CHECKING:
     from autotest.engine.observations import LocationHeaderEntry

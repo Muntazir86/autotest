@@ -4,4 +4,4 @@ Stdout:
 Usage: autotest run [OPTIONS] LOCATION
 Try 'autotest run -h' for help.
 
-Error: Invalid value for '--report': invalid choice(s): unknown. Choose from junit, vcr, har.
+Error: Invalid value for '--report': invalid choice(s): unknown. Choose from junit, vcr, har, html.
